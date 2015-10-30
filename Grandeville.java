@@ -12,6 +12,12 @@ public class Grandeville {
 	public double mod(double a){
 		return a>0?a:-a;
 	}
+	public double manhattanDist(double st,double av){
+		return mod(st)+mod(av);
+	}
+	public double crowDist(double st,double av){
+		return max(mod(st),mod(av));
+	}
 		
 	public Grandeville(){
 		for(int i=0;i<I;++i)
@@ -47,8 +53,10 @@ public class Grandeville {
 			else
 				return c;														// If Pre computed
 			
-		} else
-			return 0;															// Probability is 0 otherwise
+		} else {
+			System.err.println("Attempt to access("+st+","+av+")@"+tm);
+			return 0;															// Probability is 0 otherwise			
+		}
 	}
 	
 	public void print(){
@@ -72,38 +80,23 @@ public class Grandeville {
 	// atleast x blocks away at tm time
 	public double q1(int x,int tm){
 		double p=0;
-		for(int av=-SIZE;av<=SIZE;++av){
-			for(int st=-SIZE;st<=SIZE;++st){
-				if(mod(av)+mod(st)<x){
-					System.err.println("("+av+","+st+")@"+tm);
-					p+=this.getCorner(av,st,tm);
+		for(int st=-SIZE;st<=SIZE;++st){
+			for(int av=-SIZE;av<=SIZE;++av){
+				if(crowDist(st,av)<x){
+					System.err.println("("+st+","+av+")@"+tm);
+					p+=this.getCorner(st,av,tm);
 				}
 			}
 			
 		}
 		return 1-p;
 	}
-	public double q1_2(int x,int tm){
-		double p=0;
-		for(int av=-SIZE;av<=SIZE;++av){
-			for(int st=-SIZE;st<=SIZE;++st){
-				if(mod(av)+mod(st)>=x){
-					System.err.println("("+av+","+st+")@"+tm);
-					p+=this.getCorner(av,st,tm);
-				}
-			}
-			
-		}
-		return p;
-	}
-
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("Hello World!!!");
 		Grandeville gv= new Grandeville();
 
 		System.out.println("q1: P="+gv.q1(3, 10));
-		System.out.println("q1_2: P="+gv.q1_2(3, 10));
 		gv.print();
 		
 	}
