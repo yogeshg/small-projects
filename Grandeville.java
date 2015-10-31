@@ -1,3 +1,5 @@
+import static java.lang.Math.*;
+
 public class Grandeville {
 	
 	private int SIZE=11;
@@ -16,10 +18,17 @@ public class Grandeville {
 		return mod(st)+mod(av);
 	}
 	public double crowDist(double st,double av){
-		return max(mod(st),mod(av));
+//		return max(mod(st),mod(av));
+		return Math.sqrt(st*st + av*av);
+	}
+	public String locstr(double st,double av,double tm){
+		return "("+st+","+av+")@"+tm;
 	}
 		
 	public Grandeville(){
+		this.init();
+	}
+	public void init(){
 		for(int i=0;i<I;++i)
 			for(int j=0;j<J;++j)
 				corners[i][j][0]=0;
@@ -28,9 +37,13 @@ public class Grandeville {
 		for(int k=1;k<K;++k)
 			for(int i=0;i<I;++i)
 				for(int j=0;j<J;++j)
-					corners[i][j][k]=(double)-0.00001;
+					corners[i][j][k]=(double)-0.0001;
 	}
 	
+	public void setCorner(int st,int av,int tm,double v){
+		corners[st+SIZE][av+SIZE][tm]=v;
+	}
+
 	// st in -SIZE to SIZE -> i in 0 to 2*SIZE -> s*SIZE+1 elements
 	public double getCorner(int st,int av,int tm){
 		int i=st+SIZE;
@@ -54,7 +67,7 @@ public class Grandeville {
 				return c;														// If Pre computed
 			
 		} else {
-			System.err.println("Attempt to access("+st+","+av+")@"+tm);
+//			System.err.println("Attempt to access("+st+","+av+")@"+tm);
 			return 0;															// Probability is 0 otherwise			
 		}
 	}
@@ -65,15 +78,15 @@ public class Grandeville {
 			p=0;
 			for(int i=0;i<I;++i){
 				for(int j=0;j<J;++j){
-					System.out.print(corners[i][j][k]);
+//					System.out.print(corners[i][j][k]>=0?corners[i][j][k]:" ");
 					p+=max(corners[i][j][k],(double)0);
-					System.out.print("\t");
+//					System.out.print("\t");
 				}
-				System.out.println();
+//				System.out.println();
 			}
-			System.out.println("###");
-			System.out.println("P("+k+")="+p);
-			System.out.println("###");
+//			System.out.println("###");
+//			System.out.println("P("+k+")="+p);
+//			System.out.println("###");
 		}
 	}
 	
@@ -83,7 +96,7 @@ public class Grandeville {
 		for(int st=-SIZE;st<=SIZE;++st){
 			for(int av=-SIZE;av<=SIZE;++av){
 				if(crowDist(st,av)<x){
-					System.err.println("("+st+","+av+")@"+tm);
+//					System.err.println("("+st+","+av+")@"+tm);
 					p+=this.getCorner(st,av,tm);
 				}
 			}
@@ -91,13 +104,73 @@ public class Grandeville {
 		}
 		return 1-p;
 	}
+	public void clearAfterBlocks(int x,int tm){
+		for(int st=-SIZE;st<=SIZE;++st){
+			for(int av=-SIZE;av<=SIZE;++av){
+				if(crowDist(st,av)>=x){
+					this.setCorner(st, av, tm,0);
+//					System.err.println("Clearing"+locstr(st,av,tm));
+				}
+			}
+		}
+	}
+	// atleast x within tm moves
+	public double q2(int x,int tm){
+		double p=0;
+		for(int t=1;t<=tm;++t){
+			p+=q1(x,t);
+			System.err.println("p_"+t+"="+p);
+			this.clearAfterBlocks(x,t);
+		}
+		this.print();
+		return p;
+	}
+
+	public double q3(int tm){
+		double p=0;
+		double q=0;
+		int st;
+		int av;
+		for(int t=1;t<=tm;++t){
+			this.init();
+			q=0;
+			for(st=-SIZE;st<=SIZE;++st) {
+				for(av=-SIZE;av<=SIZE;++av) {
+					if(-1==av){
+						q+=this.getCorner(st, av, t);
+					} else {
+						this.setCorner(st, av, t, 0);
+					}
+				}
+			}
+			System.err.println("q_"+t+"="+q);
+			q=0;
+			for(st=-SIZE;st<=SIZE;++st) {
+				for(av=1;av<=SIZE;++av) {
+					q+=this.getCorner(st, av, tm);
+				}
+			}
+			System.err.println("q_"+t+"="+q);
+			p+=q;
+			
+			this.print();
+//			System.out.println("step "+t);
+//			System.out.println("####");
+
+		}
+		return p;
+	}
+	
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		System.out.println("Hello World!!!");
 		Grandeville gv= new Grandeville();
 
 		System.out.println("q1: P="+gv.q1(3, 10));
-		gv.print();
+
+		System.out.println("q2: P="+gv.q2(5, 10));
+		
+		System.out.println("q3: P="+gv.q3(10));
+		
 		
 	}
 
