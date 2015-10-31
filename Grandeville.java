@@ -18,7 +18,6 @@ public class Grandeville {
 		return mod(st)+mod(av);
 	}
 	public double crowDist(double st,double av){
-//		return max(mod(st),mod(av));
 		return Math.sqrt(st*st + av*av);
 	}
 	public String locstr(double st,double av,double tm){
@@ -70,14 +69,13 @@ public class Grandeville {
 				return c;														// If Pre computed
 			
 		} else {
-//			System.err.println("Attempt to access("+st+","+av+")@"+tm);
 			return 0;															// Probability is 0 otherwise			
 		}
 	}
 	
-	public void print(){}
+	public void print2(){}
 	
-	public void print2(){
+	public void print(){
 		double p=0;
 		for(int k=0;k<K;++k){
 			p=0;
@@ -101,11 +99,9 @@ public class Grandeville {
 		for(int st=-SIZE;st<=SIZE;++st){
 			for(int av=-SIZE;av<=SIZE;++av){
 				if(crowDist(st,av)<x){
-//					System.err.println("("+st+","+av+")@"+tm);
 					p+=this.getCorner(st,av,tm);
 				}
 			}
-			
 		}
 		return 1-p;
 	}
@@ -114,7 +110,6 @@ public class Grandeville {
 			for(int av=-SIZE;av<=SIZE;++av){
 				if(crowDist(st,av)>=x){
 					this.setCorner(st, av, tm,0);
-//					System.err.println("Clearing"+locstr(st,av,tm));
 				}
 			}
 		}
@@ -129,7 +124,6 @@ public class Grandeville {
 			this.clearAfterBlocks(x,t);
 			System.err.println("q_"+t+"="+"("+q+","+(1-q)+")");
 		}
-		this.print();
 		return p;
 	}
 
@@ -159,7 +153,6 @@ public class Grandeville {
 					}
 				}
 			}
-//			System.err.println("q_"+t+"="+q);
 			for(st=-SIZE;st<=SIZE;++st) {
 				for(av=1;av<=SIZE;++av) {
 					r+=this.getCorner(st, av, tm);
@@ -167,11 +160,10 @@ public class Grandeville {
 			}
 			System.err.println("q_"+t+"="+"("+q+","+(r)+")");
 			p+=r;
-			
-			this.print();
 //			System.out.println("step "+t);
 //			System.out.println("####");
 		}
+//		this.print();
 		return p;
 	}
 	
@@ -179,17 +171,26 @@ public class Grandeville {
 		System.out.println("Hello World!!!");
 		Grandeville gv= new Grandeville();
 
-		System.out.println("q1: P=\t\t\t"+gv.q1(3, 10));
+		gv.init();
+		System.out.println("q1: P="+gv.q1(3, 10));
+//		gv.print();
 
-		System.out.println("q2: P=\t\t\t"+gv.q2(5, 10));
-		
-		System.out.println("q3: P=\t\t\t"+gv.q3(10));
-		
-		System.out.println("q1: P=\t\t\t"+gv.q1(10, 60));
+		gv.init();
+		System.out.println("q2: P="+gv.q2(5, 10));
+//		gv.print();
 
-		System.out.println("q2: P=\t\t\t"+gv.q2(10, 60));
-		
-		System.out.println("q3: P=\t\t\t"+gv.q3(30));
+		gv.init();
+		System.out.println("q3: P="+gv.q3(10));
+
+
+		gv.init();
+		System.out.println("q1: P="+gv.q1(10, 60));
+
+		gv.init();
+		System.out.println("q2: P="+gv.q2(10, 60));
+
+		gv.init();
+		System.out.println("q3: P="+gv.q3(30));
 		
 		
 	}
