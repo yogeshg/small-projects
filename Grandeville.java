@@ -2,7 +2,7 @@ import static java.lang.Math.*;
 
 public class Grandeville {
 	
-	private int SIZE=11;
+	private int SIZE=61;
 	private int I=1+2*SIZE;
 	private int J=1+2*SIZE;
 	private int K=SIZE;
@@ -35,9 +35,12 @@ public class Grandeville {
 		corners[SIZE][SIZE][0]=1;
 		
 		for(int k=1;k<K;++k)
-			for(int i=0;i<I;++i)
-				for(int j=0;j<J;++j)
-					corners[i][j][k]=(double)-0.0001;
+			reset(k);
+	}
+	public void reset(int k){
+		for(int i=0;i<I;++i)
+			for(int j=0;j<J;++j)
+				corners[i][j][k]=(double)-0.0001;
 	}
 	
 	public void setCorner(int st,int av,int tm,double v){
@@ -72,21 +75,23 @@ public class Grandeville {
 		}
 	}
 	
-	public void print(){
+	public void print(){}
+	
+	public void print2(){
 		double p=0;
 		for(int k=0;k<K;++k){
 			p=0;
 			for(int i=0;i<I;++i){
 				for(int j=0;j<J;++j){
-//					System.out.print(corners[i][j][k]>=0?corners[i][j][k]:" ");
+					System.out.print(corners[i][j][k]>=0?corners[i][j][k]:" ");
 					p+=max(corners[i][j][k],(double)0);
-//					System.out.print("\t");
+					System.out.print("\t");
 				}
-//				System.out.println();
+				System.out.println();
 			}
-//			System.out.println("###");
-//			System.out.println("P("+k+")="+p);
-//			System.out.println("###");
+			System.out.println("###");
+			System.out.println("P("+k+")="+p);
+			System.out.println("###");
 		}
 	}
 	
@@ -117,10 +122,12 @@ public class Grandeville {
 	// atleast x within tm moves
 	public double q2(int x,int tm){
 		double p=0;
+		double q=0;
 		for(int t=1;t<=tm;++t){
-			p+=q1(x,t);
-			System.err.println("p_"+t+"="+p);
+			q=q1(x,t);
+			p=q;
 			this.clearAfterBlocks(x,t);
+			System.err.println("q_"+t+"="+"("+q+","+(1-q)+")");
 		}
 		this.print();
 		return p;
@@ -129,11 +136,20 @@ public class Grandeville {
 	public double q3(int tm){
 		double p=0;
 		double q=0;
+		double r=0;
 		int st;
 		int av;
 		for(int t=1;t<=tm;++t){
 			this.init();
 			q=0;
+			r=0;
+			for(int t2=1;t2<t;++t2){
+				for(st=-SIZE;st<=SIZE;++st) {
+					for(av=-SIZE;av<=-1;++av) {
+						this.setCorner(st, av, t2, 0);
+					}
+				}
+			}
 			for(st=-SIZE;st<=SIZE;++st) {
 				for(av=-SIZE;av<=SIZE;++av) {
 					if(-1==av){
@@ -143,20 +159,18 @@ public class Grandeville {
 					}
 				}
 			}
-			System.err.println("q_"+t+"="+q);
-			q=0;
+//			System.err.println("q_"+t+"="+q);
 			for(st=-SIZE;st<=SIZE;++st) {
 				for(av=1;av<=SIZE;++av) {
-					q+=this.getCorner(st, av, tm);
+					r+=this.getCorner(st, av, tm);
 				}
 			}
-			System.err.println("q_"+t+"="+q);
-			p+=q;
+			System.err.println("q_"+t+"="+"("+q+","+(r)+")");
+			p+=r;
 			
 			this.print();
 //			System.out.println("step "+t);
 //			System.out.println("####");
-
 		}
 		return p;
 	}
@@ -165,11 +179,17 @@ public class Grandeville {
 		System.out.println("Hello World!!!");
 		Grandeville gv= new Grandeville();
 
-		System.out.println("q1: P="+gv.q1(3, 10));
+		System.out.println("q1: P=\t\t\t"+gv.q1(3, 10));
 
-		System.out.println("q2: P="+gv.q2(5, 10));
+		System.out.println("q2: P=\t\t\t"+gv.q2(5, 10));
 		
-		System.out.println("q3: P="+gv.q3(10));
+		System.out.println("q3: P=\t\t\t"+gv.q3(10));
+		
+		System.out.println("q1: P=\t\t\t"+gv.q1(10, 60));
+
+		System.out.println("q2: P=\t\t\t"+gv.q2(10, 60));
+		
+		System.out.println("q3: P=\t\t\t"+gv.q3(30));
 		
 		
 	}
