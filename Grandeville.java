@@ -41,6 +41,11 @@ public class Grandeville {
 			for(int j=0;j<J;++j)
 				corners[i][j][k]=(double)-0.0001;
 	}
+	public void copyToFrom(int k,int k2){
+		for(int i=0;i<I;++i)
+			for(int j=0;j<J;++j)
+				corners[i][j][k]=corners[i][j][k2];
+	}
 	
 	public void setCorner(int st,int av,int tm,double v){
 		corners[st+SIZE][av+SIZE][tm]=v;
@@ -167,30 +172,65 @@ public class Grandeville {
 		return p;
 	}
 	
+	public void evolve3(int x){
+		double p=0;
+		double q=0;
+		double E=0;
+		int t=0;
+		int st,av,stat=0;
+		this.init();
+		for(t=1;t<=1000000;++t) {
+			q=0;
+			for(st=-SIZE;st<=SIZE;++st) {
+				for(av=-SIZE;av<=SIZE;++av) {
+					this.getCorner(st, av, 1);
+					if(crowDist(st,av)>=x){
+						q+=this.getCorner(st, av, 1);
+						this.setCorner(st, av, 1, 0);
+					}
+				}
+			}
+			this.copyToFrom(0,1);
+			this.reset(1);
+
+			E+=t*q;
+			System.out.println("("+t+","+q+","+E+")");
+			if(0.000000000001>t*q){
+				++stat;
+				if(stat>1000) break;
+			}
+
+//			this.print();
+		}
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("Hello World!!!");
 		Grandeville gv= new Grandeville();
-
+		
 		gv.init();
-		System.out.println("q1: P="+gv.q1(3, 10));
-//		gv.print();
+		gv.evolve3(60);
 
-		gv.init();
-		System.out.println("q2: P="+gv.q2(5, 10));
-//		gv.print();
-
-		gv.init();
-		System.out.println("q3: P="+gv.q3(10));
-
-
-		gv.init();
-		System.out.println("q1: P="+gv.q1(10, 60));
-
-		gv.init();
-		System.out.println("q2: P="+gv.q2(10, 60));
-
-		gv.init();
-		System.out.println("q3: P="+gv.q3(30));
+//		gv.init();
+//		System.out.println("q1: P="+gv.q1(3, 10));
+////		gv.print();
+//
+//		gv.init();
+//		System.out.println("q2: P="+gv.q2(5, 10));
+////		gv.print();
+//
+//		gv.init();
+//		System.out.println("q3: P="+gv.q3(10));
+//
+//
+//		gv.init();
+//		System.out.println("q1: P="+gv.q1(10, 60));
+//
+//		gv.init();
+//		System.out.println("q2: P="+gv.q2(10, 60));
+//
+//		gv.init();
+//		System.out.println("q3: P="+gv.q3(30));
 		
 		
 	}
