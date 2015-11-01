@@ -1,0 +1,35 @@
+
+What is the probability that the tourist is at least 3 city blocks (as the crow flies)
+	from Broadway and Broadway after 10 moves?
+P(|st|+|av|>=3 & tm=10)
+
+What is the probability that the tourist is at least 10 city blocks (as the crow flies)
+	from Broadway and Broadway after 60 moves?
+P(|st|+|av|>=10 & tm=60)
+
+What is the probability that the tourist is ever at least 5 city blocks (as the crow flies)
+	from Broadway and Broadway within 10 moves?
+tm<=10
+A_tm = |st|+|av|>=5 and tm
+
+P(A_tm)
++
+(|st|+|av|>=5 )@tm == 0
+P(tm=2 and |st|+|av|>=5)
+
+
+What is the probability that the tourist is ever at least 10 city blocks (as the crow flies)
+	from Broadway and Broadway within 60 moves?
+
+
+What is the probability that the tourist is ever east of East 1st Avenue
+	but ends up west of West 1st Avenue in 10 moves?
+
+What is the probability that the tourist is ever east of East 1st Avenue
+	but ends up west of West 1st Avenue in 30 moves?
+
+What is the average number of moves until the first time the tourist is at least 10 city blocks
+	(as the crow flies) from Broadway and Broadway.
+
+What is the average number of moves until the first time the tourist is at least 60 city blocks
+	(as the crow flies) from Broadway and Broadway.
