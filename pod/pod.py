@@ -8,13 +8,13 @@
 from bs4 import BeautifulSoup, SoupStrainer
 from urlparse import urljoin,urlparse
 from collections import OrderedDict
-import requests,os,json,argparse,sys
+import requests,os,json,argparse,sys,shutil
 
 class NatGeoPOD:
     # TODO: Make init
     @staticmethod
     def parse(link):
-        print link
+        print 'Parsing link ',link
         data=OrderedDict()
         soup=BeautifulSoup(requests.get(link).text)
         prevlink=soup.select('.primary_photo a')[0]['href']
@@ -30,7 +30,7 @@ class NatGeoPOD:
         data['imgname']=os.path.basename(urlparse(imglink).path)
         data['imglink']=imglink
         data['prevlink']=prevlink
-        print(json.dumps(data, indent=4))
+        # print(json.dumps(data, indent=4))
         # TODO: Make self
         return data
 
@@ -41,7 +41,7 @@ class NasaAPOD:
     def parse(link):
         def is_text_backarrow(tag):
             return "<" == tag.text
-        print link
+        print 'Parsing link ',link
         data=OrderedDict()
         soup=BeautifulSoup(requests.get(link).text)
         prevlink=soup.find(is_text_backarrow)['href']
@@ -57,20 +57,30 @@ class NasaAPOD:
         data['imgname']=os.path.basename(urlparse(imglink).path)
         data['imglink']=imglink
         data['prevlink']=prevlink
-        print(json.dumps(data, indent=4))
-
+        # print(json.dumps(data, indent=4))
+        # TODO: Make self
+        return data
 
 def printj(jsono):
     print(json.dumps(jsono, indent=4))
 
+def ensureDir(directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+def ensurePdir(fname):
+    ensureDir(os.path.dirname(fname))
+
 def saveImgUrl2file(imgurl,fname):
     r = requests.get(imgurl, stream=True)
     if r.status_code == 200:
+        ensurePdir(fname)
         with open(fname, 'wb') as f:
             r.raw.decode_content = True
             shutil.copyfileobj(r.raw, f)
 
 def saveJson2file(obj,fname):
+    ensurePdir(fname)
     with open(fname, 'wb') as f:
         f.write(json.dumps(obj, indent=4))
 
@@ -84,41 +94,43 @@ class POD:
 
     def refresh(self):
         curr=self.root
-        for p in self.pods:
-            p.update(NatGeoPOD.parse(curr))
-            printj(p)
-            curr=p['prevlink']
+        for i in range(self.num):
+            self.pods[i]=NatGeoPOD.parse(curr)
+            curr=self.pods[i]['prevlink']
         return 0
 
-    def persist(self):
+    def persist(self,dirname):
         for p in self.pods:
-            self.savePOD(p)
+            self.savePOD(p,dirname)
         return 0
 
     def show(self):
         for p in self.pods:
             printj(p)
 
-    def savePOD(self,p):
-        fname=p['symname']
+    def savePOD(self,p,dirname):
+        fname=os.path.join(dirname,p['symname'])
         saveImgUrl2file(p['imglink'],fname)
         fname=os.path.splitext(fname)[0]+'.txt'
         saveJson2file(p,fname)
 
 def main(args=None):
-    import pod
+    # from pod import *
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('-n','--num',type=int,default=1,
+    parser.add_argument('-n','--num',type=int,default=10,
         help='number of pictures to be downloaded [defaults to 10]')
     parser.add_argument('-w','--web',default="natgeo",
         help='which website to download from [nasa=apod]/[default=natgeo]')
     parser.add_argument('-u','--url',default="http://photography.nationalgeographic.com/photography/photo-of-the-day/",
         help='number of pictures to be downloaded [defaults to 10]')
+    parser.add_argument('-d','--dir',default=".",
+        help='directory where output should be stored [defaults to .]')
     p=parser.parse_args()
     # print p.__dict__
-    l = pod.POD(p)
+    l = POD(p)
     l.refresh()
-    l.show()
+    l.persist(p.dir)
+    # l.show()
     return 0
 
 if __name__ == '__main__':

@@ -1,37 +1,58 @@
-from bs4 import BeautifulSoup, SoupStrainer
-from urlparse import urljoin,urlparse
-import requests
-import json
-from collections import OrderedDict
+import pod,requests,json,os,shutil
+# from PIL import Image
+# from StringIO import StringIO
 
-only_a_tags = SoupStrainer("a")
-only_img_tags = SoupStrainer("img")
-only_tags_with_id_link2 = SoupStrainer(id="link2")
+def printj(jsono):
+    print(json.dumps(jsono, indent=4))
 
-# def is_short_string(string):
-#     return len(string) < 10
+def saveImgUrl2file(imgurl,fname):
+    r = requests.get(imgurl, stream=True)
+    if r.status_code == 200:
+        with open(fname, 'wb') as f:
+            r.raw.decode_content = True
+            shutil.copyfileobj(r.raw, f)
 
-# only_short_strings = SoupStrainer(string=is_short_string)
+j=pod.NatGeoPOD.parse('http://photography.nationalgeographic.com/photography/photo-of-the-day/');
+
+path="/Users/yogeshgarg/Code2/proto/natgeopod/"
+
+saveImgUrl2file(j['imglink'],path+j['symname'])
+
+    # i = Image.open(StringIO(r.content))
+    # i.save(path+j['symname'])
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('integers', metavar='N', type=int, nargs='+',
+                   help='an integer for the accumulator')
+parser.add_argument('--sum', dest='accumulate', action='store_const',
+                   const=sum, default=max,
+                   help='sum the integers (default: find the max)')
+
+args = parser.parse_args()
+print args.accumulate(args.integers)
 
 
-def parseNatGeoPOD(link):
-    data=OrderedDict()
-    soup=BeautifulSoup(requests.get(link).text)
-    prevlink=soup.select('.primary_photo a')[0]['href']
-    prevlink=urljoin(link,prevlink)
-    data['heading']=soup.select('#caption h2')[0].text
-    data['subhead']=soup.select('.primary_photo img')[0]['alt']
-    data['pubtime']=soup.select('#caption .publication_time')[0].text
-    data['credits']=soup.select('#caption .credit')[0].text
-    data['text']=soup.select('#caption')[0].text
-    data['symname']=os.path.basename(os.path.dirname(urlparse(link).path))
-    imglink=soup.select('.primary_photo img')[0]['src']
-    imglink=urljoin(link,imglink)
-    data['imgname']=os.path.basename(urlparse(imglink).path)
-    data['imglink']=imglink
-    data['prevlink']=prevlink
-    print(json.dumps(data, indent=4))
-    return data
 
-j=parseNatGeoPOD('http://photography.nationalgeographic.com/photography/photo-of-the-day/');
+link="http://apod.nasa.gov/apod/astropix.html"
+
+
+
+
+soup.select('a[href*=image]')
+
+# pubtime
+(soup.select('a[href*=image]')[0]).parent.get_text().strip()
+# imglink
+
+# text
+
+# heading
+
+# subhead
+soup.select('body > center > b')[0].parent
+
+soup.find(is_text_backarrow)['href']
+
 
