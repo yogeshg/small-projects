@@ -4,6 +4,8 @@
     * National Geographic Photography
 """
 
+DEFAULT_LINK="http://photography.nationalgeographic.com/photography/photo-of-the-day/"
+DEFAULT_LINK="http://apod.nasa.gov/apod/astropix.html"
 
 from bs4 import BeautifulSoup, SoupStrainer
 from urlparse import urljoin,urlparse
@@ -95,8 +97,11 @@ class POD:
     def refresh(self):
         curr=self.root
         for i in range(self.num):
-            self.pods[i]=NatGeoPOD.parse(curr)
-            curr=self.pods[i]['prevlink']
+            try:
+                self.pods[i]=NasaAPOD.parse(curr)
+                curr=self.pods[i]['prevlink']
+            except Exception, e:
+                print e
         return 0
 
     def persist(self,dirname):
@@ -121,7 +126,7 @@ def main(args=None):
         help='number of pictures to be downloaded [defaults to 10]')
     parser.add_argument('-w','--web',default="natgeo",
         help='which website to download from [nasa=apod]/[default=natgeo]')
-    parser.add_argument('-u','--url',default="http://photography.nationalgeographic.com/photography/photo-of-the-day/",
+    parser.add_argument('-u','--url',default=DEFAULT_LINK,
         help='number of pictures to be downloaded [defaults to 10]')
     parser.add_argument('-d','--dir',default=".",
         help='directory where output should be stored [defaults to .]')
