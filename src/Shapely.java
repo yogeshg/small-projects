@@ -1,6 +1,6 @@
 import static java.lang.Math.*;
 
-public class Shapely {
+public class Shapely { 
 	
 	private
 
@@ -11,6 +11,9 @@ public class Shapely {
 	int v[];		// value for coalition
 	float sh[];		// shapely value for the grand coalition for a player 
 	float sh2[][];	// shapely value for a coalition for a player 
+
+	public static final boolean DEBUG = false;
+
 	
 	/*
 	 * COALITION UTILITY FUNCTIONS
@@ -80,7 +83,7 @@ public class Shapely {
 		}
 	}
 	public void printPlayer(int i){
-			System.out.print("Player "+i +" : "+ ('A'+i) +" (#"+p[i]+")");
+			System.out.print("Player "+i +" : "+ (i) +" (#"+p[i]+")");
 	}
 
 	public void printCoalition(int j){
@@ -176,8 +179,10 @@ public class Shapely {
 			numerator += Factorial.getFactorial(s) * Factorial.getFactorial(N-s-1) * diff;
 			numerator2 += Factorial.getFactorial(s) * Factorial.getFactorial(N-s-1) * 1;
 		}
-//		System.out.println("Numerator_ "+numerator2+" Denominator "+denominator);
-//		System.out.println("Shapely "+numerator/denominator);
+		if(DEBUG){
+			System.out.println("Numerator_ "+numerator2+" Denominator "+denominator);
+			System.out.println("Shapely "+numerator/denominator);
+		}
 		sh2[coalitionId][playerId]=numerator/denominator;
 	}
 
@@ -185,19 +190,6 @@ public class Shapely {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-//		int[] val={0, 0, 0, 100};
-//		Shapely s= new Shapely(2, val);
-//		s.printGame();
-		
-
-//		int[] val3={0, 0, 0, 100, 0, 100, 0, 100};
-//		Shapely s3= new Shapely(3, val3);
-//		s3.printGame();
-//		System.out.println("Shapely for ");
-//		s3.printCoalition(7);
-//		System.out.println("Player 0:"+s3.getShapelyForCoalitionPlayer(7, 0));
-//		System.out.println("Player 1:"+s3.getShapelyForCoalitionPlayer(7, 1));
-//		System.out.println("Player 2:"+s3.getShapelyForCoalitionPlayer(7, 2));
 
 		//			0	A	B	AB		C	AC		BC	ABC		D	AD		BD	ABD		CD	ACD		BCD		ABCD
 		int[] val3={0,	0,	0,	100,	0,	100,	0,	100};
@@ -205,51 +197,25 @@ public class Shapely {
 		Shapely s3= new Shapely(4, val4);
 		s3.printGame();
 		
-		System.out.println();
-		s3.printShapelyForCoalition(7);
-		
-		System.out.println();
-		s3.printShapelyForCoalition(11);
-		
-		System.out.println();
-		s3.printShapelyForCoalition(13);
-		
-		System.out.println();
-		s3.printShapelyForCoalition(14);
-		
-		System.out.println();
-		s3.printShapelyForCoalition(15);
-		
-		
+		for(int j=0;j<s3.m;++j){
+			System.out.println();
+			s3.printShapelyForCoalition(j);
+		}
 
-//		System.out.println("");
-//		System.out.print("Shapely for ");
-//		s3.printCoalition(7);
-//		System.out.println("Player 0:"+s3.getShapelyForCoalitionPlayer(7, 0));
-//		System.out.println("Player 1:"+s3.getShapelyForCoalitionPlayer(7, 1));
-//		System.out.println("Player 2:"+s3.getShapelyForCoalitionPlayer(7, 2));
+//		System.out.println();
+//		s3.printShapelyForCoalition(7);
 //
-//		System.out.println("");
-//		System.out.print("Shapely for ");
-//		s3.printCoalition(7);
-//		System.out.println("Player 0:"+s3.getShapelyForCoalitionPlayer(7, 0));
-//		System.out.println("Player 1:"+s3.getShapelyForCoalitionPlayer(7, 1));
-//		System.out.println("Player 2:"+s3.getShapelyForCoalitionPlayer(7, 2));
-//
-//		System.out.println("");
-//		System.out.print("Shapely for ");
-//		s3.printCoalition(7);
-//		System.out.println("Player 0:"+s3.getShapelyForCoalitionPlayer(7, 0));
-//		System.out.println("Player 1:"+s3.getShapelyForCoalitionPlayer(7, 1));
-//		System.out.println("Player 2:"+s3.getShapelyForCoalitionPlayer(7, 2));
-//
-//		System.out.println("");
-//		System.out.print("Shapely for ");
-//		s3.printCoalition(15);
-//		System.out.println("Player 0:"+s3.getShapelyForCoalitionPlayer(15, 0));
-//		System.out.println("Player 1:"+s3.getShapelyForCoalitionPlayer(15, 1));
-//		System.out.println("Player 2:"+s3.getShapelyForCoalitionPlayer(15, 2));
-//		System.out.println("Player 4:"+s3.getShapelyForCoalitionPlayer(15, 3));
+//		System.out.println();
+//		s3.printShapelyForCoalition(11);
+//		
+//		System.out.println();
+//		s3.printShapelyForCoalition(13);
+//		
+//		System.out.println();
+//		s3.printShapelyForCoalition(14);
+//		
+//		System.out.println();
+//		s3.printShapelyForCoalition(15);
 
 	}
 
