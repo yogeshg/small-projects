@@ -6,27 +6,28 @@ public class Shapely {
 
 	int n; 			// Number of players
 	int m; 			// Number of coalitions
-	int p[];	// hashes for players p[i] = 2^i
+	int p[];		// hashes for players p[i] = 2^i
 
-	int v[];	// value for coalition
-	float sh[];	// shapely value for the grand coalition for a player 
-	
+	int v[];		// value for coalition
+	float sh[];		// shapely value for the grand coalition for a player 
 	float sh2[][];	// shapely value for a coalition for a player 
+	
+	/*
+	 * COALITION UTILITY FUNCTIONS
+	 */
 	
 	boolean coalitionHasPlayer(int coalition,int i){
 		return 0<(p[i] & coalition);
 	}
-
-	int coalitionSize (int coalition) {
+	int coalitionSize (int j) {
 	    int count = 0;
-	    while (coalition > 0) {           // until all bits are zero
-	        if ((coalition & 1) == 1)     // check lower bit
+	    while (j > 0) {           // until all bits are zero
+	        if ((j & 1) == 1)     // check lower bit
 	            count++;
-	        coalition >>= 1;              // shift bits, removing lower bit
+	        j >>= 1;              // shift bits, removing lower bit
 	    }
 	    return count;
 	}
-
 	/** 
 	 * c1 is a subset of c2
 	 * @param c1
@@ -37,35 +38,42 @@ public class Shapely {
 		return c2==(c1|c2);
 	}
 	
+	/**
+	 * Constructor
+	 * @param numPlayers number of players
+	 * @param val value function for each subset of players
+	 */
 	public Shapely(int numPlayers, int[] val) {
 		n=numPlayers;
 		m=1<<numPlayers;
+
 		// Populate hashes for each player
 		p=new int[n];
-		for(int i=0;i<n;++i){
+		for(int i=0;i<n;++i)
 			p[i]=1<<i;
-		}
+
 		// Populate values for each coalition
 		v=new int[m];
-		for(int j=0;j<m;++j){
+		for(int j=0;j<m;++j)
 			v[j]=val[j];
-		}
+
 		// Populate null Shapely-s for each player
 		sh=new float[n];
-		for(int i=0;i<n;++i){
+		for(int i=0;i<n;++i)
 			sh[i]=-1;
-		}
+
 		// Populate null Shapely-s for each coalition,player
 		sh2=new float[m][n];
-		for(int j=0;j<m;++j){
-			for(int i=0;i<n;++i){
+		for(int j=0;j<m;++j)
+			for(int i=0;i<n;++i)
 				sh2[j][i]=-1;
-			}
-		}
-
 	}
 	
-	public void printPlayers(){
+	/*
+	 * PRINTING UTILITY FUNCTIONS
+	 */
+	
+	public void printAllPlayers(){
 		for(int i=0;i<n;++i){
 			printPlayer(i);
 			System.out.println(); 
@@ -86,16 +94,15 @@ public class Shapely {
 		System.out.println(v[j]); 
 	}
 	public void printGame(){
-		
-		printPlayers();
+		System.out.println("All Players:");
+		printAllPlayers();
 		System.out.println();
-		
+		System.out.println("Value function:");
 		for(int j=0;j<m;++j)
 			System.out.print(v[j]+" ");
-		System.out.println();
-		
+		System.out.println();		
 		for(int s=0;s<=n;++s){
-			System.out.println("Size "+s+":");
+			System.out.println("Coalitions of Size "+s+":");
 			for(int j=0;j<m;++j){
 				if(coalitionSize(j)==s)
 					printCoalition(j);
