@@ -1,17 +1,42 @@
 # -*- coding: utf-8 -*-
-# <nbformat>3.0</nbformat>
-
-# <codecell>
 
 import numpy as np
 import random
 random.seed()
+import datetime as dt
 
 from Queue import PriorityQueue
 import copy
 
+class Stats():
+    def __init__(self, name):
+        self.name = name
+        self.max = 0
+        self.min = 0
+        self.count = 0
+        self.avg = 0
+    def collect(self, val):
+        n = self.count
+        den = (1.0/(n+1))
+        self.count += 1
+        self.max = max(self.max, val)
+        self.min = min(self.max, val)
+        self.avg = (n*den*self.avg) + (den*val)
+    def __str__(self):
+        return "{0:10}: {1:10d} {2:20.10f} {3:20.10f} {4:20.10f}".format(self.name, self.count, self.min, self.avg, self.max)
 
-# <codecell>
+gStats = {}
+
+def registerStats(key):
+    gStats[key] = Stats(key)
+
+def collectStats(key,value):
+    gStats[key].collect(value)
+
+def printStats():
+    for s in gStats.itervalues():
+        print s
+
 
 class Move(object):
     def __init__(self, row, col) :
@@ -19,6 +44,8 @@ class Move(object):
         self.col = col
     def __str__(self):
         return str((self.row,self.col))
+    def __cmp__(self, other):
+        return not ( (self.row == other.row) and (self.col == other.col) )
 
 class AlphaBeta():
     def __init__( self, a, b, e=0):
@@ -62,30 +89,6 @@ class AlphaBetaOfMove():
     def __cmp__( self, other ):
         return cmp(self.alphabeta, other.alphabeta)
 
-# <codecell>
-
-# TEST of Moves and Classes
-
-# from Queue import PriorityQueue
-# q = PriorityQueue()
-# q.put( AlphaBetaOfMove( AlphaBeta( -5, 5, 1), Move(1, 1) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( -5, 5, 2), Move(2, 2) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( -4, 5 ), Move(3, 3) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( -4, 5 ), Move(4, 4) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( -4, 4 ), Move(5, 5) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( 5, 5 ), Move(6, 6) ) )
-# q.put( AlphaBetaOfMove( AlphaBeta( -5, -5 ), Move(7, 7) ) )
-
-# print q.get()
-# print q.get()
-# print q.get()
-# print q.get()
-# print q.get()
-# print q.get()
-# print q.get()
-
-# <codecell>
-
 def max_continuous( l, a ):
     result_so_far = 0
     seen_so_far = 0
@@ -99,7 +102,26 @@ def max_continuous( l, a ):
 #     print result_so_far
     return result_so_far
 
-# <codecell>
+# stringHash = lambda s: ' '.join([s[i:(i+2)] for i in reversed(range(len(s),-1,-2))])
+
+class GameBoard(np.matrix):
+
+    def __init__( self,*args,**kargs):
+        # inits matrix first!
+        self.posHash = lambda x:int((((x<0)or(x>3))*0x3)|(x%4))
+        self.posIndex = lambda i,j:int(2*((i*self.shape[1])+j))
+        self.hash = 0x0L
+
+    def __setitem__(self, *args):
+        index = self.posIndex(args[0][0],args[0][1])
+        val = self.posHash(args[1])
+        oldval = self.__getitem__(args[0])
+        # print index,val,oldval,
+        self.hash ^= (oldval<<index)
+        self.hash ^= (val<<index)
+        # print '\t',stringHash( bin(self.hash) )
+        # print self.hash
+        np.matrix.__setitem__(self, *args)
 
 class Game(object):
     
@@ -110,10 +132,14 @@ class Game(object):
         game.ROWS = range(game.n);
         game.DIAG = range(1-game.n,game.n);
         game.TARGET = 4
-        game.board = np.matrix( [[0 for col in game.COLS] for row in game.ROWS] )
+        game.board = GameBoard( [[0 for col in game.COLS] for row in game.ROWS] )
+        game._cache = {}
     
-    def is_move_valid( game, row, col ):
-        return (row<game.n) and (col<game.n) and game.board[row,col]==0
+    def is_move_valid( game, row, col, player=0 ):
+        return (row<game.n) and (col<game.n) and game.board[row,col]==player
+
+    def is_unmove_valid(game, row, col, player):
+        return game.is_move_valid(row, col, player)
 
     def next_moves( game ):
         for col in game.COLS:
@@ -139,13 +165,34 @@ class Game(object):
                 yield Move(r,c)
                 
     def move( game, player, m ):
-        if( game.is_move_valid(m.row, m.col) ):
+        if( game.is_move_valid(m.row, m.col) and m in game.next_moves() ):
             game.board[m.row,m.col] = player
             return True
         else:
             return False
-        
-    def evaluate( game, player ):
+
+    def unmove( game, player, m ):
+        if( game.is_move_valid(m.row, m.col, player) ):
+            game.board[m.row,m.col] = 0
+            return True
+        else:
+            return False
+
+    def evaluate_cached(game, player, statskey_cached=None, statskey_forced=None):
+        if(statskey_cached):
+            start = dt.datetime.now()
+        k = (game.board.hash << 2)+(player%4)
+        if( not game._cache.has_key( k ) ):
+            v = game.evaluate(player, statskey_cached=statskey_cached, statskey_forced=statskey_forced)
+            game._cache[k] = v
+        if(statskey_cached):
+            end = dt.datetime.now()
+            collectStats(statskey_cached, (end-start).total_seconds())
+        return game._cache[k]
+
+    def evaluate( game, player, statskey_cached=None, statskey_forced=None):
+        if(statskey_forced):
+            start = dt.datetime.now()
     
         result_row = 0
         for r in game.ROWS:
@@ -170,10 +217,14 @@ class Game(object):
             r = max_continuous( [game.board[m.row,m.col] for m in game.DIAG2(d2)], player )
             result_d2 = max( result_d2, r )
     #     print result_d2
+
+        if(statskey_forced):
+            end = dt.datetime.now()
+            collectStats(statskey_forced, (end-start).total_seconds())
+
         return max( result_row,  result_col, result_d1, result_d2 )
 
 
-# <codecell>
 
 # returns maximum score for player, assuming other minimises for player (== maximises for other)
 def getAlphaBeta( game, player, other, reward=AlphaBeta(-100,100), depth=10, tab=0 ):
@@ -185,7 +236,7 @@ def getAlphaBeta( game, player, other, reward=AlphaBeta(-100,100), depth=10, tab
     '''
     # evaluation is the current value of board, assuming no more moves in future
     # alpha == beta == finalvalue if we figure out the outcome.
-    reward.evaluation = game.evaluate( player )
+    reward.evaluation = game.evaluate_cached( player, statskey_cached='cached', statskey_forced='forced' )
     move = Move(-1,-1)
     # base case: can't play further, lost
     if (reward.evaluation==reward.beta):
@@ -196,19 +247,15 @@ def getAlphaBeta( game, player, other, reward=AlphaBeta(-100,100), depth=10, tab
         return AlphaBetaOfMove(reward, move )
     q = PriorityQueue()
     for m in game.next_moves( ):
-            g2 = copy.deepcopy( game )
-            g2.move( player, m)
-#             a = evaluate( g2, player ) TODO: check if we won
-#             if a > alpha :
-#                 a_so_far = a
-#                 (a_r, a_c) = ( row, col )
-#                 if a == TARGET:
-#                     return ( a, row, col )
-            #(other_alpha, other_beta, other_evaluation, other_r, other_c) = 
-            oponent_reward = AlphaBeta(-reward.beta, -reward.alpha, -reward.evaluation)
-            oponent_reward = getAlphaBeta(g2, other, player, reward=oponent_reward, depth=depth-1, tab=tab+1 ).alphabeta
-            player_reward = AlphaBeta(-oponent_reward.beta, -oponent_reward.alpha, -oponent_reward.evaluation)
-            q.put_nowait( AlphaBetaOfMove( player_reward, m ) )
+            # g2 = copy.deepcopy( game )
+            assert game.move( player, m)
+            try:
+                oponent_reward = AlphaBeta(-reward.beta, -reward.alpha, -reward.evaluation)
+                oponent_reward = getAlphaBeta(game, other, player, reward=oponent_reward, depth=depth-1, tab=tab+1 ).alphabeta
+                player_reward = AlphaBeta(-oponent_reward.beta, -oponent_reward.alpha, -oponent_reward.evaluation)
+                q.put_nowait( AlphaBetaOfMove( player_reward, m ) )
+            finally:
+                assert game.unmove(player, m)
 #             if( tab < 1 ):
 #                 print ("\t"*tab), (player,row,col), (other,other_r,other_c), (other_alpha,other_beta,other_evaluation), (next_alpha,next_beta,evaluation), update
     if( q.empty() ):
