@@ -1,6 +1,3 @@
-#!/usr/bin/python
+from game import Game
+from gameCl import GameCl, GameAi
 
-import gameCl
-
-if __name__ == '__main__':
-    gameCl.main()

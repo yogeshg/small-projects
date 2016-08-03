@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import sys
 import traceback
 # from threading import *
@@ -18,23 +16,23 @@ class GameAi:
         self.anticipatedMove = Move(0,1)
         return
 
-    # def updateGame( self ):
-    #     return
-
     def startCalc( self ):
         for d in range(6):
             try:
-                registerStats('cached')
-                registerStats('forced')
-                registerStats('cacheSize')
+                stats.register('cache_eval')
+                stats.register('force_eval')
+                stats.register('cache_size')
+                self.game._statskey_cached='cache_eval'
+                self.game._statskey_forced='force_eval'
+
                 result = getAlphaBeta( self.game, self.player, self.other, reward=AlphaBeta(-4,4), depth=d )
-                print result
+                print 'Optimal move and reward at depth {} - {}'.format(d, result)
                 self.move = result.move
             except (KeyboardInterrupt):
                 break
             finally:
-                collectStats('cacheSize', len(self.game._cache))
-                printStats()
+                stats.collect('cache_size', len(self.game._cache))
+                stats.show()
         # in a new thread,
         # update self.move
         return
@@ -66,7 +64,6 @@ class GameCl:
 
 
     def getMoveCl( self, player ):
-        print 'Player {player} move...'.format(player=player)
         movetxt = sys.stdin.readline()
         move = None
         while not move :
@@ -108,13 +105,13 @@ class GameCl:
         '''
         player1/player2: True if command line, False if Ai
         '''
-
         while( not self.judge() ):
 
             player1Moved = False
             player2Moved = False
 
             self.show()
+            print 'Player 1 move...'
             if( player1 ):
                 move = self.getMoveCl(1)
             else :
@@ -124,6 +121,7 @@ class GameCl:
                 print 'Invalid move, chance skipped'
 
             self.show()
+            print 'Player 2 move...'
             if( player2 ):
                 move = self.getMoveCl(2)
             else :
@@ -135,14 +133,3 @@ class GameCl:
         self.show()
         print "Player", self.judge(), "won!!!"
 
-def main():
-    try:
-        player1 = int(sys.argv[1])
-        player2 = int(sys.argv[2])
-    except:
-        print "usage:\n\t{} player1 player2".format(sys.argv[0])
-        sys.exit(1)
-    GameCl(10).play(player1=player1, player2=player2)
-
-if __name__ == '__main__':
-    main()

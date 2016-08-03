@@ -6,37 +6,8 @@ random.seed()
 import datetime as dt
 
 from Queue import PriorityQueue
-import copy
 
-class Stats():
-    def __init__(self, name):
-        self.name = name
-        self.max = 0
-        self.min = 0
-        self.count = 0
-        self.avg = 0
-    def collect(self, val):
-        n = self.count
-        den = (1.0/(n+1))
-        self.count += 1
-        self.max = max(self.max, val)
-        self.min = min(self.max, val)
-        self.avg = (n*den*self.avg) + (den*val)
-    def __str__(self):
-        return "{0:10}: {1:10d} {2:20.10f} {3:20.10f} {4:20.10f}".format(self.name, self.count, self.min, self.avg, self.max)
-
-gStats = {}
-
-def registerStats(key):
-    gStats[key] = Stats(key)
-
-def collectStats(key,value):
-    gStats[key].collect(value)
-
-def printStats():
-    for s in gStats.itervalues():
-        print s
-
+import stats
 
 class Move(object):
     def __init__(self, row, col) :
@@ -133,6 +104,8 @@ class Game(object):
         game.DIAG = range(1-game.n,game.n);
         game.TARGET = 4
         game.board = GameBoard( [[0 for col in game.COLS] for row in game.ROWS] )
+        game._statskey_cached=None
+        game._statskey_forced=None
         game._cache = {}
     
     def is_move_valid( game, row, col, player=0 ):
@@ -178,20 +151,20 @@ class Game(object):
         else:
             return False
 
-    def evaluate_cached(game, player, statskey_cached=None, statskey_forced=None):
-        if(statskey_cached):
+    def evaluate_cached(game, player):
+        if(game._statskey_cached):
             start = dt.datetime.now()
         k = (game.board.hash << 2)+(player%4)
         if( not game._cache.has_key( k ) ):
-            v = game.evaluate(player, statskey_cached=statskey_cached, statskey_forced=statskey_forced)
+            v = game.evaluate(player)
             game._cache[k] = v
-        if(statskey_cached):
+        if(game._statskey_cached):
             end = dt.datetime.now()
-            collectStats(statskey_cached, (end-start).total_seconds())
+            stats.collect(game._statskey_cached, (end-start).total_seconds())
         return game._cache[k]
 
-    def evaluate( game, player, statskey_cached=None, statskey_forced=None):
-        if(statskey_forced):
+    def evaluate( game, player):
+        if(game._statskey_forced):
             start = dt.datetime.now()
     
         result_row = 0
@@ -218,9 +191,9 @@ class Game(object):
             result_d2 = max( result_d2, r )
     #     print result_d2
 
-        if(statskey_forced):
+        if(game._statskey_forced):
             end = dt.datetime.now()
-            collectStats(statskey_forced, (end-start).total_seconds())
+            stats.collect(game._statskey_forced, (end-start).total_seconds())
 
         return max( result_row,  result_col, result_d1, result_d2 )
 
@@ -236,7 +209,7 @@ def getAlphaBeta( game, player, other, reward=AlphaBeta(-100,100), depth=10, tab
     '''
     # evaluation is the current value of board, assuming no more moves in future
     # alpha == beta == finalvalue if we figure out the outcome.
-    reward.evaluation = game.evaluate_cached( player, statskey_cached='cached', statskey_forced='forced' )
+    reward.evaluation = game.evaluate_cached( player )
     move = Move(-1,-1)
     # base case: can't play further, lost
     if (reward.evaluation==reward.beta):
@@ -262,5 +235,4 @@ def getAlphaBeta( game, player, other, reward=AlphaBeta(-100,100), depth=10, tab
         return AlphaBetaOfMove( reward, Move(-1,-1) )
     else:
         return q.get_nowait()
-
 

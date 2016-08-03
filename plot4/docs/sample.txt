@@ -1,0 +1,460 @@
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |                    
+0 |                    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 0)
+name      :      count                  min                  avg                  max
+cache_size:          1         1.0000000000         1.0000000000         1.0000000000
+force_eval:          1         0.0022790000         0.0022790000         0.0022790000
+cache_eval:          1         0.0023200000         0.0023200000         0.0023200000
+Optimal move and reward at depth 1 - (0, 2):(-4, 4, 0)
+name      :      count                  min                  avg                  max
+cache_size:          1        11.0000000000        11.0000000000        11.0000000000
+force_eval:         10         0.0014520000         0.0017393000         0.0023010000
+cache_eval:         11         0.0014640000         0.0015984545         0.0023320000
+Optimal move and reward at depth 2 - (0, 9):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1       111.0000000000       111.0000000000       111.0000000000
+force_eval:        100         0.0013390000         0.0014815700         0.0021270000
+cache_eval:        111         0.0013520000         0.0013480901         0.0021440000
+Optimal move and reward at depth 3 - (0, 1):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1       751.0000000000       751.0000000000       751.0000000000
+force_eval:        640         0.0019130000         0.0014956859         0.0026490000
+cache_eval:       1111         0.0019340000         0.0008720180         0.0026820000
+Optimal move and reward at depth 4 - (0, 9):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1      9170.0000000000      9170.0000000000      9170.0000000000
+force_eval:       8419         0.0014390000         0.0014973977         0.0063040000
+cache_eval:      11111         0.0014630000         0.0011474493         0.0063360000
+Optimal move and reward at depth 5 - (0, 6):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    101624.0000000000    101624.0000000000    101624.0000000000
+force_eval:      92454         0.0013660000         0.0014749859         0.0218390000
+cache_eval:     111111         0.0013770000         0.0012403159         0.0218710000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |                    
+0 |             X      
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 2 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 0)
+name      :      count                  min                  avg                  max
+cache_size:          1    101625.0000000000    101625.0000000000    101625.0000000000
+force_eval:          1         0.0013370000         0.0013370000         0.0013370000
+cache_eval:          1         0.0013490000         0.0013490000         0.0013490000
+Optimal move and reward at depth 1 - (0, 2):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1    101635.0000000000    101635.0000000000    101635.0000000000
+force_eval:         10         0.0013400000         0.0013428000         0.0013650000
+cache_eval:         11         0.0013510000         0.0012310000         0.0013750000
+Optimal move and reward at depth 2 - (0, 1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1    101735.0000000000    101735.0000000000    101735.0000000000
+force_eval:        100         0.0013460000         0.0013440900         0.0014340000
+cache_eval:        111         0.0013560000         0.0012210811         0.0014460000
+Optimal move and reward at depth 3 - (0, 5):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    102591.0000000000    102591.0000000000    102591.0000000000
+force_eval:        856         0.0013320000         0.0013951881         0.0021240000
+cache_eval:       1111         0.0013430000         0.0010852988         0.0021440000
+Optimal move and reward at depth 4 - (0, 2):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    112169.0000000000    112169.0000000000    112169.0000000000
+force_eval:       9578         0.0013480000         0.0013883811         0.0034720000
+cache_eval:      11111         0.0013580000         0.0012076478         0.0035090000
+Optimal move and reward at depth 5 - (0, 7):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    213614.0000000000    213614.0000000000    213614.0000000000
+force_eval:     101445         0.0013450000         0.0014100206         0.0127110000
+cache_eval:     111111         0.0013560000         0.0012993673         0.0219460000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |                    
+0 |             X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1    213615.0000000000    213615.0000000000    213615.0000000000
+force_eval:          1         0.0013220000         0.0013220000         0.0013220000
+cache_eval:          1         0.0013330000         0.0013330000         0.0013330000
+Optimal move and reward at depth 1 - (0, 4):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1    213625.0000000000    213625.0000000000    213625.0000000000
+force_eval:         10         0.0013280000         0.0013344000         0.0013430000
+cache_eval:         11         0.0013390000         0.0012233636         0.0013540000
+Optimal move and reward at depth 2 - (0, 5):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    213725.0000000000    213725.0000000000    213725.0000000000
+force_eval:        100         0.0013470000         0.0013361900         0.0013690000
+cache_eval:        111         0.0013590000         0.0012139189         0.0013800000
+Optimal move and reward at depth 3 - (0, 3):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    214601.0000000000    214601.0000000000    214601.0000000000
+force_eval:        876         0.0013450000         0.0013844509         0.0027270000
+cache_eval:       1111         0.0013570000         0.0011019874         0.0027940000
+Optimal move and reward at depth 4 - (0, 8):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    224584.0000000000    224584.0000000000    224584.0000000000
+force_eval:       9983         0.0013400000         0.0013938724         0.0036600000
+cache_eval:      11111         0.0013510000         0.0012637133         0.0037080000
+Optimal move and reward at depth 5 - (1, 7):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    327635.0000000000    327635.0000000000    327635.0000000000
+force_eval:     103051         0.0014400000         0.0014613047         0.0163930000
+cache_eval:     111111         0.0014590000         0.0013689352         0.0164620000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 |             X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 2 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1    327636.0000000000    327636.0000000000    327636.0000000000
+force_eval:          1         0.0025410000         0.0025410000         0.0025410000
+cache_eval:          1         0.0025940000         0.0025940000         0.0025940000
+Optimal move and reward at depth 1 - (0, 5):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    327646.0000000000    327646.0000000000    327646.0000000000
+force_eval:         10         0.0014610000         0.0016409000         0.0026500000
+cache_eval:         11         0.0014870000         0.0015178182         0.0026890000
+Optimal move and reward at depth 2 - (1, 6):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    327748.0000000000    327748.0000000000    327748.0000000000
+force_eval:        102         0.0015250000         0.0016153137         0.0029390000
+cache_eval:        111         0.0015580000         0.0015075495         0.0029790000
+Optimal move and reward at depth 3 - (2, 7):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    328792.0000000000    328792.0000000000    328792.0000000000
+force_eval:       1044         0.0027920000         0.0018393956         0.0074760000
+cache_eval:       1111         0.0028380000         0.0017555230         0.0075440000
+Optimal move and reward at depth 4 - (0, 9):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    339334.0000000000    339334.0000000000    339334.0000000000
+force_eval:      10542         0.0013400000         0.0014722785         0.0071230000
+cache_eval:      11111         0.0013600000         0.0014117067         0.0071810000
+Optimal move and reward at depth 5 - (0, 0):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    446707.0000000000    446707.0000000000    446707.0000000000
+force_eval:     107373         0.0013440000         0.0014173478         0.0182410000
+cache_eval:     111111         0.0013530000         0.0013826215         0.0530460000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O           X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    446708.0000000000    446708.0000000000    446708.0000000000
+force_eval:          1         0.0013280000         0.0013280000         0.0013280000
+cache_eval:          1         0.0013400000         0.0013400000         0.0013400000
+Optimal move and reward at depth 1 - (0, 1):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1    446718.0000000000    446718.0000000000    446718.0000000000
+force_eval:         10         0.0013270000         0.0013376000         0.0013610000
+cache_eval:         11         0.0013380000         0.0012265455         0.0013720000
+Optimal move and reward at depth 2 - (0, 4):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    446820.0000000000    446820.0000000000    446820.0000000000
+force_eval:        102         0.0013390000         0.0013744118         0.0018840000
+cache_eval:        111         0.0013500000         0.0012739820         0.0019010000
+Optimal move and reward at depth 3 - (0, 8):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    447864.0000000000    447864.0000000000    447864.0000000000
+force_eval:       1044         0.0013310000         0.0013754397         0.0022210000
+cache_eval:       1111         0.0013420000         0.0013039343         0.0022680000
+Optimal move and reward at depth 4 - (0, 1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    458460.0000000000    458460.0000000000    458460.0000000000
+force_eval:      10596         0.0013460000         0.0014994109         0.0080610000
+cache_eval:      11111         0.0013570000         0.0014441154         0.0081100000
+Optimal move and reward at depth 5 - (0, 3):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    565339.0000000000    565339.0000000000    565339.0000000000
+force_eval:     106879         0.0020920000         0.0014523358         0.0117180000
+cache_eval:     111111         0.0021210000         0.0014108959         0.0117750000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O     X     X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 2 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1    565340.0000000000    565340.0000000000    565340.0000000000
+force_eval:          1         0.0013400000         0.0013400000         0.0013400000
+cache_eval:          1         0.0013540000         0.0013540000         0.0013540000
+Optimal move and reward at depth 1 - (0, 9):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    565350.0000000000    565350.0000000000    565350.0000000000
+force_eval:         10         0.0013400000         0.0013404000         0.0013550000
+cache_eval:         11         0.0013500000         0.0012285455         0.0013650000
+Optimal move and reward at depth 2 - (0, 1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    565452.0000000000    565452.0000000000    565452.0000000000
+force_eval:        102         0.0013390000         0.0013853725         0.0019800000
+cache_eval:        111         0.0013500000         0.0012843153         0.0020060000
+Optimal move and reward at depth 3 - (0, 5):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    566541.0000000000    566541.0000000000    566541.0000000000
+force_eval:       1089         0.0013470000         0.0014458678         0.0025420000
+cache_eval:       1111         0.0013580000         0.0014304086         0.0025960000
+Optimal move and reward at depth 4 - (0, 2):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    577429.0000000000    577429.0000000000    577429.0000000000
+force_eval:      10888         0.0013380000         0.0014672404         0.0102440000
+cache_eval:      11111         0.0013480000         0.0014515919         0.0102720000
+Optimal move and reward at depth 5 - (0, 2):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    687004.0000000000    687004.0000000000    687004.0000000000
+force_eval:     109575         0.0013540000         0.0014172488         0.0096820000
+cache_eval:     111111         0.0013670000         0.0014102240         0.0097260000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O   O X     X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    687005.0000000000    687005.0000000000    687005.0000000000
+force_eval:          1         0.0013300000         0.0013300000         0.0013300000
+cache_eval:          1         0.0013430000         0.0013430000         0.0013430000
+Optimal move and reward at depth 1 - (1, 2):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1    687015.0000000000    687015.0000000000    687015.0000000000
+force_eval:         10         0.0013310000         0.0013419000         0.0013710000
+cache_eval:         11         0.0013420000         0.0012305455         0.0013820000
+Optimal move and reward at depth 2 - (0, 8):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    687117.0000000000    687117.0000000000    687117.0000000000
+force_eval:        102         0.0013460000         0.0013886667         0.0019910000
+cache_eval:        111         0.0013570000         0.0012871081         0.0020170000
+Optimal move and reward at depth 3 - (0, 1):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    688215.0000000000    688215.0000000000    688215.0000000000
+force_eval:       1098         0.0014280000         0.0015539945         0.0060140000
+cache_eval:       1111         0.0014430000         0.0015534212         0.0060710000
+Optimal move and reward at depth 4 - (0, 1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    699213.0000000000    699213.0000000000    699213.0000000000
+force_eval:      10998         0.0014910000         0.0015593449         0.0148890000
+cache_eval:      11111         0.0015200000         0.0015718155         0.1177380000
+Optimal move and reward at depth 5 - (0, 4):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    807616.0000000000    807616.0000000000    807616.0000000000
+force_eval:     108403         0.0013420000         0.0014561698         0.0077140000
+cache_eval:     109311         0.0013530000         0.0014579453         0.0077440000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O   O X X   X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 2 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1    807617.0000000000    807617.0000000000    807617.0000000000
+force_eval:          1         0.0013260000         0.0013260000         0.0013260000
+cache_eval:          1         0.0013390000         0.0013390000         0.0013390000
+Optimal move and reward at depth 1 - (1, 3):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    807627.0000000000    807627.0000000000    807627.0000000000
+force_eval:         10         0.0013290000         0.0013445000         0.0013880000
+cache_eval:         11         0.0013400000         0.0012325455         0.0013990000
+Optimal move and reward at depth 2 - (0, 1):(-4, 4, 3)
+name      :      count                  min                  avg                  max
+cache_size:          1    807729.0000000000    807729.0000000000    807729.0000000000
+force_eval:        102         0.0013510000         0.0014852353         0.0021550000
+cache_eval:        111         0.0013620000         0.0013775135         0.0021970000
+Optimal move and reward at depth 3 - (0, 5):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    808836.0000000000    808836.0000000000    808836.0000000000
+force_eval:       1107         0.0016610000         0.0014508582         0.0024170000
+cache_eval:       1111         0.0016760000         0.0014595311         0.0024460000
+Optimal move and reward at depth 4 - (0, 5):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    819015.0000000000    819015.0000000000    819015.0000000000
+force_eval:      10179         0.0013410000         0.0014375020         0.0036730000
+cache_eval:      10211         0.0013520000         0.0014460636         0.0037150000
+Optimal move and reward at depth 5 - (0, 5):(-4, 4, -3)
+name      :      count                  min                  avg                  max
+cache_size:          1    919977.0000000000    919977.0000000000    919977.0000000000
+force_eval:     100962         0.0013420000         0.0014514623         0.0094060000
+cache_eval:     101211         0.0013540000         0.0014617732         0.0094470000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O   O X X O X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    919978.0000000000    919978.0000000000    919978.0000000000
+force_eval:          1         0.0019570000         0.0019570000         0.0019570000
+cache_eval:          1         0.0019880000         0.0019880000         0.0019880000
+Optimal move and reward at depth 1 - (1, 5):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1    919988.0000000000    919988.0000000000    919988.0000000000
+force_eval:         10         0.0013480000         0.0015360000         0.0018960000
+cache_eval:         11         0.0013600000         0.0014088182         0.0019110000
+Optimal move and reward at depth 2 - (2, 7):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1    920090.0000000000    920090.0000000000    920090.0000000000
+force_eval:        102         0.0013480000         0.0014237059         0.0019650000
+cache_eval:        111         0.0013590000         0.0013200090         0.0019860000
+Optimal move and reward at depth 3 - (0, 1):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1    921200.0000000000    921200.0000000000    921200.0000000000
+force_eval:       1110         0.0014660000         0.0014635063         0.0037630000
+cache_eval:       1111         0.0014790000         0.0014759001         0.0037820000
+Optimal move and reward at depth 4 - (1, 5):(-4, 4, 3)
+name      :      count                  min                  avg                  max
+cache_size:          1    932294.0000000000    932294.0000000000    932294.0000000000
+force_eval:      11094         0.0018890000         0.0014511192         0.0033450000
+cache_eval:      11111         0.0019060000         0.0014626600         0.0033910000
+Optimal move and reward at depth 5 - (0, 1):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1043198.0000000000   1043198.0000000000   1043198.0000000000
+force_eval:     110904         0.0016820000         0.0014455586         0.0059100000
+cache_eval:     111111         0.0016990000         0.0014564610         0.0060080000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |                    
+1 |               X    
+0 | O X O X X O X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 2 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 1)
+name      :      count                  min                  avg                  max
+cache_size:          1   1043199.0000000000   1043199.0000000000   1043199.0000000000
+force_eval:          1         0.0018960000         0.0018960000         0.0018960000
+cache_eval:          1         0.0019450000         0.0019450000         0.0019450000
+Optimal move and reward at depth 1 - (1, 0):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1043209.0000000000   1043209.0000000000   1043209.0000000000
+force_eval:         10         0.0013440000         0.0014284000         0.0019020000
+cache_eval:         11         0.0013550000         0.0013135455         0.0019270000
+Optimal move and reward at depth 2 - (1, 1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1043311.0000000000   1043311.0000000000   1043311.0000000000
+force_eval:        102         0.0016580000         0.0015803431         0.0038540000
+cache_eval:        111         0.0016730000         0.0014680000         0.0038810000
+Optimal move and reward at depth 3 - (2, 7):(-4, 4, -2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1044422.0000000000   1044422.0000000000   1044422.0000000000
+force_eval:       1111         0.0014870000         0.0014974527         0.0119980000
+cache_eval:       1111         0.0015020000         0.0015129055         0.0120270000
+Optimal move and reward at depth 4 - (1, 6):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1055515.0000000000   1055515.0000000000   1055515.0000000000
+force_eval:      11093         0.0013440000         0.0014170246         0.0034250000
+cache_eval:      11111         0.0013550000         0.0014271376         0.0035150000
+Optimal move and reward at depth 5 - (2, 7):(-4, 4, -3)
+name      :      count                  min                  avg                  max
+cache_size:          1   1166536.0000000000   1166536.0000000000   1166536.0000000000
+force_eval:     111021         0.0013430000         0.0014530941         0.0095050000
+cache_eval:     111111         0.0013540000         0.0014656936         0.0095510000
+9 |                    
+8 |                    
+7 |                    
+6 |                    
+5 |                    
+4 |                    
+3 |                    
+2 |               O    
+1 |               X    
+0 | O X O X X O X O    
+- + - - - - - - - - - -
+  | 0 1 2 3 4 5 6 7 8 9
+Player 1 move...
+Optimal move and reward at depth 0 - (-1, -1):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1166537.0000000000   1166537.0000000000   1166537.0000000000
+force_eval:          1         0.0013290000         0.0013290000         0.0013290000
+cache_eval:          1         0.0013400000         0.0013400000         0.0013400000
+Optimal move and reward at depth 1 - (1, 2):(-4, 4, -1)
+name      :      count                  min                  avg                  max
+cache_size:          1   1166547.0000000000   1166547.0000000000   1166547.0000000000
+force_eval:         10         0.0013330000         0.0013409000         0.0013640000
+cache_eval:         11         0.0013440000         0.0012292727         0.0013750000
+Optimal move and reward at depth 2 - (1, 6):(-4, 4, 2)
+name      :      count                  min                  avg                  max
+cache_size:          1   1166658.0000000000   1166658.0000000000   1166658.0000000000
+force_eval:        111         0.0013440000         0.0014299279         0.0023490000
+cache_eval:        111         0.0013550000         0.0014425495         0.0023730000
+Optimal move and reward at depth 3 - (1, 6):(-4, 4, -2)
+name      :      count                  min                  avg        
