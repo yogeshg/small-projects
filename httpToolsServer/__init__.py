@@ -6,18 +6,12 @@ import importlib
 import traceback
 import logging
 
-# PORT_NUMBER = 8080
-TOOLSDIR = '/Users/yogeshgarg/Code/code/'
-
-gLastHandler = None
-
 #This class will handles any incoming request from
 #the browser 
 class myHandler(BaseHTTPRequestHandler):
     
     #Handler for the GET requests
     def do_GET(self):
-        global gLastHandler
         o = urlparse.urlparse(self.path)
         logging.debug('Processing request {}'.format(o))
         try:
