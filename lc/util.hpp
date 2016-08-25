@@ -5,6 +5,7 @@ namespace yo {
             for(auto x = list.begin(); x!=list.end(); ++x) {
                 std::cout << *x << sep;
             }
+            std::cout << "\n";
             return;
         }
     }

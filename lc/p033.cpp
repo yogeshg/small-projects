@@ -4,31 +4,37 @@
 
 // Lexicographic numbers upto n
 
-void lex(int n, int root, std::vector<int>& list) {
+void lex(int n, int* list, int root, int& index) {
     if( root<=n ) {
-        std::cout << n <<","<< root <<"\n";
-        list.push_back(root);
+        std::cerr << n <<","<< root <<"\n";
+        list[++index] = root;
         root*=10;
         for( int i=0; i<10; ++i) {
-            lex(n, root+i, list);
+            lex(n, list, root+i, index);
         }
     }
     return;
 }
 
-int main(int argc, char** argv) {
-    int N = atoi(argv[1]);
-    std::cout << N <<"\n";
-
-    int index = -1;
+std::vector<int> lex(int n) {
     std::vector<int> list;
-
-    for(int i = 1; i < 10; ++i) {
-        lex(N, i, list);
+    for(int i=1; i<=n; ++i) {
+        list.push_back(0);
     }
+    int index = -1;
+    for(int i = 1; i < 10; ++i) {
+        lex(n, &list[0], i, index);
+    }
+    return list;
+}
+
+int main(int argc, char** argv) {
+    int n = atoi(argv[1]);
+    std::cerr << n <<"\n";
+
+    std::vector<int> list = lex(n);
 
     yo::util::iterable2str(list);
 
-    std::cout << "\n";
     return 0;
 }
