@@ -1,5 +1,12 @@
 CC=g++
-GCC=g++
+CXX=g++
+CXXFLAGS=-std=c++11 -g -Wall
 
-exe: p148
+exe = p451
 
+all: $(exe)
+
+echo:
+	echo $(exe)
+clean:
+	rm -f *~ a.out core $(exe)
