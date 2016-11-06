@@ -1,2 +1,5 @@
-%.out : %.cpp
-	g++ -std=c++11 -o $@ $<
+CC=g++
+GCC=g++
+
+exe: p148
+
