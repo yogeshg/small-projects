@@ -98,12 +98,14 @@ class FreqTree {
         }
 
         void toFreq() {
-            Node* l = root->left;
-            Node* r = root->right;
-            root->left = NULL;
-            root->right = NULL;
-            root->addNodeByFreq( l );
-            root->addNodeByFreq( r );
+            if(root) {
+                Node* l = root->left;
+                Node* r = root->right;
+                root->left = NULL;
+                root->right = NULL;
+                root->addNodeByFreq( l );
+                root->addNodeByFreq( r );
+            }
         }
         std::string toString() {
             if( root ) {
@@ -120,8 +122,8 @@ class Solution {
             FreqTree t;
             // t.toCout(); std::cout<<"\n";
             for( char& c : s ) {
-            //     std::cout<<c<<" ";
-            t.add(c, 1);
+                //     std::cout<<c<<" ";
+                t.add(c, 1);
             }
             // t.toCout(); std::cout<<"\n";
             t.toFreq();
