@@ -1,6 +1,7 @@
 #include<iostream>
 #include<sstream>
 #include<cassert>
+#include<limits>
 
 struct TreeNode {
     int val;
@@ -100,7 +101,7 @@ TreeNode* makeTree(TreeNode* tree, std::string treeStr, char delim=' ') {
 struct SolutionReturn {
     int soFar;
     int endingHere;
-    SolutionReturn() : soFar(0), endingHere(0) {};
+    SolutionReturn() : soFar(std::numeric_limits<int>::min()), endingHere(0) {};
 };
 
 class Solution {
@@ -112,8 +113,8 @@ class Solution {
             SolutionReturn s1 = maxPathSumRec(root->left);
             SolutionReturn s2 = maxPathSumRec(root->right);
 
-            s.endingHere = std::max(s1.endingHere+root->val, s2.endingHere+root->val);
-            s.soFar = std::max( std::max(s1.soFar, s2.soFar), s1.endingHere+root->val+s2.endingHere);
+            s.endingHere = std::max(std::max(s1.endingHere, s2.endingHere), 0) + root->val;
+            s.soFar = std::max(std::max(s1.soFar, s2.soFar), std::max(s1.endingHere,0)+root->val+std::max(s2.endingHere,0));
 
             return s;
         }
@@ -123,7 +124,6 @@ class Solution {
             return s.soFar; 
         }
 };
-
 int main(int argc, char** argv) {
 
     Solution s;
