@@ -2,7 +2,7 @@ CC=g++
 CXX=g++
 CXXFLAGS=-std=c++11 -g -Wall
 
-exe = p131
+exe = qWombats
 
 all: $(exe)
 
