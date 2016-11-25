@@ -12,16 +12,7 @@ class HexLattice {
 
     public:
     HexLattice(int num) : n(num) {}
-    ~HexLattice(){
-        for(auto layer : val) {
-            for(auto row : layer) {
-                row.clear();
-            }
-            layer.clear();
-        }
-        val.clear();
-        
-    }
+
     std::string toString() {
         std::stringstream ss;
         for(auto layer : val) {
