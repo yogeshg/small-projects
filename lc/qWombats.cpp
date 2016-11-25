@@ -1,48 +1,73 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <vector>
 
 #define DBG std::cout << __FILE__ << " " << __LINE__ << " "
 
 class HexLattice {
 
     int n;
-    std::vector<std::vector<std::vector<int>>> val;
+    int*** val;
 
     public:
-    HexLattice(int num) : n(num) {}
-
-    std::string toString() {
-        std::stringstream ss;
-        for(auto layer : val) {
-            for(auto row : layer) {
-                for(auto cell : row) {
-                    ss << cell << " ";
+    HexLattice(int num) {
+        DBG << "constructed\n";
+        n = num;
+        DBG << "\n";
+        val = new int**[n];
+        for(int i=0; i<n; ++i){
+            DBG << "\n";
+            val[i] = new int*[i+1];
+            for(int j=0; j<=i; ++j) {
+                DBG << "\n";
+                val[i][j] = new int[j+1];
+                for(int k=0; k<=j; ++k) {
+                    val[i][j][k] = i+j+k;
                 }
-                ss << "\n";
             }
-            ss << "\n";
+        }
+    }
+    ~HexLattice() {
+        DBG << "destructed\n";
+        for(int i=0; i<n; ++i){
+            for(int j=0; j<=i; ++j) {
+                DBG << "\n";
+                delete val[i][j];
+            }
+            DBG << "\n";
+            delete val[i];
+        }
+        DBG << "\n";
+        delete val;
+    }
+    std::string toString() {
+        DBG << "tostring\n";
+        std::stringstream ss;
+        for(int i=0; i<n; ++i) {
+            for(int j=0; j<=i; ++j) {
+                for(int k=0; k<=j; ++k) {
+                    ss << val[i][j][k] <<" ";
+                }
+                ss << "-\n";
+            }
+            ss << "----\n";
         }
         return ss.str();
     }
     void fromCin() {
-        int temp;
         for(int i=0; i<n; ++i) {
-            std::vector<std::vector<int>> t2;
-            val.push_back(t2);
             for(int j=0; j<=i; ++j) {
-                std::vector<int> t1;
-                val[i].push_back(t1);
-                for(int k=0; k<=i-j;++k) {
-                    std::cin >> temp;
-                    val[i][j].push_back(temp);
+                for(int k=0; k<=j;++k) {
+                    std::cin >> val[i][j][k];
                 }
             }
         }
     }
 
 };
+
+
+
 
 int main(int argc, char** argv) {
     HexLattice l(3);
