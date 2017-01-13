@@ -7,11 +7,13 @@ import sys
 THREAD_COUNT = 3
 PRINT_COUNT = 3
 
-def sample(name):
+def sample(name, lock):
     for i in range(PRINT_COUNT):
         time.sleep(0.1)
-        # print name
-        print QUEUE.dequeue()
+        lock.acquire()
+        v = QUEUE.dequeue()
+        lock.release()
+        print name, v
     return 1
 
 class MyQ():
@@ -29,19 +31,21 @@ class MyQ():
         self.queue = self.queue[1:]
         return v
 
-class Printer(threading.Thread):
-    def run(self):
-        sample(self.getName())
-        return
+# class Printer(threading.Thread):
+#     def run(self):
+#         sample(self.getName())
+#         return
 
 QUEUE = MyQ()
 
 def main():
+    lock = threading.Lock()
     t = []
     [QUEUE.enqueue(x) for x in 'hello_world']
     print QUEUE.queue
     for i in range(THREAD_COUNT):
-        t.append( Printer() )
+        t1 = threading.Thread( target=sample, args=("T"+str(i), lock) )
+        t.append( t1 )
     print "Running for the threads"
     for i in range(THREAD_COUNT):
         t[i].start()
