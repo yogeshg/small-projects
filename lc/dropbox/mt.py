@@ -17,44 +17,49 @@ def sample(name):
 
 class MyQ():
     def __init__(self, lock=None):
-        self.queue = []
+        self.buffer_size = 20
+        self.queue = ['#']*self.buffer_size
+        self.start = 0
+        self.size = 0
         self.lock = lock
         return
 
+    def length():
+        return self.size
+
     def enqueue(self, v):
+
         if(self.lock):
             self.lock.acquire()
-        q = list(self.queue)
-        q.append(v)
+        p = self.start + self.size
+        self.size+=1
         time.sleep(0.0001)
-        self.queue = q
         if(self.lock):
             self.lock.release()
-        print 'enqueued', v
+        self.queue[(p)%20] = v
+
+        # print 'enqueued', v, 'at', p
         return
 
     def dequeue(self):
-        if(self.lock): 
-            self.lock.acquire()
-        v = self.queue[0]
-        time.sleep(0.0001)
-        self.queue = self.queue[1:]
-        if(self.lock):
-            self.lock.release()
-        print 'dequeued', v
+        if(self.size > 0):
+            if(self.lock):
+                self.lock.acquire()
+            s = self.start
+            self.start+=1
+            self.size-=1
+            if(self.lock):
+                self.lock.release()
+            v = self.queue[s]
+        self.queue[s]='#'
         return v
-
-# class Printer(threading.Thread):
-#     def run(self):
-#         sample(self.getName())
-#         return
 
 LOCK = threading.Lock()
 QUEUE = MyQ(LOCK)
 
 def main():
     t = []
-    [QUEUE.enqueue(x) for x in 'hello_world#']
+    [QUEUE.enqueue(x) for x in 'hello_world!']
     print QUEUE.queue
     for i in range(THREAD_COUNT):
         t1 = threading.Thread( target=sample, args=("T"+str(i),) )
