@@ -1,6 +1,7 @@
-CXXFLAGS = -std=c++11
+CXX=g++-6
+CXXFLAGS=-std=c++11
 
-exe = hw3 random_test
+exe = hw3 random_test chrono_test
 
 all: ${exe}
 
