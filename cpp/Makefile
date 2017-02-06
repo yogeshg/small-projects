@@ -3,7 +3,7 @@ CXXFLAGS=-std=c++11
 
 exe = hw3 random_test chrono_test map_test
 
-all: ${exe}
+all: ${exe} util.hpp
 
 clean:
 	rm -f ${exe} *.out *.o

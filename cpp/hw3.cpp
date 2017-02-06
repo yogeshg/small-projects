@@ -4,22 +4,29 @@
 #include<string>
 #include<sstream>
 #include<iostream>
+#include"util.hpp"
 
+using namespace util;
 
-void toString(std::vector<int> c, std::ostream& ss) {
-    for(auto x: c){
-        ss<< x << " ";
+std::vector<int>::iterator find_geq(std::vector<int>::iterator beg,std::vector<int>::iterator end, int val) {
+    while( beg!=end ) {
+        if( *beg < val ) {
+            ++beg;
+        } else {
+            break;
+        }
     }
-    ss<< "\n";
+    return beg;
 }
-std::string toString (std::vector<int> c) {
-    std::stringstream ss;
-    toString(c, ss);
-    return ss.str();
+void insert_ordered(std::vector<int>& c, int val) {
+    auto pos = find_geq( c.begin(), c.end(), val );
+    c.insert(pos, val);
 }
-void print(std::vector<int> c) {
-    toString(c, std::cout);
+std::vector<int>::iterator get_position(std::vector<int>::iterator pos, int relative) {
+    for(; relative>0; --relative,++pos);
+    return pos;
 }
+
 
 class ContainerTest {
 
@@ -37,14 +44,20 @@ class ContainerTest {
                 values.at(k) = values.at(j);
                 values.at(j) = temp;
             }
+            std::cerr << "random values:"  << toString(values);
+            std::cerr << "random positions:"  << toString(positions);
         }
         int insert() {
             for(int i=0; i<size; ++i){
-                container.push_back(0);
+                insert_ordered( container, values[i]);
+                std::cerr << "inserting value "<<values[i]<<":"  << toString( container );
             }
         }
         int remove(){
             for(int i=0; i<size; ++i) {
+                auto pos = get_position( container.begin(), positions[i] );
+                container.erase(pos);
+                std::cerr << "removing position "<< positions[i] <<":" << toString(container);
             }
         }
     private:
@@ -58,12 +71,22 @@ class ContainerTest {
 
 int main(int argc, char** argv) {
     int size;
+    int seed;
     try {
         std::istringstream(argv[1]) >> size;
+        std::istringstream(argv[2]) >> seed;
     } catch (...) {
-        std::cerr << "usage:\n\t" << argv[0] << " size\n";
+        std::cerr << "usage:\n\t" << argv[0] << " size seed\n";
         return 1;
     }
-    ContainerTest t(size,1991);
+    StopWatch w;
+    ContainerTest t(size, seed);
+    w.check();
+    t.insert();
+    w.check();
+    t.remove();
+    w.check();
+    w.toString(std::cout);
+    w.reset();
     return 0;
 }
