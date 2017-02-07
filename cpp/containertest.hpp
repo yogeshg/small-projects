@@ -24,8 +24,8 @@ class ContainerTest {
             values.at(k) = values.at(j);
             values.at(j) = temp;
         }
-        std::cerr << "random values:"  << toString(values);
-        std::cerr << "random positions:"  << toString(positions);
+        // std::cerr << "random values:"  << toString(values);
+        // std::cerr << "random positions:"  << toString(positions);
     }
     void insert() {
         for(int i=0; i<size; ++i){
@@ -34,14 +34,14 @@ class ContainerTest {
 #else
             insert_ordered( container, values[i]);
 #endif
-            std::cerr << "inserting value "<<values[i]<<":"  << toString( container );
+            // std::cerr << "inserting value "<<values[i]<<":"  << toString( container );
         }
     }
     void remove(){
         for(int i=0; i<size; ++i) {
             auto pos = get_position( container.begin(), positions[i] );
             container.erase(pos);
-            std::cerr << "removing position "<< positions[i] <<":" << toString(container);
+            // std::cerr << "removing position "<< positions[i] <<":" << toString(container);
         }
     }
     private:

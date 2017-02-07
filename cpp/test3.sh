@@ -1,6 +1,6 @@
 list_bin="hw3_list_int hw3_list_big7 hw3_list_big15"
-set_bin="hw3_set_int hw3_set_big7 hw3_set_big15"
-setopt_bin="hw3_setopt_int hw3_setopt_big7 hw3_setopt_big15"
+set_bin="hw3_set_int" #"hw3_set_big7 hw3_set_big15"
+setopt_bin="hw3_setopt_int" #"hw3_setopt_big7 hw3_setopt_big15"
 vector_bin="hw3_vector_int hw3_vector_big7 hw3_vector_big15"
 all_bin="$vector_bin $list_bin $setopt_bin $set_bin"
 
