@@ -1,5 +1,5 @@
 CXX=g++-6
-CXXFLAGS=-std=c++11
+CXXFLAGS=-std=c++11 -O2
 
 exe = hw3_vector_int hw3_list_int hw3_vector_big7 hw3_list_big7 hw3_vector_big15 hw3_list_big15
 all: ${exe}
