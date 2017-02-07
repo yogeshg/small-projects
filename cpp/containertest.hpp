@@ -1,9 +1,7 @@
+#include<set>
 #include<vector>
-#include<list>
 #include<random>
-#include<string>
-#include<sstream>
-#include<iostream>
+// #include<iostream>
 #include"util.hpp"
 #include<algorithm>
 using namespace util;
@@ -26,20 +24,24 @@ class ContainerTest {
             values.at(k) = values.at(j);
             values.at(j) = temp;
         }
-        // std::cerr << "random values:"  << toString(values);
-        // std::cerr << "random positions:"  << toString(positions);
+        std::cerr << "random values:"  << toString(values);
+        std::cerr << "random positions:"  << toString(positions);
     }
-    int insert() {
+    void insert() {
         for(int i=0; i<size; ++i){
+#if defined CONTAINER_INSERTS
+            container.insert(values[i]);
+#else
             insert_ordered( container, values[i]);
-            // std::cerr << "inserting value "<<values[i]<<":"  << toString( container );
+#endif
+            std::cerr << "inserting value "<<values[i]<<":"  << toString( container );
         }
     }
-    int remove(){
+    void remove(){
         for(int i=0; i<size; ++i) {
             auto pos = get_position( container.begin(), positions[i] );
             container.erase(pos);
-            // std::cerr << "removing position "<< positions[i] <<":" << toString(container);
+            std::cerr << "removing position "<< positions[i] <<":" << toString(container);
         }
     }
     private:
@@ -61,4 +63,3 @@ class ContainerTest {
     }
 
 };
-
