@@ -16,7 +16,7 @@ do
     do
         for SEED in $seeds
         do
-            echo ./$BIN $SIZE $SEED
+            ./$BIN $SIZE $SEED
         done
     done
 done
@@ -27,7 +27,7 @@ do
     do
         for SEED in $seeds
         do
-            echo ./$BIN $SIZE $SEED
+            ./$BIN $SIZE $SEED
         done
     done
 done
