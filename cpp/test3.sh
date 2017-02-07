@@ -23,7 +23,7 @@ done
 
 for SIZE in $med_sizes
 do
-    for BIN in $vector_bin $list_bin 
+    for BIN in hw3_vector_int hw3_list_int hw3_set_int hw3_setopt_int
     do
         for SEED in $seeds
         do
