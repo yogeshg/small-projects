@@ -2,7 +2,7 @@ CXX=g++-6
 CXXFLAGS=-std=c++11 -O2
 
 exe = hw3_vector_int hw3_list_int hw3_vector_big7 hw3_list_big7 hw3_vector_big15 hw3_list_big15 hw3_set_int hw3_set_big7 hw3_set_big15 hw3_setopt_int hw3_setopt_big7 hw3_setopt_big15
-all: ${exe}
+all: touch ${exe}
 ${exe}: hw3.cpp
 hw3_vector_int: CXXFLAGS+=-D'CONTAINER=std::vector<int>'
 hw3_list_int: CXXFLAGS+=-D'CONTAINER=std::list<int>'
