@@ -86,7 +86,7 @@ You can use the same syntax for both, but make vectors default, so that
 programmers (as humans) become more inclined towards using those, as opposed
 to static length arrays.
 
-```
+``` c++
     seq<int> s1;
     s1.push_back(100);
     s1.push_back(200);
