@@ -5,6 +5,27 @@ HW 1 -- Time Machine
 
 # Time Machine
 
+
+## Safer Arrays
+
+Arrays are nice, but there are also going to be a nightmare for new programmers
+to learn and even experts to debug, the reason being that it is so easy to leak
+through them. This is going to become one of the most prevelant bug in the code
+written in your language. Why? Here is how:
+
+``` c
+int main() {
+	int arr[10];
+	int i;
+	for( i=0; i<10; ++i){
+		printf("%d ",arr[i]);
+	}
+	return 0;
+
+}
+
+```
+
 ## Notes
 
 ### Language Model
