@@ -1,12 +1,9 @@
 #include"stdio.h"
 int main() {
-	int arr[10];
+	int arr[] = {100,200,300,400,500};
 	int i;
-	for( i=0; i<10; ++i){
-		arr[i] = i*100;
-	}
-	for( i=0; i<10; ++i){
-		printf("%d ",arr[i]);
+	for( i=1; i<10; i*=2){
+		printf("%d ",arr[i]);		// potential for invalid access
 	}
 	printf("\n");
 	return 0;
