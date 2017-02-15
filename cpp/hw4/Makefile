@@ -1,4 +1,4 @@
-CXX=gcc -std=c++11
+CXX=g++ -std=c++11
 
 all: hw4-sample hw4-sample2 hw4-yg2482.pdf
 

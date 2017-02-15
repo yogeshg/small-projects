@@ -3,24 +3,32 @@ HW 1 -- Time Machine
 % Yogesh Garg (yg2482@columbia.edu)
 % \today
 
+\tableofcontents
+
 # Time Machine
 
 Dear Dennis
 
-## User defined Types
 Your language is going to be used very widely, it will have more applications
 than you can currently imagine, amongst which will be scientific computations
 for satellites and probes to other planets. Your language will be used by
 expert programs but they are all human beings, and prone to making errors if
 not individually, because of collaboration of efforts.
 
+## User defined Types
 To avoid loss of many billions, people's life's worth of effort, and also to
 improve the experience of expressing ideas using your programming language
 safely to machine AND man, I would propose that instead of having
 just the native types like integers, floats that are available currently,
 please provide a facility to incorporate user defined types.
 
-``` c
+I will try to illustrate this with the following example:
+
+### Correct but unsafe code
+The following code is correct, but unsafe. The intention of lines 8-9 is to
+increase the speed in steps of 1 second, using an acceleration value ```a```
+
+~~~~~~{.c .numberLines startFrom="1" caption="ssup"}
 #include"stdio.h"
 int main() {
   
@@ -34,56 +42,133 @@ int main() {
         printf("time: %d, velocity: %f, total distance: %f\n",i,v,d);
     }
 }
-```
+~~~~~~
 
+
+### Incorrect and unsafe code
 Notice how we are overloading floats to carry everything from time, distance,
 velocity, to acceleration. This gives a potential for buggy code, for example
-there's nothing stopping us from doing:
-``` c
+there is nothing that stops us from doing:
+
+~~~~~~{.c .numberLines startFrom="8"}
     for( int i=0; i < t; ++i) {
         v += a;                 // potential for bug
         d += v;                 // potential for bug
         printf("time: %d, velocity: %f, total distance: %f\n",i,v,d);
     }
-```
+~~~~~~
+
 to "optimize" because the program knows the time step is 1 second in every step.
 so far, so good. But soon, someone (the program herself, or someone else
 altogether) will come along and want to increase the timestep to 0.5 seconds.
-``` c
+
+~~~~~~{.c .numberLines startFrom="8"}
     for( float i=0; i < t; i+=0.5) {
         v += a;                 // bug realised
         d += v;                 // bug realised
         printf("time: %f, velocity: %f, total distance: %f\n",i,v,d);
     }
-```
+~~~~~~
+
+This produces the following output, which is clearly different from the intent
+of the program.
+
 ``` txt
 time: 0.000000, velocity: 10.000000, total distance: 110.000000
 time: 0.500000, velocity: 20.000000, total distance: 310.000000
-time: 1.000000, velocity: 30.000000, total distance: 610.000000
-time: 1.500000, velocity: 40.000000, total distance: 1010.000000
-time: 2.000000, velocity: 50.000000, total distance: 1510.000000
-time: 2.500000, velocity: 60.000000, total distance: 2110.000000
-time: 3.000000, velocity: 70.000000, total distance: 2810.000000
-time: 3.500000, velocity: 80.000000, total distance: 3610.000000
-time: 4.000000, velocity: 90.000000, total distance: 4510.000000
-time: 4.500000, velocity: 100.000000, total distance: 5510.000000
-time: 5.000000, velocity: 110.000000, total distance: 6610.000000
-time: 5.500000, velocity: 120.000000, total distance: 7810.000000
-time: 6.000000, velocity: 130.000000, total distance: 9110.000000
-time: 6.500000, velocity: 140.000000, total distance: 10510.000000
-time: 7.000000, velocity: 150.000000, total distance: 12010.000000
-time: 7.500000, velocity: 160.000000, total distance: 13610.000000
-time: 8.000000, velocity: 170.000000, total distance: 15310.000000
-time: 8.500000, velocity: 180.000000, total distance: 17110.000000
+...
 time: 9.000000, velocity: 190.000000, total distance: 19010.000000
 time: 9.500000, velocity: 200.000000, total distance: 21010.000000
 ```
 
-Imagine how 
+### Safe and (thus) Correct code
 
-precisely because of how efficient it is
+If you can provide facility to declare explicit user defined types and rules to
+operate on them, then such errors would become impossible (or atleast harder)
+to make.
 
-Arrays
+~~~~~~{.cpp .numberLines startFrom="1"}
+#include"stdio.h"
+#include"dimension.h"
+
+typedef dimension<1,0,0> dis;       // meters
+typedef dimension<0,1,0> tim;       // seconds
+typedef dimension<1,-1,0> vel;      // meters/second
+typedef dimension<1,-2,0> acc;      // meters/second^2
+
+int main() {
+  
+    dis d = 10;
+    tim t = 10;
+    vel v = 0;
+    acc a = 1;
+    tim dt = 0.5;
+    for( int i=0; dt*i < t; ++i) {
+        v = v + a*dt;
+        d = d + v*dt;
+        printf("time: %f, velocity: %f, total distance: %f\n",dt.val,v.val,d.val);
+    }
+}
+~~~~~~
+
+In this case, lines 16-17 could not be written in any other way, for example
+the following should throw errors:
+
+~~~~~~{.cpp .numberLines startFrom="15"}
+    for( float dt=0; dt < t; dt=dt+0.5) {
+        v = v + a*dt;   // error: dimension<1,-2,0> * float not defined
+        d = d + v*dt;   // error: dimension<1,-1,0> * float not defined
+        printf("time: %f, velocity: %f, total distance: %f\n",dt.val,v.val,d.val);
+    }
+~~~~~~
+
+~~~~~~{.cpp .numberLines startFrom="15"}
+    for( tim dt=0; dt < t; dt=dt+0.5) {
+        v = v + a;      // error: dimension<1,-1,0> + dimension<1,-2,0> not defined
+        d = d + v;      // error: dimension<1,0,0> + dimension<1,-1,0> not defined
+        printf("time: %f, velocity: %f, total distance: %f\n",dt.val,v.val,d.val);
+    }
+~~~~~~
+
+## Specification of rules for dimensions
+
+~~~~~~{.cpp .numberLines startFrom="1"}
+// dimension is a type that depends on integers D, T, M
+// these represent Distance units, Time units, Mass units
+template<int D, int T, int M>
+struct dimension {
+    // it contains a value
+    float val;
+    // it can be initialised using a float value
+    dimension(float x):val(x){};
+
+    // you could multiply with another dimension of same units
+    dimension<D,T,M> operator+(const dimension<D,T,M> another) const {
+        return dimension<D,T,M> (val+another.val);
+    }
+
+    // you could compare with another dimension of same units
+    bool operator<(const dimension<D,T,M> another) const {
+        return (val<another.val);
+    }
+
+    // you could multiply with a scalar
+    dimension<D,T,M> operator*(const float scalar) const {
+        return dimension<D,T,M> (val*scalar);
+    }
+};
+
+// If you want to multiply two dimensions, you will get a third dimension
+// of units added up
+template<int D, int T, int M, int D2, int T2, int M2>
+dimension<D+D2,T+T2,M+M2> operator*( const dimension<D,T,M> a,
+                                    const dimension<D2,T2,M2> b) {
+        return dimension<D+D2,T+T2,M+M2> (a.val*b.val);
+    }
+~~~~~~
+
+
+## Arrays
 
  * Resource Safety
 

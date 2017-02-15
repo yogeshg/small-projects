@@ -12,7 +12,8 @@ int main() {
     tim t = 10;
     vel v = 0;
     acc a = 1;
-    for( tim dt=0; dt < t; dt=dt+0.5) {
+    tim dt = 0.5;
+    for( int i=0; dt*i < t; ++i) {
         v = v + a*dt;
         d = d + v*dt;
         printf("time: %f, velocity: %f, total distance: %f\n",dt.val,v.val,d.val);
