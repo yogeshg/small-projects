@@ -3,6 +3,7 @@ HW 1 -- Time Machine
 % Yogesh Garg (yg2482@columbia.edu)
 % \today
 
+<<<<<<< HEAD
 \tableofcontents
 
 # Time Machine
@@ -168,58 +169,99 @@ dimension<D+D2,T+T2,M+M2> operator*( const dimension<D,T,M> a,
 ~~~~~~
 
 
-## Arrays
+## Safer Arrays
 
- * Resource Safety
+Arrays are nice, but there are also going to be a nightmare for new programmers
+to learn and even experts to debug, the reason being that it is so easy to leak
+through them. This is going to become one of the most prevelant bug in the code
+written in your language. Why? Here is how:
 
-  1. Reference Counting
-    -- Circular References
-  2. RIIA
-  Resource type
-    -- Initialization, Copy, Move, Destruction
+~~~{ .c .numberLines startFrom="1" }
+#include"stdio.h"
+int main() {
+	int arr[10];
+	int i;
+	for( i=0; i<10; ++i){
+		arr[i] = i*100;
+	}
+	for( i=1; i<10; i*=2){
+		printf("%d ",arr[i]);
+	}
+	printf("\n");
+	return 0;
+}
+~~~
 
- * Vectors -- instead of array
- * c+11 std::array dependently typed
- * type
+I would like to propose two solutuions to avoid these kind of mistakes. First
+solution will store the number of elements that a "sequence" has, and allocate
+the memory required for this on the free store. There is a minimal overhead in
+this solution for storing the size of the sequence, but this will enable you to
+provide a safe way for your users to iterate through a sequence.
 
-## Notes
+The second solution will remove this overhead and also allocate the sequence on
+the heap, but will not be able to increase in size (just as arrays are intended)
+but this will provide compiler additional information about the size of the
+array and hence allow to check for certain errors at compile time.
 
-### Language Model
+### Vectors
+As discussed, the vectors will store the size and point to a contiguous memory
+location in the free store. This enables us to increase the size of the
+sequence when required. Consider the following example:
 
-Languages and programming in general can be viewed at two levels:
+```c++
 
-* First, where you write a program keeping in mind a machine model (the C-machine model).
-    + This encourages a program to think about variables, memory access, and then using loops, operations etc.
-    + This is where there is variability in each run time / computations at run time
-    + This is where a programmer is instructing a machine how to search for a value in a container etc.
-* Second would be to define a "language model" that will enable programmers to think about language
-    + user-defined types/classes
-    + and how to templatize them and write generic programs.
-    + This is where a programmer can instruct the compiler on how to generate code for a certain generic programming
+	vector<int> v;              // allocate contiguous memory of length, say 8
+                                // and initialize size=0
+	for( int i=0; i<8; ++i ) {
+		v.push_back(100*i);     // increment size, and save at next location
+	}
+    v.push_back(800);           // for the 9th element, because we do not have
+                                // any more space, re allocate contiguous memory
+                                // of length, say two times, 16, and then
+                                // move old elements here, increment size, save
+                                // at next location
 
-### Analogy
-* Heavy machine operators and cranes
-    - They are operating a machine they "feel" using a simple interface that does their job simple for them.
-    - The machine is like an extension of their arms, and enables them to do what they previously did not have the
-    strength to do, but had an idea of how to do.
-* Programmer and old "C-Style" programming
-    - developed by creating an abstraction on the assembly language
-    - Where programmers were doing pretty much similar tasks
-* Programming today: Big projects, one code in many different contexts
-    - another layer of abstraction, fundamently different from the assembly-to-readable language abstraction
-    - Comfort associated with Google searching for you from your voice without showing you what you said first.
+    for(int a: v) {             // provide a safe way to iterate through elem
+        printf("%d ", a);       // note that no unsafe access can happen
+    }
 
-### Expression
-* Humans have long thrived for expression, created the media of paintings, theatre, music, language, etc.
-* Somewhat, paradoxically, a lot of information is lost in the process of communication
-* While theatre, paintings, and music can be left for interpretaion,
-* Languages, would be much rather not
-* Just as one seeks verbal or visual feedback from an audience of their speech, a PL should also give
-  some sort of feedback for what has been understood, if the language model is fairly more complicated
-  than the semantics.
-* In this regard, PL can be viewed as Communication with an idiosyncratic alien species that is efficient
-  at what it does, but not very "clever" about what it "should" do.
-* This motivates the idea of a compilation report, where the compiler tells us about what it understood
-  as a function of what we told it to understand.
+    auto it=v.begin();
+    for(int i=1; (it=i+v.begin())!=v.end(); i**2){
+        printf("%d ", *it);     // this is a safe equivalent of the previous code
+    }
 
+```
+
+### Arrays as a type with length
+
+This can be used to allocate on the stack, and you can also check at compile
+time if there is a potential for accessing unsafely during compiling.
+
+```c++
+    array<int,5> arr;
+    arr[0];                     // should be safe to access, checkable at compile time
+    arr[5];                     // unsafe, checable at run time
+```
+
+### Making Vectors default sequences
+
+You can use the same syntax for both, but make vectors default, so that
+programmers (as humans) become more inclined towards using those, as opposed
+to static length arrays.
+
+``` c++
+    seq<int> s1;
+    s1.push_back(100);
+    s1.push_back(200);
+    
+
+    seq<int,5> s2;
+    s2.push_back(100); // will throw compile time error, "push_back not supported in static length seq"
+    s2[0] = s1[1] = s2[2] = s1[3] = s2[4] = 100;
+    s2[5]; // will throw compile time error, "cannot access (5+1)th element of static seq of size 5"
+
+```
+
+Safe iterations using a "for each x in sequence" loop and iterators can be
+provided.
 
