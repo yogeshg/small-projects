@@ -3,7 +3,6 @@ HW 1 -- Time Machine
 % Yogesh Garg (yg2482@columbia.edu)
 % \today
 
-<<<<<<< HEAD
 \tableofcontents
 
 # Time Machine
@@ -131,7 +130,26 @@ the following should throw errors:
     }
 ~~~~~~
 
-## Specification of rules for dimensions
+### Specification of rules for dimensions
+For the above code snippet, what we would like to have are four classes:
+
+ * distance, $dis \equiv D^1$
+ * time, $tim \equiv T^1$
+ * velocity, $vel \equiv D^1 T^{-1}$
+ * acceleration, $acc \equiv D^1 T^{-2}$
+
+Now, a value of one type could not mistakenly be put into another type.
+We would also like to ensure that the following results of multiplication are
+enforced:
+
+* $operator* : vel \times tim \to dis$
+* $operator* : acc \times tim \to vel$
+
+We would want to write a generic framework for writing these types and rules
+in a scalable fashion, but at the same time, not want to specify all of them
+altogether. A solution for doing such a thing is to specify the rules as shown
+in the following syntax and then, at compile time, generate whatever rules are
+required by the code referring to such types.
 
 ~~~~~~{.cpp .numberLines startFrom="1"}
 // dimension is a type that depends on integers D, T, M
@@ -143,7 +161,7 @@ struct dimension {
     // it can be initialised using a float value
     dimension(float x):val(x){};
 
-    // you could multiply with another dimension of same units
+    // you could add with another dimension of same units
     dimension<D,T,M> operator+(const dimension<D,T,M> another) const {
         return dimension<D,T,M> (val+another.val);
     }
@@ -179,16 +197,16 @@ written in your language. Why? Here is how:
 ~~~{ .c .numberLines startFrom="1" }
 #include"stdio.h"
 int main() {
-	int arr[10];
-	int i;
-	for( i=0; i<10; ++i){
-		arr[i] = i*100;
-	}
-	for( i=1; i<10; i*=2){
-		printf("%d ",arr[i]);
-	}
-	printf("\n");
-	return 0;
+    int arr[10];
+    int i;
+    for( i=0; i<10; ++i){
+        arr[i] = i*100;
+    }
+    for( i=1; i<10; i*=2){
+        printf("%d ",arr[i]);
+    }
+    printf("\n");
+    return 0;
 }
 ~~~
 
@@ -208,13 +226,13 @@ As discussed, the vectors will store the size and point to a contiguous memory
 location in the free store. This enables us to increase the size of the
 sequence when required. Consider the following example:
 
-```c++
 
-	vector<int> v;              // allocate contiguous memory of length, say 8
+~~~{ .cpp .numberLines startFrom="1" }
+    vector<int> v;              // allocate contiguous memory of length, say 8
                                 // and initialize size=0
-	for( int i=0; i<8; ++i ) {
-		v.push_back(100*i);     // increment size, and save at next location
-	}
+    for( int i=0; i<8; ++i ) {
+        v.push_back(100*i);     // increment size, and save at next location
+    }
     v.push_back(800);           // for the 9th element, because we do not have
                                 // any more space, re allocate contiguous memory
                                 // of length, say two times, 16, and then
@@ -229,19 +247,18 @@ sequence when required. Consider the following example:
     for(int i=1; (it=i+v.begin())!=v.end(); i**2){
         printf("%d ", *it);     // this is a safe equivalent of the previous code
     }
-
-```
+~~~
 
 ### Arrays as a type with length
 
 This can be used to allocate on the stack, and you can also check at compile
 time if there is a potential for accessing unsafely during compiling.
 
-```c++
+~~~{ .c++ .numberLines startFrom="1" }
     array<int,5> arr;
     arr[0];                     // should be safe to access, checkable at compile time
     arr[5];                     // unsafe, checable at run time
-```
+~~~
 
 ### Making Vectors default sequences
 
@@ -249,18 +266,16 @@ You can use the same syntax for both, but make vectors default, so that
 programmers (as humans) become more inclined towards using those, as opposed
 to static length arrays.
 
-``` c++
+~~~{ .c++ .numberLines startFrom="1" }
     seq<int> s1;
     s1.push_back(100);
     s1.push_back(200);
     
-
     seq<int,5> s2;
     s2.push_back(100); // will throw compile time error, "push_back not supported in static length seq"
     s2[0] = s1[1] = s2[2] = s1[3] = s2[4] = 100;
     s2[5]; // will throw compile time error, "cannot access (5+1)th element of static seq of size 5"
-
-```
+~~~
 
 Safe iterations using a "for each x in sequence" loop and iterators can be
 provided.
