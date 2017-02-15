@@ -1,19 +1,24 @@
 % Design using C++ \
-HW 1 -- Time Machine
+HW 4 -- Time Machine
 % Yogesh Garg (yg2482@columbia.edu)
 % \today
 
-\tableofcontents
-
-# Time Machine
-
 Dear Dennis
+
+I have traveled far in space and time to give you this message. I am a
+coder from 2017 and I am learning about the adventures of your language, C and
+a sister called C++, the humble beginnings of which started with your language
+and adding some features to it.
 
 Your language is going to be used very widely, it will have more applications
 than you can currently imagine, amongst which will be scientific computations
 for satellites and probes to other planets. Your language will be used by
-expert programs but they are all human beings, and prone to making errors if
-not individually, because of collaboration of efforts.
+expert programmers but they are all human beings, and prone to making errors if
+not individually, then, because of collaboration of efforts. I would like to give
+you a word of caution as you design what is going to be the foundation of my
+modern world.
+
+\tableofcontents
 
 ## User defined Types
 To avoid loss of many billions, people's life's worth of effort, and also to
@@ -28,7 +33,7 @@ I will try to illustrate this with the following example:
 The following code is correct, but unsafe. The intention of lines 8-9 is to
 increase the speed in steps of 1 second, using an acceleration value ```a```
 
-~~~~~~{.c .numberLines startFrom="1" caption="ssup"}
+~~~~~~{.c .numberLines startFrom="1"}
 #include"stdio.h"
 int main() {
   
@@ -58,8 +63,8 @@ there is nothing that stops us from doing:
     }
 ~~~~~~
 
-to "optimize" because the program knows the time step is 1 second in every step.
-so far, so good. But soon, someone (the program herself, or someone else
+to "optimize" because the programmer knows the time step is 1 second in every step.
+so far, so good. But soon, someone (the programmer herself, or someone else
 altogether) will come along and want to increase the timestep to 0.5 seconds.
 
 ~~~~~~{.c .numberLines startFrom="8"}
@@ -84,8 +89,8 @@ time: 9.500000, velocity: 200.000000, total distance: 21010.000000
 ### Safe and (thus) Correct code
 
 If you can provide facility to declare explicit user defined types and rules to
-operate on them, then such errors would become impossible (or atleast harder)
-to make.
+operate on them, then such errors would become impossible -- or atleast harder
+-- to make.
 
 ~~~~~~{.cpp .numberLines startFrom="1"}
 #include"stdio.h"
@@ -110,6 +115,15 @@ int main() {
     }
 }
 ~~~~~~
+
+This gives the correct output:
+```
+time: 0.500000, velocity: 0.500000, total distance: 10.250000
+time: 0.500000, velocity: 1.000000, total distance: 10.750000
+...
+time: 0.500000, velocity: 9.500000, total distance: 57.500000
+time: 0.500000, velocity: 10.000000, total distance: 62.500000
+```
 
 In this case, lines 16-17 could not be written in any other way, for example
 the following should throw errors:
@@ -202,7 +216,7 @@ int main() {
     for( i=0; i<10; ++i){
         arr[i] = i*100;
     }
-    for( i=1; i<10; i*=2){
+    for( i=0; i<10; ++i){
         printf("%d ",arr[i]);
     }
     printf("\n");
@@ -210,7 +224,16 @@ int main() {
 }
 ~~~
 
-I would like to propose two solutuions to avoid these kind of mistakes. First
+In the for loop in lines 8-10, a programmer may want to print even indices for
+example. They might change the code to the following:
+
+~~~{ .c .numberLines startFrom="8" }
+    for( i=0; i<10; ++i){
+        printf("%d ",arr[2*i]);
+    }
+~~~
+
+I would like to propose two solutions to avoid these kind of mistakes. First
 solution will store the number of elements that a "sequence" has, and allocate
 the memory required for this on the free store. There is a minimal overhead in
 this solution for storing the size of the sequence, but this will enable you to
@@ -244,7 +267,7 @@ sequence when required. Consider the following example:
     }
 
     auto it=v.begin();
-    for(int i=1; (it=i+v.begin())!=v.end(); i**2){
+    for(int i=0; (it=i+v.begin())!=v.end(); i+=2){
         printf("%d ", *it);     // this is a safe equivalent of the previous code
     }
 ~~~
@@ -252,31 +275,40 @@ sequence when required. Consider the following example:
 ### Arrays as a type with length
 
 This can be used to allocate on the stack, and you can also check at compile
-time if there is a potential for accessing unsafely during compiling.
+time if there is a potential for accessing unsafely during compiling or
+debugging.
 
-~~~{ .c++ .numberLines startFrom="1" }
+~~~{ .cpp .numberLines startFrom="1" }
     array<int,5> arr;
     arr[0];                     // should be safe to access, checkable at compile time
-    arr[5];                     // unsafe, checable at run time
+    arr[5];                     // unsafe, checkable at run time
 ~~~
 
 ### Making Vectors default sequences
 
 You can use the same syntax for both, but make vectors default, so that
-programmers (as humans) become more inclined towards using those, as opposed
-to static length arrays.
+programmers -- as humans -- become more inclined towards using those, as
+opposed to static length arrays.
 
-~~~{ .c++ .numberLines startFrom="1" }
+~~~{ .cpp .numberLines startFrom="1" }
     seq<int> s1;
     s1.push_back(100);
     s1.push_back(200);
     
     seq<int,5> s2;
-    s2.push_back(100); // will throw compile time error, "push_back not supported in static length seq"
+    s2.push_back(100);  // will throw compile time error
+                        // "push_back not supported in static length seq"
     s2[0] = s1[1] = s2[2] = s1[3] = s2[4] = 100;
-    s2[5]; // will throw compile time error, "cannot access (5+1)th element of static seq of size 5"
+    s2[5];              // will throw compile time error
+                        // "cannot access (5+1)th element of static seq of size 5"
 ~~~
 
 Safe iterations using a "for each x in sequence" loop and iterators can be
 provided.
+
+## Conclusion
+
+I hope you will find my advice worth while and notice how it could help
+generations of programmers to come. With these two additions, your language
+will become much more safe and suitable for large system development.
 
