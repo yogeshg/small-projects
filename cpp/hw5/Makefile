@@ -1,6 +1,5 @@
-CXX=g++-6.2
+CXX=g++-6 --std=c++1z -fconcepts
 
-exe = graph
-
-graph : graph.h
+exe=graph
+all: ${exe}
 
