@@ -1,10 +1,18 @@
+#include<sstream>
 #include<string>
 #include<utility>
 
 namespace graph {
 
     typedef std::pair<std::string,int> Value;
-
+    void toString(Value v, std::ostream& ss) {
+        ss << v.second <<"(" << v.first <<")";
+    }
+    std::string toString(Value v) {
+        std::stringstream ss;
+        toString(v, ss);
+        return ss.str();
+    }
     //    bool adjacent(Graph& g, Vertex_ptr x, Vertex_ptr y);
     //    bool neighbors(Graph& g, Vertex_ptr x);
     //    void add(Graph& g, Vertex_ptr x);

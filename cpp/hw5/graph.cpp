@@ -2,7 +2,9 @@
 #include<vector>
 #include<cassert>
 #include<memory>
+#include"util.hpp"
 
+using namespace util;
 using namespace graph;
 
 typedef Value Vertex;
@@ -24,12 +26,15 @@ class Adjacency_matrix {
                 Edge_ptr null_edge_ptr;
                 row.push_back( null_edge_ptr );               // TODO push null pointer
             }
+            std::cout << "DEBUG: adding row\n";
             m.push_back(row);
 
             // Old vertices have no edge for new vertex
-            for(auto r : m) {
+            for(std::vector<Edge_ptr>& r : m) {
+                std::cout << "DEBUG: adding to row size("<<r.size()<<")";
                 Edge_ptr null_edge_ptr;
                 r.push_back( null_edge_ptr );
+                std::cout << "to size("<<r.size()<<")\n";
             }
 
             // add vertex to the list
@@ -38,6 +43,26 @@ class Adjacency_matrix {
         // void add_edge(Edge_ptr e) {
 
         // }
+        std::string toString() {
+            std::stringstream ss;
+            ss << "vertices:\n";
+            for(auto v: vertices) {
+                ss << graph::toString(*v) <<" ";
+            }
+            ss<<"\n";
+            ss << "adjacency graph (size " << m.size() <<") : \n";
+            for(auto r : m) {
+                ss <<"(size " << r.size() << "): ";
+                for(auto e : r) {
+                    ss << ((bool)e) <<",";
+                }
+                ss << "\n";
+            }
+            ss << "\n";
+            ss << "\n";
+            return ss.str();
+            // return toString(vertices);
+        }
 };
 
 void add(Adjacency_matrix& g, Vertex_ptr x) {
@@ -46,7 +71,10 @@ void add(Adjacency_matrix& g, Vertex_ptr x) {
 
 int main() {
     Adjacency_matrix a;
-    auto pV1 = std::make_shared<Vertex>;
+    std::cout << a.toString();
+    Vertex_ptr pV1 = std::make_shared<Vertex>();
+    a.add(pV1);
+    std::cout << a.toString();
     return 0;
 }
 
