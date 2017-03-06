@@ -1,0 +1,26 @@
+digraph G
+{
+    rankdir = LR;
+    node [shape=record, width=.1, height=.1];
+     
+    nd0 [label = "<p0> | <p1> | <p2> | <p3> | <p4> | | ", height = 4];
+ 
+    node[ width=1.5 ];
+    nd1 [label = "{<e> HA0 | 123 | <p>  }" ];
+    nd2 [label = "{<e> HA10 | PIK | <p> }" ];
+    nd3 [label = "{<e> HA11 | 23 | <p> }" ];
+    nd6 [label = "{<e> HA20 | 123 | <p> }" ];
+    nd7 [label = "{<e> HA40 | CUJ | <p> }" ];
+    nd8 [label = "{<e> HA41 | C++ | <p> }" ];
+ 
+    nd9 [label = "{<e> HA42 | DDJ | <p> }" ];
+ 
+    nd0:p0 -> nd1:e;
+    nd0:p1 -> nd2:e;
+    nd2:p -> nd3:e;
+ 
+    nd0:p2 -> nd6:e;
+    nd0:p4 -> nd7:e;
+    nd7:p -> nd8:e;
+    nd8:p -> nd9:e;
+}
