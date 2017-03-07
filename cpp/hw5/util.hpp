@@ -1,3 +1,6 @@
+#ifndef __UTIL_HPP__
+#define __UTIL_HPP__
+
 #include<sstream>
 #include<iostream>
 #include<vector>
@@ -33,3 +36,4 @@ namespace util {
 }
 
 
+#endif /*__UTIL_HPP__*/
