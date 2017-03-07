@@ -3,7 +3,7 @@ CXX=g++-6 --std=c++1z -fconcepts
 exe=graph_test
 all: ${exe}
 
-graph.o : graph.h
+graph.o : graph.h graph_defaults.h
 
 graph_test : graph.o
 

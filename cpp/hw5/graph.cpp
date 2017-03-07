@@ -1,9 +1,5 @@
 #include"graph.h"
-// #include<cassert>
-// #include"util.hpp"
-
-// using namespace graph;
-
+#include"graph_defaults.h"
 
 std::string toLabel(const Value& v) {
     std::stringstream ss;
