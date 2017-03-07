@@ -22,11 +22,11 @@ int main() {
         a.add(pV7);
         a.add_edge(std::make_shared<Edge>(pV1, pV3));
         a.add_edge(std::make_shared<Edge>(pV4, pV7));
-        // a.add_edge(pV1, pV5);
-        // a.add_edge(pV3, pV2);
-        // a.add_edge(pV5, pV6);
-        // a.add_edge(pV5, pV7);
-        // a.add_edge(pV6, pV1);
+        a.add_edge(pV1, pV5);
+        a.add_edge(pV3, pV2);
+        a.add_edge(pV5, pV6);
+        a.add_edge(pV5, pV7);
+        a.add_edge(pV6, pV1);
         std::cout << a.toString() << "\n";
     } catch (const char* e) {
         std::cout << "caught exception: " << e <<"\n";

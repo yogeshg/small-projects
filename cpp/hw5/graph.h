@@ -7,6 +7,7 @@
 #include<vector>
 #include<iostream>
 #include<algorithm>
+#include "graph_defaults.h"
 
 template<typename T>
 concept bool DotRepresntable = requires(T a){
@@ -15,6 +16,11 @@ concept bool DotRepresntable = requires(T a){
 
 // For the following class, (Vertex_ptr, Edge_ptr) are templatized
 template <DotRepresntable Vertex_ptr, DotRepresntable Edge_ptr>
+
+    requires requires(Vertex_ptr x, Vertex_ptr y){{make_edge_ptr(x, y)} -> Edge_ptr;}
+        // && requires(Vertex_ptr a){ {toDot(a)} -> std::string; }
+        // && requires(Edge_ptr a){ {toDot(a)} -> std::string; }
+
 class Adjacency_matrix {
     public:
         Adjacency_matrix() {}
@@ -60,9 +66,10 @@ class Adjacency_matrix {
         };
 
         void add_edge(Vertex_ptr x, Vertex_ptr y){
-            std::stringstream ss;
-            ss << __FUNCTION__ << "(" << __FILE__ << ", " << __LINE__ << ") not yet implemented.";
-            throw ss.str();
+            add_edge(make_edge_ptr(x, y));
+            // std::stringstream ss;
+            // ss << __FUNCTION__ << "(" << __FILE__ << ", " << __LINE__ << ") not yet implemented.";
+            // throw ss.str();
         }
 
         std::string toString() {

@@ -17,6 +17,8 @@ struct Edge {
 
 typedef std::shared_ptr<Edge> Edge_ptr;
 
+Edge_ptr make_edge_ptr(Vertex_ptr s, Vertex_ptr e);
+
 std::string toLabel(const Value& v);
 std::string toId(Vertex_ptr v);
 std::string toDot(Vertex_ptr v);
