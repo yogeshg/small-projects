@@ -1,57 +1,83 @@
 #include"graph.h"
-#include<vector>
 #include<cassert>
-#include<memory>
+#include<iostream>
 #include"util.hpp"
+#include<algorithm>
 
-using namespace util;
 using namespace graph;
 
-typedef Value Vertex;
-typedef std::shared_ptr<Vertex> Vertex_ptr;
-typedef std::pair<Vertex_ptr, Vertex_ptr> Edge;
-typedef std::shared_ptr<Edge> Edge_ptr;
+void graph::toString(Vertex v, std::ostream& ss) {
+    ss << v.second <<"(" << v.first <<")";
+}
+std::string graph::toString(Vertex v) {
+    std::stringstream ss;
+    toString(v, ss);
+    return ss.str();
+}
 
-class Adjacency_matrix {
-    public:
-        Adjacency_matrix() {}
+void graph::toString(Edge e, std::ostream& ss) {
+    ss << graph::toString(*e.first) <<"->"<< graph::toString(*e.second);
+}
+std::string graph::toString(Edge e) {
+    std::stringstream ss;
+    graph::toString(e, ss);
+    return ss.str();
+}
 
-        std::vector<std::vector<Edge_ptr>> m;        // actaual matrix
-        std::vector<Vertex_ptr> vertices;       // list of vertices
 
-        void add(Vertex_ptr x) {
+void graph::Adjacency_matrix::add(Vertex_ptr x) {
             std::vector<Edge_ptr> row;
             // New vertex has no edge for any previous vertex
             for(int i=0; i<vertices.size(); ++i) {
                 Edge_ptr null_edge_ptr;
                 row.push_back( null_edge_ptr );               // TODO push null pointer
             }
-            std::cout << "DEBUG: adding row\n";
             m.push_back(row);
 
             // Old vertices have no edge for new vertex
-            for(std::vector<Edge_ptr>& r : m) {
-                std::cout << "DEBUG: adding to row size("<<r.size()<<")";
+            for(auto& r : m) {
                 Edge_ptr null_edge_ptr;
                 r.push_back( null_edge_ptr );
-                std::cout << "to size("<<r.size()<<")\n";
             }
 
             // add vertex to the list
-            vertices.push_back(x);            
+            vertices.push_back(x);
         }
-        // void add_edge(Edge_ptr e) {
 
-        // }
-        std::string toString() {
+void graph::Adjacency_matrix::add_edge(Edge_ptr e) {
+    edges.push_back(e);
+    int i, j = 0;
+    for(i=0; i<vertices.size(); ++i) {
+        if(vertices.at(i) == e->first) {
+            break;
+        }
+    }
+    for(j=0; j<vertices.size(); ++j) {
+        if(vertices.at(j) == e->second) {
+            break;
+        }
+    }
+    if( (i>=vertices.size()) || (j>=vertices.size()) ) {
+        throw "Edge contains a vertex that is not in Graph.";
+    }
+    m.at(i).at(j) = e;
+    // (edges.size()-1);
+}
+
+std::string graph::Adjacency_matrix::toString() {
             std::stringstream ss;
             ss << "vertices:\n";
             for(auto v: vertices) {
                 ss << graph::toString(*v) <<" ";
             }
             ss<<"\n";
+            ss << "edges:\n";
+            for(auto e: edges) {
+                ss << graph::toString(*e) <<" ";
+            }
+            ss<<"\n";
             ss << "adjacency graph (size " << m.size() <<") : \n";
-            for(auto r : m) {
+            for(auto& r : m) {
                 ss <<"(size " << r.size() << "): ";
                 for(auto e : r) {
                     ss << ((bool)e) <<",";
@@ -61,20 +87,20 @@ class Adjacency_matrix {
             ss << "\n";
             ss << "\n";
             return ss.str();
-            // return toString(vertices);
         }
-};
 
-void add(Adjacency_matrix& g, Vertex_ptr x) {
-    
-}
 
 int main() {
     Adjacency_matrix a;
     std::cout << a.toString();
-    Vertex_ptr pV1 = std::make_shared<Vertex>();
+    Vertex_ptr pV1 = std::make_shared<Vertex>("foo", 1);
+    Vertex_ptr pV2 = std::make_shared<Vertex>("bar", 2);
+    Vertex_ptr pV3 = std::make_shared<Vertex>("baz", 3);
     a.add(pV1);
+    a.add(pV2);
+    a.add(pV3);
+    Edge_ptr pE1 = std::make_shared<Edge>(pV1, pV3);
+    a.add_edge(pE1);
     std::cout << a.toString();
     return 0;
 }
-

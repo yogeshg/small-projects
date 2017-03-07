@@ -6,13 +6,19 @@ namespace util {
 
     template<typename T>
     concept bool HasStringFunc = requires(T a){
-        { toString(a)} -> std::string;  // has a to_string function which returns a string
-         
+        {toString(a)} -> std::string;
     };
+
+    // template<typename C, typename V, typename I>
+    // concept bool Container = requires(C c) {
+    //     {c.begin()} -> I;
+    //     {c.end()} -> I;
+    // }
 
     template <class Container>
         void toString(Container c, std::ostream& ss) {
-            for(auto x: c){
+            for(auto x=c.begin(); x!=c.end(); ++x) {
+            // for(auto x: c){}
                 ss<< x << " ";
             }
             ss<< "\n";
@@ -23,10 +29,7 @@ namespace util {
             toString(c, ss);
             return ss.str();
         }
-    template <class Container>
-        void print(Container c) {
-            toString(c, std::cout);
-        }
+
 }
 
 
