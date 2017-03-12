@@ -7,6 +7,11 @@
 #include<vector>
 #include<iostream>
 #include<algorithm>
+#include<map>
+#include<utility>
+#include<memory>
+#include<stack>
+#include<set>
 
 template <class VP, class EP>
 class Adjacency_matrix {
@@ -45,10 +50,10 @@ class Adjacency_matrix {
             }
             m.at(i).at(j) = e;
         };
-        int num_edges() {return edge_list.size();};
-        int num_vertices() {return vertex_list.size();};
+        int num_edges() const {return edge_list.size();};
+        int num_vertices() const {return vertex_list.size();};
 
-        bool adjacent(Vertex_ptr x1, Vertex_ptr x2) {
+        bool adjacent(Vertex_ptr x1, Vertex_ptr x2) const {
             int i = find_vertex(x1);
             int j = find_vertex(x2);
             if( i<num_vertices() && j<num_vertices() ) {
@@ -57,7 +62,7 @@ class Adjacency_matrix {
             return false;
         }
         
-        std::vector<Edge_ptr> edges_from(Vertex_ptr x1) {
+        std::vector<Edge_ptr> edges_from(Vertex_ptr x1) const {
             std::vector<Edge_ptr> list_of_edges;
             int i = find_vertex(x1);
             if( i<num_vertices() ) {
@@ -70,13 +75,13 @@ class Adjacency_matrix {
             return list_of_edges;
         }
 
-        std::vector<Edge_ptr> edges() {
+        std::vector<Edge_ptr> edges() const {
             return edge_list;
         }
-        std::vector<Vertex_ptr> vertices() {
+        std::vector<Vertex_ptr> vertices() const {
             return vertex_list;
         }
-        std::vector<std::vector<bool>> adjacency() {
+        std::vector<std::vector<bool>> adjacency() const {
             const int n = num_vertices();
             std::vector<std::vector<bool>> adjacency_matrix(n, std::vector<bool>(n, false));
             int i=0; 
@@ -91,7 +96,7 @@ class Adjacency_matrix {
             return adjacency_matrix;
         }
 
-        Vertex_ptr top() {
+        Vertex_ptr top() const {
             return vertex_list[0];
         }
     private:
@@ -100,7 +105,7 @@ class Adjacency_matrix {
         std::vector<Edge_ptr> edge_list;                    // list of edges
 
     private:
-        int find_vertex(const Vertex_ptr& x) {
+        int find_vertex(const Vertex_ptr& x) const {
             int i=0;
             for(i=0; i<num_vertices(); ++i){
                 if(vertex_list.at(i) == x) {
@@ -108,6 +113,137 @@ class Adjacency_matrix {
                 }
             }
             return i;
+        }
+};
+
+
+template <class VP, class EP>
+class Node_graph {
+    public:
+        typedef VP Vertex_ptr;
+        typedef EP Edge_ptr;
+
+        struct Node {
+            Vertex_ptr x;
+            std::vector<std::shared_ptr<Node>> neighbors; 
+            std::vector<Edge_ptr> edges;
+            Node(Vertex_ptr x1) : x(x1), neighbors(), edges() {}
+            void clear() {
+                x = nullptr;
+                neighbors.clear();
+                edges.clear();
+            }
+        };
+
+        Node_graph() : root(nullptr), vertex2node() {}
+        void clear() {
+            std::cout << "DEBUG: washing away all sins\n";
+            for(auto it=vertex2node.begin(); it!=vertex2node.end(); ++it) {
+                auto n = it->second;
+                n->clear();
+            }
+            vertex2node.clear();
+        }
+        ~Node_graph() {
+            clear();
+        }
+
+    private:
+        std::shared_ptr<Node> root;
+        std::map<Vertex_ptr, std::shared_ptr<Node>> vertex2node;
+    private:
+        std::shared_ptr<Node> find_vertex(const Vertex_ptr& x1) const {
+            auto i = vertex2node.find(x1);
+            if( i==vertex2node.end() ) {
+                throw "Trying to find a vertex that does not exist.";
+            }
+            return i->second;
+        }
+    public:
+        void add_vertex(Vertex_ptr x) {
+            // std::cout << "DEBUG: adding a new vertex\n";
+            auto it = vertex2node.find(x);
+            if(it==vertex2node.end()) {
+                auto p = std::make_shared<Node>(x);
+                vertex2node.insert(std::make_pair(x, p));
+                if(!root) {
+                    root = p;
+                }
+            } else {
+                throw "Vertex already added in the graph";
+            }
+        }
+
+        void add_edge(Edge_ptr e){
+            // std::cout << "DEBUG: adding edge.\n";
+            auto i  = vertex2node.find(e->start);
+            auto j  = vertex2node.find(e->end);
+
+            if( (i==vertex2node.end()) || (j==vertex2node.end()) ) {
+                throw "Edge contains a vertex that is not in Graph.";
+            }
+
+            i->second->neighbors.push_back(j->second);
+            i->second->edges.push_back(e);
+
+        };
+        int num_edges() const {return 0;};
+        int num_vertices() const {return 0;};
+
+        bool adjacent(Vertex_ptr x1, Vertex_ptr x2) const {
+            return false;
+        }
+
+        std::vector<Edge_ptr> edges_from(Vertex_ptr x1) const {
+            auto it = find_vertex(x1);
+            std::vector<Edge_ptr> list_of_edges;
+            return it->edges;
+        }
+
+        std::vector<Edge_ptr> edges() const {
+            std::vector<Edge_ptr> all_edges;
+            const auto v = vertices();
+            std::set<std::shared_ptr<Node>> visited;
+            std::stack<std::shared_ptr<Node>> to_visit;
+            if(root)
+            to_visit.push(root);
+            while(!to_visit.empty()){
+                auto n = to_visit.top();
+                to_visit.pop();
+                // std::cout << "DEBUG: visiting " <<toDot(n->x) << "\n";
+                auto it = visited.find(n);
+                if(it==visited.end()) {
+                    for(auto e: n->edges) {
+                        all_edges.push_back(e);
+                    }
+                    for(auto m: n->neighbors) {
+                        to_visit.push(m);
+                    }
+                    visited.insert(n);
+                } else {
+
+                }
+            }
+            return all_edges;
+        }
+        std::vector<Vertex_ptr> vertices() const{
+            std::vector<Vertex_ptr> vertex_list;
+            for(auto it = vertex2node.begin(); it!=vertex2node.end(); ++it) {
+                vertex_list.push_back(it->first);
+            }
+            return vertex_list;
+        }
+        std::vector<std::vector<bool>> adjacency() const {
+            const int n = num_vertices();
+            std::vector<std::vector<bool>> adjacency_matrix(n, std::vector<bool>(n, false));
+            return adjacency_matrix;
+        }
+
+        Vertex_ptr top() const {
+            if(root)
+                return root->x;
+            else
+                return nullptr;
         }
 };
 

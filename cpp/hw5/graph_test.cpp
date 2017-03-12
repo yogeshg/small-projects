@@ -4,7 +4,8 @@
 
 int main() {
     try {
-        Adjacency_matrix<Vertex_ptr, Edge_ptr> a;
+        //Adjacency_matrix<Vertex_ptr, Edge_ptr> a;
+        Node_graph<Vertex_ptr, Edge_ptr> a;
         Vertex_ptr pV1 = std::make_shared<Vertex>("foo", 1);
         Vertex_ptr pV2 = std::make_shared<Vertex>("bar", 2);
         Vertex_ptr pV3 = std::make_shared<Vertex>("baz", 3);
@@ -30,7 +31,7 @@ int main() {
         add_edge(a, pV2, pV4);
         std::cout << toDot(a) << "\n";
         std::cout << "top element is: " << toDot(top(a)) <<"\n";
-        std::cout << "neigbors of "<<toDot(pV3) << " are: "<< a.edges_from(pV3).size() <<"\n";
+        std::cout << "neighbors of "<<toDot(pV3) << " are: "<< a.edges_from(pV3).size() <<"\n";
         std::cout << "number of vertices not reachable form this are: "<< num_non_reachable_vertices(a)<<"\n";
         std::cout << "number of vertices not reachable form "<< toDot(pV6)  <<" are: "<< num_non_reachable_vertices(a, pV6)<<"\n";
         std::cout << "number of vertices not reachable form "<< toDot(pV7)  <<" are: "<< num_non_reachable_vertices(a, pV7)<<"\n";

@@ -8,12 +8,21 @@ Edge_ptr make_edge(Vertex_ptr s, Vertex_ptr e) {
 
 std::string toDot(Vertex_ptr v) {
     std::stringstream ss;
-    ss << toId(v) << " " << toLabel(*v) << ";";
+    if(v) {
+        ss << toId(v) << " " << toLabel(*v) << ";";
+    } else {
+        ss << "null_vertex";
+    }
     return ss.str();
 }
 std::string toDot(Edge_ptr e) {
     std::stringstream ss;
-    ss << toId(e->start) << " -> " << toId(e->end) << " " << toLabel(e->value) << ";";
+    if(e) {
+        ss << toId(e->start) << " -> " << toId(e->end) << " " << toLabel(e->value) << ";";
+    } else {
+        ss << "null_edge";
+    }
+
     return ss.str();
 }
 

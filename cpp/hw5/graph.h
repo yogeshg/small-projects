@@ -30,11 +30,11 @@ concept bool Graph = requires(Representation r, typename Representation::Vertex_
 };
 
 template<Graph Representation>
-bool adjacent(Representation& g, typename Representation::Vertex_ptr x, typename Representation::Vertex_ptr y) {
+bool adjacent(const Representation& g, typename Representation::Vertex_ptr x, typename Representation::Vertex_ptr y) {
     return g.adjacent(x, y);
 }
 template<Graph Representation>
-std::vector<typename Representation::Vertex_ptr> neighbors(Representation& g, typename Representation::Vertex_ptr x) {
+std::vector<typename Representation::Vertex_ptr> neighbors(const Representation& g, typename Representation::Vertex_ptr x) {
     std::vector<typename Representation::Vertex_ptr> n;
     for(typename Representation::Edge_ptr e : g.edges_from(x)) {
         if(e) {
@@ -60,12 +60,12 @@ void add_edge(Representation& g, typename  Representation::Vertex_ptr x, typenam
 }
 
 template<Graph Representation>
-typename Representation::Vertex_ptr top(Representation& g){
+typename Representation::Vertex_ptr top(const Representation& g){
     return g.top();
 }
 
 template<Graph Representation>
-std::string toDot(Representation& g) {
+std::string toDot(const Representation& g) {
     std::stringstream ss;
     ss<<"digraph G\n{\n";
     ss<<"\t# vertices:\n";
@@ -93,17 +93,17 @@ std::string toDot(Representation& g) {
 }
 
 template<Graph Representation>
-int num_vertices(Representation& g) {
+int num_vertices(const Representation& g) {
     return g.num_vertices();
 }
 
 template<Graph Representation>
-int num_edges(Representation& g) {
+int num_edges(const Representation& g) {
     return g.num_edges();
 }
 
 template<Graph Representation>
-bool exists_cycle(Representation g, typename Representation::Vertex_ptr top) {
+bool exists_cycle(const Representation& g, typename Representation::Vertex_ptr top) {
     const auto& v = g.vertices();
     std::set<typename Representation::Vertex_ptr> unvisited(v.begin(), v.end());
 
@@ -127,12 +127,12 @@ bool exists_cycle(Representation g, typename Representation::Vertex_ptr top) {
     return false;
 }
 template<Graph Representation>
-bool exists_cycle(Representation g) {
+bool exists_cycle(const Representation& g) {
     return exists_cycle(g, g.top());
 }
  
 template<Graph Representation>
-int num_non_reachable_vertices(Representation g, typename Representation::Vertex_ptr top) {
+int num_non_reachable_vertices(const Representation& g, typename Representation::Vertex_ptr top) {
     const auto& v = g.vertices();
     std::set<typename Representation::Vertex_ptr> unvisited(v.begin(), v.end());
 
@@ -155,17 +155,17 @@ int num_non_reachable_vertices(Representation g, typename Representation::Vertex
 }
 
 template<Graph Representation>
-bool fully_reachable(Representation g, typename Representation::Vertex_ptr top) {
+bool fully_reachable(const Representation& g, typename Representation::Vertex_ptr top) {
     return !num_non_reachable_vertices(g, top);
 } 
 
 template<Graph Representation>
-int num_non_reachable_vertices(Representation g) {
+int num_non_reachable_vertices(const Representation& g) {
     return num_non_reachable_vertices(g, g.top());
 }
 
 template<Graph Representation>
-bool fully_reachable(Representation g) {
+bool fully_reachable(const Representation& g) {
     return fully_reachable(g, g.top());
 }
 
