@@ -8,9 +8,12 @@
 #include<iostream>
 #include<algorithm>
 
-template <class Vertex_ptr, class Edge_ptr>
+template <class VP, class EP>
 class Adjacency_matrix {
     public:
+        typedef VP Vertex_ptr;
+        typedef EP Edge_ptr;
+
         Adjacency_matrix() {}
 
         void add_vertex(Vertex_ptr x) {
@@ -72,15 +75,18 @@ class Adjacency_matrix {
             return vertex_list;
         }
         std::vector<std::vector<bool>> adjacency() {
-            std::vector<std::vector<bool>> adjacency_matrix;
+            const int n = num_vertices();
+            std::vector<std::vector<bool>> adjacency_matrix(n, std::vector<bool>(n, false));
             int i=0; 
             for(auto l : m){
-                adjacency_matrix[i];
+                int j = 0;
                 for(auto e : l){
-                    adjacency_matrix.at(i).push_back((bool)e);
+                    adjacency_matrix[i][j]=(bool)e;
+                    ++j;
                 }
                 ++i;
             }
+            return adjacency_matrix;
         }
 
         Vertex_ptr top() {
@@ -102,41 +108,6 @@ class Adjacency_matrix {
             return i;
         }
 };
-
-
-
-template<typename T>
-concept bool DotRepresntable = requires(T a){
-    {toDot(a)} -> std::string;
-};
-
-template <DotRepresntable Vertex_ptr, DotRepresntable Edge_ptr>
-std::string toDot(Adjacency_matrix<Vertex_ptr, Edge_ptr> a) {
-    std::stringstream ss;
-    ss<<"digraph G\n{\n";
-    ss<<"\t# vertices:\n";
-    for(auto v: a.vertices()) {
-        ss <<"\t"<< toDot(v) <<"\n";
-    }
-    ss<<"\n";
-    ss<<"\t# edges:\n";
-    for(auto e: a.edges()) {
-        ss <<"\t"<< toDot(e) <<"\n";
-    }
-    ss<<"\n";
-    ss<<"\t# adjacency:\n";
-    for(auto& r : a.adjacency()) {
-        ss <<"\t# ";
-        for(auto e : r) {
-            ss << ((bool)e) <<",";
-        }
-        ss << "\n";
-    }
-    ss << "\n";
-    ss << "}\n\n";
-    return ss.str();
-    return "";
-}
 
 //    bool adjacent(Graph& g, Vertex_ptr x, Vertex_ptr y);
 //    bool neighbors(Graph& g, Vertex_ptr x);

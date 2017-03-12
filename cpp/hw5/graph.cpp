@@ -1,9 +1,7 @@
-#include"graph.h"
 #include"graph_defaults.h"
-#include"graph_representation.h"
 #include<memory>
 
-Edge_ptr make_edge_ptr(Vertex_ptr s, Vertex_ptr e) {
+Edge_ptr make_edge(Vertex_ptr s, Vertex_ptr e) {
     return std::make_shared<Edge>(s, e);
 }
 

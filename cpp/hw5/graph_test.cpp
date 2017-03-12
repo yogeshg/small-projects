@@ -13,19 +13,19 @@ int main() {
         Vertex_ptr pV6 = std::make_shared<Vertex>("six", 6);
         Vertex_ptr pV7 = std::make_shared<Vertex>("seven", 7);
         add(a, pV1);
-        // a.add(pV2);
+        add(a, pV2);
         add(a, pV3);
         add(a, pV4);
-        // a.add(pV5);
-        // a.add(pV6);
+        add(a, pV5);
+        add(a, pV6);
         add(a, pV7);
         a.add_edge(std::make_shared<Edge>(pV1, pV3));
         a.add_edge(std::make_shared<Edge>(pV4, pV7));
-        // a.add_edge(pV1, pV5);
-        // a.add_edge(pV3, pV2);
-        // a.add_edge(pV5, pV6);
-        // a.add_edge(pV5, pV7);
-        // a.add_edge(pV6, pV1);
+        add_edge(a, pV1, pV5);
+        add_edge(a, pV3, pV2);
+        add_edge(a, pV5, pV6);
+        add_edge(a, pV5, pV7);
+        add_edge(a, pV6, pV1);
         std::cout << toDot(a) << "\n";
     } catch (const char* e) {
         std::cout << "caught exception: " << e <<"\n";

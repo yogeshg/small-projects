@@ -8,25 +8,80 @@
 #include<iostream>
 #include<algorithm>
 
-template< template<typename, typename>class Representation, typename Vertex_ptr, typename Edge_ptr>
-concept bool Graph = requires(Representation<Vertex_ptr, Edge_ptr> r, Vertex_ptr vp, Edge_ptr ep) {
-    {r.add_vertex(vp)} -> void;
-    {r.add_edge(ep)} -> void;
-    {r.edges()} -> std::vector<Edge_ptr>;
-    {r.edges_from(vp)} -> std::vector<Edge_ptr>;
-    {r.vertices()} -> std::vector<Vertex_ptr>;
-    {ep->start} -> Vertex_ptr;
-    {ep->end} -> Vertex_ptr;
-    {r.adjacent(vp, vp)} -> bool;
-    {r.top()} -> Vertex_ptr;
+template<typename Representation>
+concept bool Graph = requires(Representation r, typename Representation::Vertex_ptr x, typename Representation::Edge_ptr e) {
+    typename Representation::Vertex_ptr;
+    typename Representation::Edge_ptr;
+    {r.add_vertex(x)}->void;
+    {r.vertices()} -> std::vector<typename Representation::Vertex_ptr>;
+    {r.adjacent(x, x)} -> bool;
+    {r.add_edge(e)} -> void;
+    {r.edges()} -> std::vector<typename Representation::Edge_ptr>;
+    {r.edges_from(x)} -> std::vector<typename Representation::Edge_ptr>;
+    {r.top()} -> typename Representation::Vertex_ptr;
+    {e} -> bool;
+    {e->start} -> typename Representation::Vertex_ptr;
+    {e->end} -> typename Representation::Vertex_ptr;
+    {make_edge(x,x)} -> typename Representation::Edge_ptr;
 };
 
-    template<template<typename, typename>class Representation, typename Vertex_ptr, typename Edge_ptr>
-void add(Representation<Vertex_ptr, Edge_ptr>& g, Vertex_ptr x)
-    requires Graph<Representation, Vertex_ptr, Edge_ptr>
-{
+template<Graph Representation>
+bool adjacent(Representation& g, typename Representation::Vertex_ptr x, typename Representation::Vertex_ptr y) {
+    return g.adjacent(x, y);
+}
+template<Graph Representation>
+bool neighbors(Representation& g, typename Representation::Vertex_ptr x) {
+    return g.neighbors(x);
+}
+
+template<Graph Representation>
+void add(Representation& g, typename Representation::Vertex_ptr x) {
     g.add_vertex(x);
 }
+
+template<Graph Representation>
+void add_edge(Representation& g, typename  Representation::Edge_ptr e){
+    g.add_edge(e);
+}
+
+template<Graph Representation>
+void add_edge(Representation& g, typename  Representation::Vertex_ptr x, typename  Representation::Vertex_ptr y){
+    g.add_edge(make_edge(x, y));
+}
+
+template<Graph Representation>
+typename Representation::Vertex_ptr top(Representation& g){
+    return g.top();
+}
+
+template<Graph Representation>
+std::string toDot(Representation& g) {
+    std::stringstream ss;
+    ss<<"digraph G\n{\n";
+    ss<<"\t# vertices:\n";
+    for(auto v: g.vertices()) {
+        ss <<"\t"<< toDot(v) <<"\n";
+    }
+    ss<<"\n";
+    ss<<"\t# edges:\n";
+    for(auto e: g.edges()) {
+        ss <<"\t"<< toDot(e) <<"\n";
+    }
+    ss<<"\n";
+    ss<<"\t# adjacency:\n";
+    for(auto& r : g.adjacency()) {
+        ss <<"\t# ";
+        for(auto e : r) {
+            ss << ((bool)e) <<",";
+        }
+        ss << "\n";
+    }
+    ss << "\n";
+    ss << "}\n\n";
+    return ss.str();
+
+}
+
 
 //    bool adjacent(Graph& g, Vertex_ptr x, Vertex_ptr y);
 //    bool neighbors(Graph& g, Vertex_ptr x);
