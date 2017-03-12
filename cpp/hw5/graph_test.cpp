@@ -19,14 +19,26 @@ int main() {
         add(a, pV5);
         add(a, pV6);
         add(a, pV7);
-        a.add_edge(std::make_shared<Edge>(pV1, pV3));
+        auto e = std::make_shared<Edge>(pV1, pV3);
+        a.add_edge(e);
         a.add_edge(std::make_shared<Edge>(pV4, pV7));
         add_edge(a, pV1, pV5);
         add_edge(a, pV3, pV2);
         add_edge(a, pV5, pV6);
         add_edge(a, pV5, pV7);
         add_edge(a, pV6, pV1);
+        add_edge(a, pV2, pV4);
         std::cout << toDot(a) << "\n";
+        std::cout << "top element is: " << toDot(top(a)) <<"\n";
+        std::cout << "neigbors of "<<toDot(pV3) << " are: "<< a.edges_from(pV3).size() <<"\n";
+        std::cout << "number of vertices not reachable form this are: "<< num_non_reachable_vertices(a)<<"\n";
+        std::cout << "number of vertices not reachable form "<< toDot(pV6)  <<" are: "<< num_non_reachable_vertices(a, pV6)<<"\n";
+        std::cout << "number of vertices not reachable form "<< toDot(pV7)  <<" are: "<< num_non_reachable_vertices(a, pV7)<<"\n";
+        std::cout << "number of vertices not reachable form "<< toDot(pV3)  <<" are: "<< num_non_reachable_vertices(a, pV3)<<"\n";
+        std::cout << "is this graph fully reachable?: "<< fully_reachable(a) <<"\n";
+        std::cout << "is this graph fully reachable from "<< toDot(pV7) <<"?: "<< fully_reachable(a, pV7) <<"\n";
+        std::cout << "is there a cycle?: "<< exists_cycle(a) <<"\n";
+        std::cout << "is there a cycle from "<< toDot(pV4) <<"?: "<< exists_cycle(a, pV4) <<"\n";
     } catch (const char* e) {
         std::cout << "caught exception: " << e <<"\n";
     } catch (std::string e) {

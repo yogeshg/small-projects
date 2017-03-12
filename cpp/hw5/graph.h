@@ -7,6 +7,8 @@
 #include<vector>
 #include<iostream>
 #include<algorithm>
+#include<set>
+#include<stack>
 
 template<typename Representation>
 concept bool Graph = requires(Representation r, typename Representation::Vertex_ptr x, typename Representation::Edge_ptr e) {
@@ -23,6 +25,8 @@ concept bool Graph = requires(Representation r, typename Representation::Vertex_
     {e->start} -> typename Representation::Vertex_ptr;
     {e->end} -> typename Representation::Vertex_ptr;
     {make_edge(x,x)} -> typename Representation::Edge_ptr;
+    {r.num_vertices()} -> int;
+    {r.num_edges()} -> int;
 };
 
 template<Graph Representation>
@@ -30,8 +34,14 @@ bool adjacent(Representation& g, typename Representation::Vertex_ptr x, typename
     return g.adjacent(x, y);
 }
 template<Graph Representation>
-bool neighbors(Representation& g, typename Representation::Vertex_ptr x) {
-    return g.neighbors(x);
+std::vector<typename Representation::Vertex_ptr> neighbors(Representation& g, typename Representation::Vertex_ptr x) {
+    std::vector<typename Representation::Vertex_ptr> n;
+    for(typename Representation::Edge_ptr e : g.edges_from(x)) {
+        if(e) {
+            n.push_back((e->end));
+        }
+    }
+    return n;
 }
 
 template<Graph Representation>
@@ -82,26 +92,89 @@ std::string toDot(Representation& g) {
 
 }
 
+template<Graph Representation>
+int num_vertices(Representation& g) {
+    return g.num_vertices();
+}
 
-//    bool adjacent(Graph& g, Vertex_ptr x, Vertex_ptr y);
-//    bool neighbors(Graph& g, Vertex_ptr x);
-//    void add(Graph& g, Vertex_ptr x);
+template<Graph Representation>
+int num_edges(Representation& g) {
+    return g.num_edges();
+}
+
+template<Graph Representation>
+bool exists_cycle(Representation g, typename Representation::Vertex_ptr top) {
+    const auto& v = g.vertices();
+    std::set<typename Representation::Vertex_ptr> unvisited(v.begin(), v.end());
+
+    std::stack<typename Representation::Vertex_ptr> to_visit;
+    to_visit.push(top);
+
+    while(!to_visit.empty()) {
+        auto x = to_visit.top();
+        to_visit.pop();
+        // std::cout << "DEBUG: visiting " << toDot(x) <<"\n";
+        auto it = unvisited.find(x);
+        if(it != unvisited.end()) {
+            for( auto y : neighbors(g,(*it))) {
+                to_visit.push(y);
+            }
+            unvisited.erase(it);
+        } else {
+            return true;
+        }
+    }
+    return false;
+}
+template<Graph Representation>
+bool exists_cycle(Representation g) {
+    return exists_cycle(g, g.top());
+}
+ 
+template<Graph Representation>
+int num_non_reachable_vertices(Representation g, typename Representation::Vertex_ptr top) {
+    const auto& v = g.vertices();
+    std::set<typename Representation::Vertex_ptr> unvisited(v.begin(), v.end());
+
+    std::stack<typename Representation::Vertex_ptr> to_visit;
+    to_visit.push(top);
+
+    while(!to_visit.empty()) {
+        auto x = to_visit.top();
+        to_visit.pop();
+        // std::cout << "DEBUG: visiting " << toDot(x) <<"\n";
+        auto it = unvisited.find(x);
+        if(it != unvisited.end()) {
+            for( auto y : neighbors(g,(*it))) {
+                to_visit.push(y);
+            }
+            unvisited.erase(it);
+        }
+    }
+    return unvisited.size();
+}
+
+template<Graph Representation>
+bool fully_reachable(Representation g, typename Representation::Vertex_ptr top) {
+    return !num_non_reachable_vertices(g, top);
+} 
+
+template<Graph Representation>
+int num_non_reachable_vertices(Representation g) {
+    return num_non_reachable_vertices(g, g.top());
+}
+
+template<Graph Representation>
+bool fully_reachable(Representation g) {
+    return fully_reachable(g, g.top());
+}
+
 //    void remove(Graph& g, Vertex_ptr x);
-//    void add_edge(Grap&h g, Vertex_ptr x, Vertex_ptr y);
-//    void add_edge(Graph& g, Edge_ptr e); // and edge is a pair of vertexes
 //    value value(Graph& g, Vertex_ptr x); // vertex value
 //    void set_value(Graph& g, Vertex x, Value v); // set vertex value
 //    Value value(Graph& g, Edge_ptr e); // edge value
 //    void set_value(Graph& g, Edge_ptr e, Value v); // edge value
-//    Vertex top(Graph&); // get some Vertex
 
-
-
-//    Write a function that prints a graph in some format (e.g., as text)
-//    Write a function that counts the number of vertexes
-//    Write a function that counts the number of edges
-//    Write a function that check if every vertex is reachable from the top
-//    Write a function that finds cycles
 //    Write a function that lists the vertexes in order of Values (highest value first)
 //    Write a function that lists the edges in order of Values (highest value first)
 

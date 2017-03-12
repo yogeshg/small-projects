@@ -1,5 +1,6 @@
 #include"graph_defaults.h"
 #include<memory>
+#include<sstream>
 
 Edge_ptr make_edge(Vertex_ptr s, Vertex_ptr e) {
     return std::make_shared<Edge>(s, e);
