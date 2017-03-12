@@ -1,7 +1,6 @@
 #include"graph_defaults.h"
+#include"graph_representation.h"
 #include"graph.h"
-
-// using namespace graph;
 
 int main() {
     try {
@@ -13,21 +12,21 @@ int main() {
         Vertex_ptr pV5 = std::make_shared<Vertex>("five", 5);
         Vertex_ptr pV6 = std::make_shared<Vertex>("six", 6);
         Vertex_ptr pV7 = std::make_shared<Vertex>("seven", 7);
-        a.add(pV1);
-        a.add(pV2);
-        a.add(pV3);
-        a.add(pV4);
-        a.add(pV5);
-        a.add(pV6);
-        a.add(pV7);
+        add(a, pV1);
+        // a.add(pV2);
+        add(a, pV3);
+        add(a, pV4);
+        // a.add(pV5);
+        // a.add(pV6);
+        add(a, pV7);
         a.add_edge(std::make_shared<Edge>(pV1, pV3));
         a.add_edge(std::make_shared<Edge>(pV4, pV7));
-        a.add_edge(pV1, pV5);
-        a.add_edge(pV3, pV2);
-        a.add_edge(pV5, pV6);
-        a.add_edge(pV5, pV7);
-        a.add_edge(pV6, pV1);
-        std::cout << a.toString() << "\n";
+        // a.add_edge(pV1, pV5);
+        // a.add_edge(pV3, pV2);
+        // a.add_edge(pV5, pV6);
+        // a.add_edge(pV5, pV7);
+        // a.add_edge(pV6, pV1);
+        std::cout << toDot(a) << "\n";
     } catch (const char* e) {
         std::cout << "caught exception: " << e <<"\n";
     } catch (std::string e) {
