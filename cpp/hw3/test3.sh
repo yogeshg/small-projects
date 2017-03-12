@@ -10,16 +10,16 @@ big_sizes="2000000 5000000"
 
 seeds="1979 1991 2017"
 
-for BIN in $all_bin
-do
-    for SIZE in $small_sizes
-    do
-        for SEED in $seeds
-        do
-            ./$BIN $SIZE $SEED
-        done
-    done
-done
+## for BIN in $all_bin
+## do
+##     for SIZE in $small_sizes
+##     do
+##         for SEED in $seeds
+##         do
+##             ./$BIN $SIZE $SEED
+##         done
+##     done
+## done
 
 for SIZE in $med_sizes
 do
