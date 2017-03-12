@@ -28,7 +28,6 @@ int main() {
         add_edge(a, pV5, pV6);
         add_edge(a, pV5, pV7);
         add_edge(a, pV6, pV1);
-        add_edge(a, pV2, pV4);
         std::cout << toDot(a) << "\n";
         std::cout << "top element is: " << toDot(top(a)) <<"\n";
         std::cout << "neighbors of "<<toDot(pV3) << " are: "<< a.edges_from(pV3).size() <<"\n";

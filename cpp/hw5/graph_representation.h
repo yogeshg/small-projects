@@ -202,7 +202,6 @@ class Node_graph {
 
         std::vector<Edge_ptr> edges() const {
             std::vector<Edge_ptr> all_edges;
-            const auto v = vertices();
             std::set<std::shared_ptr<Node>> visited;
             std::stack<std::shared_ptr<Node>> to_visit;
             if(root)
@@ -226,11 +225,36 @@ class Node_graph {
             }
             return all_edges;
         }
-        std::vector<Vertex_ptr> vertices() const{
+
+        std::vector<Vertex_ptr> vertices(bool debug=false) const{
+            std::vector<Vertex_ptr> all_vertices;
+            std::set<std::shared_ptr<Node>> visited;
+            std::stack<std::shared_ptr<Node>> to_visit;
+            if(root)
+            to_visit.push(root);
+            while(!to_visit.empty()){
+                auto n = to_visit.top();
+                to_visit.pop();
+                // std::cout << "DEBUG: visiting " <<toDot(n->x) << "\n";
+                auto it = visited.find(n);
+                if(it==visited.end()) {
+                    all_vertices.push_back(n->x);
+                    for(auto m: n->neighbors) {
+                        to_visit.push(m);
+                    }
+                    visited.insert(n);
+                } else {
+
+                }
+            }
+            if(!debug)
+                return all_vertices;
+
             std::vector<Vertex_ptr> vertex_list;
             for(auto it = vertex2node.begin(); it!=vertex2node.end(); ++it) {
                 vertex_list.push_back(it->first);
             }
+            std::cout << "DEBUG: found "<< vertex_list.size()-all_vertices.size() <<" extra nodes.\n";
             return vertex_list;
         }
         std::vector<std::vector<bool>> adjacency() const {
