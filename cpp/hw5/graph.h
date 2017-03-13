@@ -14,6 +14,7 @@ template<typename Representation>
 concept bool Graph = requires(Representation r, typename Representation::Vertex_ptr x, typename Representation::Edge_ptr e) {
     typename Representation::Vertex_ptr;
     typename Representation::Edge_ptr;
+    {r.name} -> std::string;
     {r.add_vertex(x)}->void;
     {r.vertices()} -> std::vector<typename Representation::Vertex_ptr>;
     {r.adjacent(x, x)} -> bool;
@@ -27,6 +28,8 @@ concept bool Graph = requires(Representation r, typename Representation::Vertex_
     {make_edge(x,x)} -> typename Representation::Edge_ptr;
     {r.num_vertices()} -> int;
     {r.num_edges()} -> int;
+    {toDot(x)} -> std::string;
+    {toDot(e)} -> std::string;
 };
 
 template<Graph Representation>
@@ -67,7 +70,7 @@ typename Representation::Vertex_ptr top(const Representation& g){
 template<Graph Representation>
 std::string toDot(const Representation& g) {
     std::stringstream ss;
-    ss<<"digraph G\n{\n";
+    ss<<"digraph "<< g.name <<"\n{\n";
     ss<<"\t# vertices:\n";
     for(auto v: g.vertices()) {
         ss <<"\t"<< toDot(v) <<"\n";
@@ -103,10 +106,8 @@ int num_edges(const Representation& g) {
 }
 
 template<Graph Representation>
-bool exists_cycle(const Representation& g, typename Representation::Vertex_ptr top) {
-    const auto& v = g.vertices();
-    std::set<typename Representation::Vertex_ptr> unvisited(v.begin(), v.end());
-
+bool exists_cycle(const Representation& g, typename Representation::Vertex_ptr top,
+        std::set<typename Representation::Vertex_ptr> visited={}) {
     std::stack<typename Representation::Vertex_ptr> to_visit;
     to_visit.push(top);
 
@@ -114,18 +115,19 @@ bool exists_cycle(const Representation& g, typename Representation::Vertex_ptr t
         auto x = to_visit.top();
         to_visit.pop();
         // std::cout << "DEBUG: visiting " << toDot(x) <<"\n";
-        auto it = unvisited.find(x);
-        if(it != unvisited.end()) {
-            for( auto y : neighbors(g,(*it))) {
+        auto it = visited.find(x);
+        if(it == visited.end()) {
+            for( auto y : neighbors(g, x)) {
                 to_visit.push(y);
             }
-            unvisited.erase(it);
+            visited.insert(x);
         } else {
             return true;
         }
     }
     return false;
 }
+
 template<Graph Representation>
 bool exists_cycle(const Representation& g) {
     return exists_cycle(g, g.top());

@@ -1,5 +1,5 @@
-#ifndef __GRAPH_REPRESENTATION_H__
-#define __GRAPH_REPRESENTATION_H__
+#ifndef __GRAPH_REPRESENTATION_TREE_H__
+#define __GRAPH_REPRESENTATION_TREE_H__
 
 #include<sstream>
 #include<string>
@@ -14,128 +14,26 @@
 #include<set>
 
 template <class VP, class EP>
-class Adjacency_matrix {
-    public:
-        typedef VP Vertex_ptr;
-        typedef EP Edge_ptr;
-
-        Adjacency_matrix():name("Adjacency_matrix") {}
-
-        void add_vertex(Vertex_ptr x) {
-            std::vector<Edge_ptr> row;
-            // New vertex has no edge for any previous vertex
-            for(int i=0; i<num_vertices(); ++i) {
-                Edge_ptr null_edge_ptr;
-                row.push_back( null_edge_ptr );               // TODO push null pointer
-            }
-            m.push_back(row);
-
-            // Old vertices have no edge for new vertex
-            for(auto& r : m) {
-                Edge_ptr null_edge_ptr;
-                r.push_back( null_edge_ptr );
-            }
-
-            // add vertex to the list
-            vertex_list.push_back(x);
-        }
-
-        void add_edge(Edge_ptr e){
-            edge_list.push_back(e);
-            int i, j = 0;
-            i = find_vertex(e->start);
-            j = find_vertex(e->end);
-            if( (i>=num_vertices()) || (j>=num_vertices()) ) {
-                throw "Edge contains a vertex that is not in Graph.";
-            }
-            m.at(i).at(j) = e;
-        };
-        int num_edges() const {return edge_list.size();};
-        int num_vertices() const {return vertex_list.size();};
-
-        bool adjacent(Vertex_ptr x1, Vertex_ptr x2) const {
-            int i = find_vertex(x1);
-            int j = find_vertex(x2);
-            if( i<num_vertices() && j<num_vertices() ) {
-                return (bool)m.at(find_vertex(x1)).at(find_vertex(x2));
-            }
-            return false;
-        }
-
-        std::vector<Edge_ptr> edges_from(Vertex_ptr x1) const {
-            std::vector<Edge_ptr> list_of_edges;
-            int i = find_vertex(x1);
-            if( i<num_vertices() ) {
-                for(auto e : m.at(i)) {
-                    if(e) {
-                        list_of_edges.push_back(e);
-                    }
-                }
-            }
-            return list_of_edges;
-        }
-
-        std::vector<Edge_ptr> edges() const {
-            return edge_list;
-        }
-        std::vector<Vertex_ptr> vertices() const {
-            return vertex_list;
-        }
-        std::vector<std::vector<bool>> adjacency() const {
-            const int n = num_vertices();
-            std::vector<std::vector<bool>> adjacency_matrix(n, std::vector<bool>(n, false));
-            int i=0; 
-            for(auto l : m){
-                int j = 0;
-                for(auto e : l){
-                    adjacency_matrix[i][j]=(bool)e;
-                    ++j;
-                }
-                ++i;
-            }
-            return adjacency_matrix;
-        }
-
-        Vertex_ptr top() const {
-            return vertex_list[0];
-        }
-        const std::string name;
-    private:
-        std::vector<std::vector<Edge_ptr>> m;           // actaual matrix
-        std::vector<Vertex_ptr> vertex_list;               // list of vertices
-        std::vector<Edge_ptr> edge_list;                    // list of edges
-
-        int find_vertex(const Vertex_ptr& x) const {
-            int i=0;
-            for(i=0; i<num_vertices(); ++i){
-                if(vertex_list.at(i) == x) {
-                    return i;
-                }
-            }
-            return i;
-        }
-};
-
-
-template <class VP, class EP>
-class Node_graph {
+class Node_tree {
     public:
         typedef VP Vertex_ptr;
         typedef EP Edge_ptr;
 
         struct Node {
             Vertex_ptr x;
+            std::shared_ptr<Node> parent; 
             std::vector<std::shared_ptr<Node>> neighbors; 
             std::vector<Edge_ptr> edges;
-            Node(Vertex_ptr x1) : x(x1), neighbors(), edges() {}
+            Node(Vertex_ptr x1, std::shared_ptr<Node> p) : parent(p), x(x1), neighbors(), edges() {}
             void clear() {
+                parent = nullptr;
                 x = nullptr;
                 neighbors.clear();
                 edges.clear();
             }
         };
 
-        Node_graph() : root(nullptr), vertex2node(), name("Node_graph") {}
+        Node_tree() : root(nullptr), vertex2node(), name("Node_tree") {}
         void clear() {
             // std::cout << "DEBUG: washing away all sins\n";
             for(auto it=vertex2node.begin(); it!=vertex2node.end(); ++it) {
@@ -144,15 +42,16 @@ class Node_graph {
             }
             vertex2node.clear();
         }
-        ~Node_graph() {
+        ~Node_tree() {
             clear();
         }
 
+    public:
         void add_vertex(Vertex_ptr x) {
             // std::cout << "DEBUG: adding a new vertex\n";
             auto it = vertex2node.find(x);
             if(it==vertex2node.end()) {
-                auto p = std::make_shared<Node>(x);
+                auto p = std::make_shared<Node>(x, nullptr);
                 vertex2node.insert(std::make_pair(x, p));
                 if(!root) {
                     root = p;
@@ -164,15 +63,14 @@ class Node_graph {
 
         void add_edge(Edge_ptr e){
             // std::cout << "DEBUG: adding edge.\n";
-            auto i  = vertex2node.find(e->start);
-            auto j  = vertex2node.find(e->end);
-
-            if( (i==vertex2node.end()) || (j==vertex2node.end()) ) {
-                throw "Edge contains a vertex that is not in Graph.";
+            const auto p_start_node = find_vertex(e->start);
+            const auto p_end_node = find_vertex(e->end);
+            if( (p_end_node->parent != nullptr) || (root==p_end_node) ) {
+                throw "Can not make this edge in a tree.";
             }
-
-            i->second->neighbors.push_back(j->second);
-            i->second->edges.push_back(e);
+            p_start_node->neighbors.push_back(p_end_node);
+            p_start_node->edges.push_back(e);
+            p_end_node->parent = p_start_node;
 
         };
         int num_edges() const {return edges().size();};
@@ -260,18 +158,11 @@ class Node_graph {
             for( auto it=node2index.begin(); it!=node2index.end(); ++it) {
                 const auto p_node = it->first;
                 const auto index = it->second;
-                for( auto it2 : p_node->neighbors ) {
-                    auto it_child = node2index.find(it2);
-                    if(it_child!=node2index.end()){
-                        const auto index_child = it_child->second;
-                        adjacency_matrix[index][index_child] = true;
-                    }
+                const auto it_parent = node2index.find(p_node->parent);
+                if( it_parent != node2index.end() ) {
+                    const auto index_parent = it_parent->second;
+                    adjacency_matrix[index_parent][index] = true;
                 }
-                // const auto it_parent = node2index.find(p_node->parent);
-                // if( it_parent != node2index.end() ) {
-                //     const auto index_parent = it_parent->second;
-                //     adjacency_matrix[index_parent][index] = true;
-                // }
             }
             return adjacency_matrix;
         }
@@ -282,7 +173,6 @@ class Node_graph {
             else
                 return nullptr;
         }
-
         const std::string name;
     private:
         std::shared_ptr<Node> root;
@@ -290,10 +180,14 @@ class Node_graph {
         std::shared_ptr<Node> find_vertex(const Vertex_ptr& x1) const {
             auto i = vertex2node.find(x1);
             if( i==vertex2node.end() ) {
-                throw "Trying to find a vertex that does not exist.";
+                std::stringstream ss;
+                ss << "Trying to find a vertex that does not exist." <<toDot(x1);
+                throw ss.str();
+
             }
             return i->second;
         }
+
 };
 
-#endif /*__GRAPH_REPRESENTATION_H__*/
+#endif /*__GRAPH_REPRESENTATION_TREE_H__*/
