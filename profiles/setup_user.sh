@@ -11,8 +11,6 @@ confirm () {
     esac
 }
 
-set -x
-
 echo 'generatind ssh key'
 confirm && ssh-keygen -q
 
