@@ -1,0 +1,6 @@
+# testing graph Adjacency_matrix
+# value of v0x5ac0780 [label="six:6"]; is [label="six:6"]
+# value of v0x5ac0780 [label="six:600"]; is [label="six:600"]
+# value of v0x5ac0500 -> v0x5ac0600 [label="myedge:2"]; is [label="myedge:2"]
+# top element is: null_vertex
+# caught exception: Looking for a vertex (v0x5ac0600 [label="baz:3"];) which has not been registered.

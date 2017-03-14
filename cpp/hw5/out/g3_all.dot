@@ -1,0 +1,27 @@
+digraph Node_tree
+{
+	# vertices:
+	v0x5b017a0 [label="foo:1"];
+	v0x5b019a0 [label="five:5"];
+	v0x5b01a20 [label="six:600"];
+	v0x5b018a0 [label="baz:3"];
+	v0x5b01820 [label="bar:2"];
+
+	# edges:
+	v0x5b017a0 -> v0x5b018a0 [label="myedge:2"];
+	v0x5b017a0 -> v0x5b019a0 [label=":1"];
+	v0x5b019a0 -> v0x5b01a20 [label=":1"];
+	v0x5b018a0 -> v0x5b01820 [label=":1"];
+
+	# adjacency:
+	# 0,0,1,0,1,0,0,
+	# 0,0,0,0,0,0,0,
+	# 0,1,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,
+	# 0,0,0,0,0,1,0,
+	# 0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,0,
+
+}
+
+

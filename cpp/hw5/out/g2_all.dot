@@ -1,0 +1,31 @@
+digraph Node_graph
+{
+	# vertices:
+	v0x5ada820 [label="foo:1"];
+	v0x5adaa20 [label="five:5"];
+	v0x5adab20 [label="seven:7"];
+	v0x5adaaa0 [label="six:600"];
+	v0x5ada920 [label="baz:3"];
+	v0x5ada8a0 [label="bar:2"];
+
+	# edges:
+	v0x5ada820 -> v0x5ada920 [label="myedge:2"];
+	v0x5ada820 -> v0x5adaa20 [label=":1"];
+	v0x5adaa20 -> v0x5adaaa0 [label=":1"];
+	v0x5adaa20 -> v0x5adab20 [label=":1"];
+	v0x5adaaa0 -> v0x5ada820 [label=":1"];
+	v0x5ada920 -> v0x5ada8a0 [label=":1"];
+	v0x5ada920 -> v0x5adaa20 [label=":1"];
+
+	# adjacency:
+	# 0,0,1,0,1,0,0,
+	# 0,0,0,0,0,0,0,
+	# 0,1,0,0,1,0,0,
+	# 0,0,0,0,0,0,1,
+	# 0,0,0,0,0,1,1,
+	# 1,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,0,
+
+}
+
+
