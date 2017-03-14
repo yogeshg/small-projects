@@ -194,7 +194,8 @@ std::vector<Edge> sorted_edges(Graph g) {
     std::vector<Edge_ptr>all_edges= g.edges();
     std::vector<Edge>edges;
     for(Edge_ptr p: all_edges) {
-        edges.push_back(*p);
+        if(p)
+            edges.push_back(*p);
     }
     std::sort(edges.begin(), edges.end(), compare_edges);
     return edges; 

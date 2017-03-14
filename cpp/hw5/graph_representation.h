@@ -125,7 +125,12 @@ class Adjacency_matrix {
         }
 
         Vertex_ptr top() const {
-            return vertex_list[0];
+            for( auto v: vertex_list) {
+                if(v) {
+                    return v;
+                }
+            }
+            return nullptr;
         }
         const std::string name;
     private:
@@ -262,18 +267,20 @@ class Node_graph {
                 auto n = to_visit.top();
                 to_visit.pop();
                 // std::cout << "DEBUG: visiting " <<toDot(n->x) << "\n";
-                auto it = visited.find(n);
-                if(it==visited.end()) {
-                    for(auto e: n->edges) {
-                        all_edges.push_back(e);
-                    }
-                    for(auto m: n->neighbors) {
-                        to_visit.push(m);
-                    }
-                    visited.insert(n);
-                } else {
+                try {
+                    auto it = visited.find(n);
+                    if(it==visited.end()) {
+                        for(auto e: n->edges) {
+                            all_edges.push_back(e);
+                        }
+                        for(auto m: n->neighbors) {
+                            to_visit.push(m);
+                        }
+                        visited.insert(n);
+                    } else {
 
-                }
+                    }
+                } catch(...) {}
             }
             return all_edges;
         }

@@ -66,10 +66,7 @@ void test(Graph& a, std::string report_prefix="", std::string graph_prefix="") {
         r.get_os() << "# " << "value of " <<toDot(e)<<" is "<< toLabel(e->value) <<"\n";
         g_all.get_os()<< toDot(a) << "\n";
         // a.remove(pV5);
-        a.remove(pV1);
-        a.remove(pV3);
-        g_rem.get_os()<< toDot(a) << "\n";
-        r.get_os() << "# " << "top element is: " << toDot(top(a)) <<"\n";
+       r.get_os() << "# " << "top element is: " << toDot(top(a)) <<"\n";
         r.get_os() << "# " << "neighbors of "<<toDot(pV3) << " are: "<< a.edges_from(pV3).size() <<"\n";
         r.get_os() << "# " << "number of vertices not reachable form this are: "<< num_non_reachable_vertices(a)<<"\n";
         r.get_os() << "# " << "number of vertices not reachable form "<< toDot(pV6)  <<" are: "<< num_non_reachable_vertices(a, pV6)<<"\n";
@@ -90,7 +87,10 @@ void test(Graph& a, std::string report_prefix="", std::string graph_prefix="") {
         for(Edge e: sorted_edges(a)) {
             r.get_os() <<"#\t"<< toLabel(e.value)<<"\n";
         }
-    } catch (const char* e) {
+        try{ a.remove(pV1); } catch(...){};
+        try{ a.remove(pV3); } catch(...){};
+        g_rem.get_os()<< toDot(a) << "\n";
+     } catch (const char* e) {
         r.get_os() << "# " << "caught exception: " << e <<"\n";
     } catch (std::string e) {
         r.get_os() << "# " << "caught exception: " << e <<"\n";
