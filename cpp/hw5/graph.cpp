@@ -15,6 +15,7 @@ std::string toDot(Vertex_ptr v) {
     }
     return ss.str();
 }
+
 std::string toDot(Edge_ptr e) {
     std::stringstream ss;
     if(e) {
@@ -31,9 +32,14 @@ std::string toLabel(const Value& v) {
     ss <<"[label=\"" << v.first <<":"<<v.second<<"\"]";
     return ss.str();
 }
+
 std::string toId(Vertex_ptr v) {
     std::stringstream ss;
     ss <<"v"<<v;
     return ss.str();
 }
+
+bool compare_edges(Edge e, Edge f) {return e.value.second < f.value.second;}
+bool compare_vertices(Vertex x, Vertex y) {return x.second < y.second;}
+
 

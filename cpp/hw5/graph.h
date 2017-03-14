@@ -9,6 +9,8 @@
 #include<algorithm>
 #include<set>
 #include<stack>
+#include<utility>
+#include"graph_defaults.h"
 
 template<typename Representation>
 concept bool Graph = requires(Representation r, typename Representation::Vertex_ptr x, typename Representation::Edge_ptr e) {
@@ -173,11 +175,30 @@ bool fully_reachable(const Representation& g) {
     return fully_reachable(g, g.top());
 }
 
-//    void remove(Graph& g, Vertex_ptr x);
-//    value value(Graph& g, Vertex_ptr x); // vertex value
-//    void set_value(Graph& g, Vertex x, Value v); // set vertex value
-//    Value value(Graph& g, Edge_ptr e); // edge value
-//    void set_value(Graph& g, Edge_ptr e, Value v); // edge value
+template<Graph Representation>
+void remove(Graph& g, Vertex_ptr x) {
+    return g.remove(x);
+}
+
+std::vector<Vertex> sorted_vertices(Graph g) {
+    std::vector<Vertex_ptr>all_vertices = g.vertices();
+    std::vector<Vertex>vertices;
+    for(Vertex_ptr p: all_vertices) {
+        vertices.push_back(*p);
+    }
+    std::sort(vertices.begin(), vertices.end(), compare_vertices);
+    return vertices; 
+}
+
+std::vector<Edge> sorted_edges(Graph g) {
+    std::vector<Edge_ptr>all_edges= g.edges();
+    std::vector<Edge>edges;
+    for(Edge_ptr p: all_edges) {
+        edges.push_back(*p);
+    }
+    std::sort(edges.begin(), edges.end(), compare_edges);
+    return edges; 
+}
 
 //    Write a function that lists the vertexes in order of Values (highest value first)
 //    Write a function that lists the edges in order of Values (highest value first)

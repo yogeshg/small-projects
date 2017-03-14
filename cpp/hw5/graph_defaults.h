@@ -24,4 +24,7 @@ std::string toId(Vertex_ptr v);
 std::string toDot(Vertex_ptr v);
 std::string toDot(Edge_ptr e);
 
+bool compare_edges(Edge e, Edge f); 
+bool compare_vertices(Vertex x, Vertex y);
+
 #endif /* __GRAPH_DEFAULTS_H__ */

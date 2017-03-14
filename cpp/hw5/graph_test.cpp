@@ -29,11 +29,11 @@ class Log
     }
 };
 
-void test(Graph& a, std::string report_filename="", std::string graph_filename="") {
+void test(Graph& a, std::string report_prefix="", std::string graph_prefix="") {
     auto& out = std::cout;
-    Log g_all("g_all.dot");
-    Log g_rem("g_rem.dot");
-    Log r(report_filename);
+    Log g_all(graph_prefix + "_all.dot");
+    Log g_rem(graph_prefix + "_rem.dot");
+    Log r(report_prefix + ".txt");
     try {
         r.get_os() << "# " << "testing graph "<<a.name<<"\n";
         Vertex_ptr pV1 = std::make_shared<Vertex>("foo", 1);
@@ -59,6 +59,11 @@ void test(Graph& a, std::string report_filename="", std::string graph_filename="
         add_edge(a, pV5, pV6);
         try {add_edge(a, pV5, pV7);} catch (const char*e) {r.get_os() << "# " << "caught exception "<< e <<"\n"; }
         try {add_edge(a, pV6, pV1);} catch (const char*e) {r.get_os() << "# " << "caught exception "<< e <<"\n"; }
+        r.get_os() << "# " << "value of " <<toDot(pV6)<<" is "<< toLabel(*pV6) <<"\n";
+        *pV6 = {"six", 600};
+        e->value = {"myedge", 2};
+        r.get_os() << "# " << "value of " <<toDot(pV6)<<" is "<< toLabel(*pV6) <<"\n";
+        r.get_os() << "# " << "value of " <<toDot(e)<<" is "<< toLabel(e->value) <<"\n";
         g_all.get_os()<< toDot(a) << "\n";
         // a.remove(pV5);
         a.remove(pV1);
@@ -75,9 +80,16 @@ void test(Graph& a, std::string report_filename="", std::string graph_filename="
         r.get_os() << "# " << "top element is: " << toDot(top(a)) <<"\n";
         r.get_os() << "# " << "is there a cycle?: "<< exists_cycle(a) <<"\n";
         r.get_os() << "# " << "is there a cycle from "<< toDot(pV4) <<"?: "<< exists_cycle(a, pV4) <<"\n";
-
         r.get_os() << "# " << "are " << toDot(pV5) << " and "<< toDot(pV6) <<" adjacent? : " << a.adjacent(pV5, pV6) <<"\n";
         r.get_os() << "# " << "are " << toDot(pV5) << " and "<< toDot(pV1) <<" adjacent? : " << a.adjacent(pV5, pV1) <<"\n";
+        r.get_os() << "# sorted vertices:\n";
+        for(Vertex x: sorted_vertices(a)) {
+            r.get_os() <<"#\t"<< toLabel(x)<<"\n";
+        }
+        r.get_os() << "# sorted edges:\n";
+        for(Edge e: sorted_edges(a)) {
+            r.get_os() <<"#\t"<< toLabel(e.value)<<"\n";
+        }
     } catch (const char* e) {
         r.get_os() << "# " << "caught exception: " << e <<"\n";
     } catch (std::string e) {
@@ -87,12 +99,12 @@ void test(Graph& a, std::string report_filename="", std::string graph_filename="
 }
 
 int main() {
-    // Adjacency_matrix<Vertex_ptr, Edge_ptr> a1;
-    // test(a1, "", "");
+    Adjacency_matrix<Vertex_ptr, Edge_ptr> a1;
+    test(a1, "out/r1", "out/g1");
     Node_graph<Vertex_ptr, Edge_ptr> a2;
-    test(a2, "", "");
-    // Node_tree<Vertex_ptr, Edge_ptr> a3;
-    // test(a3, "", "");
+    test(a2, "out/r2", "out/g2");
+    Node_tree<Vertex_ptr, Edge_ptr> a3;
+    test(a3, "out/r3", "out/g3");
     return 0;
 }
 
