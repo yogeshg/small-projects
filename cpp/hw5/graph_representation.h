@@ -41,7 +41,6 @@ class Adjacency_matrix {
         }
 
         void add_edge(Edge_ptr e){
-            edge_list.push_back(e);
             int i, j = 0;
             i = find_vertex(e->start);
             j = find_vertex(e->end);
@@ -50,7 +49,22 @@ class Adjacency_matrix {
             }
             m.at(i).at(j) = e;
         };
-        int num_edges() const {return edge_list.size();};
+
+        void remove(Vertex_ptr v) {
+            auto i = find_vertex(v);
+            for(auto& row : m) {
+                Edge_ptr null_edge_ptr;
+                row[i] = null_edge_ptr;
+            }
+            for(auto& e: m.at(i)) {
+                Edge_ptr null_edge_ptr;
+                e = null_edge_ptr;
+            }
+            Vertex_ptr null_vertex_ptr;
+            vertex_list[i] = null_vertex_ptr;
+        }
+
+        int num_edges() const {return edges().size();};
         int num_vertices() const {return vertex_list.size();};
 
         bool adjacent(Vertex_ptr x1, Vertex_ptr x2) const {
@@ -76,10 +90,24 @@ class Adjacency_matrix {
         }
 
         std::vector<Edge_ptr> edges() const {
+            std::vector<Edge_ptr> edge_list;
+            for(auto& row : m) {
+                for(auto& edge : row) {
+                    if(edge) {
+                        edge_list.push_back(edge);
+                    }
+                }
+            }
             return edge_list;
         }
         std::vector<Vertex_ptr> vertices() const {
-            return vertex_list;
+            std::vector<Vertex_ptr> notnull_vertex_list;
+            for(auto& x: vertex_list) {
+                if(x) {
+                    notnull_vertex_list.push_back(x);
+                }
+            }
+            return notnull_vertex_list;
         }
         std::vector<std::vector<bool>> adjacency() const {
             const int n = num_vertices();
@@ -103,7 +131,6 @@ class Adjacency_matrix {
     private:
         std::vector<std::vector<Edge_ptr>> m;           // actaual matrix
         std::vector<Vertex_ptr> vertex_list;               // list of vertices
-        std::vector<Edge_ptr> edge_list;                    // list of edges
 
         int find_vertex(const Vertex_ptr& x) const {
             int i=0;
@@ -112,7 +139,9 @@ class Adjacency_matrix {
                     return i;
                 }
             }
-            return i;
+            std::stringstream ss;
+            ss << "Looking for a vertex ("<< toDot(x) <<") which has not been registered.";
+            throw ss.str(); 
         }
 };
 
@@ -164,8 +193,8 @@ class Node_graph {
 
         void add_edge(Edge_ptr e){
             // std::cout << "DEBUG: adding edge.\n";
-            auto i  = vertex2node.find(e->start);
-            auto j  = vertex2node.find(e->end);
+            auto i = vertex2node.find(e->start);
+            auto j = vertex2node.find(e->end);
 
             if( (i==vertex2node.end()) || (j==vertex2node.end()) ) {
                 throw "Edge contains a vertex that is not in Graph.";
@@ -175,6 +204,38 @@ class Node_graph {
             i->second->edges.push_back(e);
 
         };
+
+        void remove(Vertex_ptr v) {
+            const auto p = find_vertex(v);
+            const bool is_root = (root==p);
+            // remove reference from children, make them root if required
+            for(auto q: p->neighbors) {
+                if(is_root) {
+                    root = q;
+                }
+                // They do not have a reference to the parent
+            }
+            // remove reference from parent
+            const auto all_vertices = vertices();
+            for(auto x: all_vertices) {
+                auto q = find_vertex(x);
+                const int num_children = q->neighbors.size();
+                int index_child = num_children;
+                for(auto i = 0; i < num_children; ++i) {
+                    if(q->edges.at(i)->end == v) {
+                        index_child = i;
+                        // std::cout << "DEBUG: found a parent" << toDot(x) << "with child num "<< index_child <<" \n";
+                        // std::cout << "DEBUG: lengths of neighbors is "<< q->neighbors.size()
+                        //     << " and edges is " << q->edges.size() << "\n";
+                        q->neighbors.erase(q->neighbors.begin() + index_child);
+                        q->edges.erase(q->edges.begin() + index_child);
+                        break;
+                    }
+                }
+            }
+            p->clear();
+        }
+
         int num_edges() const {return edges().size();};
         int num_vertices() const {return vertices().size();};
 

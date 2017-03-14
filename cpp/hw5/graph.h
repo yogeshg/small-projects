@@ -22,7 +22,9 @@ concept bool Graph = requires(Representation r, typename Representation::Vertex_
     {r.edges()} -> std::vector<typename Representation::Edge_ptr>;
     {r.edges_from(x)} -> std::vector<typename Representation::Edge_ptr>;
     {r.top()} -> typename Representation::Vertex_ptr;
+    {r.remove(x)} -> void;
     {e} -> bool;
+    {x} -> bool;
     {e->start} -> typename Representation::Vertex_ptr;
     {e->end} -> typename Representation::Vertex_ptr;
     {make_edge(x,x)} -> typename Representation::Edge_ptr;

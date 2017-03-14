@@ -73,6 +73,37 @@ class Node_tree {
             p_end_node->parent = p_start_node;
 
         };
+        void remove(Vertex_ptr v) {
+            const auto p = find_vertex(v);
+            const bool is_root = (root==p);
+            // remove reference from children, make them root if reqd
+            for(auto q: p->neighbors) {
+                if(is_root) {
+                    root = q;
+                }
+                q->parent = nullptr;
+            }
+            // remove reference from parent
+            if(p->parent) {
+                const int num_siblings = p->parent->neighbors.size();
+                int index_sibling = num_siblings;
+                for(int i = 0; i <num_siblings; ++i){
+                    if(p->parent->edges.at(i)->end==v) {
+                        index_sibling = i;
+                        break;
+                    }
+                }
+                if(index_sibling >= num_siblings) {
+                    throw "Vertex should be a child of parent.";
+                }
+                p->parent->edges.erase(p->parent->edges.begin() + index_sibling);
+                p->parent->neighbors.erase(p->parent->neighbors.begin() + index_sibling);
+            }
+            // clear current node
+            p->clear();
+
+        }
+
         int num_edges() const {return edges().size();};
         int num_vertices() const {return vertices().size();};
 
