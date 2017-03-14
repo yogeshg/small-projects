@@ -2,22 +2,22 @@
 # caught exception Can not make this edge in a tree.
 # caught exception Can not make this edge in a tree.
 # caught exception Can not make this edge in a tree.
-# value of v0x5b10710 [label="six:6"]; is [label="six:6"]
-# value of v0x5b10710 [label="six:600"]; is [label="six:600"]
-# value of v0x5b10490 -> v0x5b10590 [label="myedge:2"]; is [label="myedge:2"]
-# top element is: v0x5b10490 [label="foo:1"];
-# neighbors of v0x5b10590 [label="baz:3"]; are: 1
+# value of v0x5ae8d30 [label="six:6"]; is [label="six:6"]
+# value of v0x5ae8d30 [label="six:600"]; is [label="six:600"]
+# value of v0x5ae8ab0 -> v0x5ae8bb0 [label="myedge:2"]; is [label="myedge:2"]
+# top element is: v0x5ae8ab0 [label="foo:1"];
+# neighbors of v0x5ae8bb0 [label="baz:3"]; are: 1
 # number of vertices not reachable form this are: 0
-# number of vertices not reachable form v0x5b10710 [label="six:600"]; are: 4
-# number of vertices not reachable form v0x5b10790 [label="seven:7"]; are: 5
-# number of vertices not reachable form v0x5b10590 [label="baz:3"]; are: 3
+# number of vertices not reachable form v0x5ae8d30 [label="six:600"]; are: 4
+# number of vertices not reachable form v0x5ae8db0 [label="seven:7"]; are: 5
+# number of vertices not reachable form v0x5ae8bb0 [label="baz:3"]; are: 3
 # is this graph fully reachable?: 1
-# is this graph fully reachable from v0x5b10790 [label="seven:7"];?: 0
-# top element is: v0x5b10490 [label="foo:1"];
+# is this graph fully reachable from v0x5ae8db0 [label="seven:7"];?: 0
+# top element is: v0x5ae8ab0 [label="foo:1"];
 # is there a cycle?: 0
-# is there a cycle from v0x5b10610 [label="four:4"];?: 0
-# are v0x5b10690 [label="five:5"]; and v0x5b10710 [label="six:600"]; adjacent? : 1
-# are v0x5b10690 [label="five:5"]; and v0x5b10490 [label="foo:1"]; adjacent? : 0
+# is there a cycle from v0x5ae8c30 [label="four:4"];?: 0
+# are v0x5ae8cb0 [label="five:5"]; and v0x5ae8d30 [label="six:600"]; adjacent? : 1
+# are v0x5ae8cb0 [label="five:5"]; and v0x5ae8ab0 [label="foo:1"]; adjacent? : 0
 # sorted vertices:
 #	[label="foo:1"]
 #	[label="bar:2"]

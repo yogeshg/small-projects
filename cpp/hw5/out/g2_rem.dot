@@ -1,16 +1,20 @@
 digraph Node_graph
 {
 	# vertices:
-	null_vertex
+	v0x5b159f0 [label="five:5"];
+	v0x5b15af0 [label="seven:7"];
+	v0x5b15a70 [label="six:600"];
 
 	# edges:
+	v0x5b159f0 -> v0x5b15a70 [label=":1"];
+	v0x5b159f0 -> v0x5b15af0 [label=":1"];
 
 	# adjacency:
 	# 0,0,0,0,0,0,0,
 	# 0,0,0,0,0,0,0,
 	# 0,0,0,0,0,0,0,
-	# 0,0,0,0,0,0,0,
-	# 0,0,0,0,0,0,0,
+	# 0,0,0,0,0,0,1,
+	# 0,0,0,0,0,1,1,
 	# 0,0,0,0,0,0,0,
 	# 0,0,0,0,0,0,0,
 

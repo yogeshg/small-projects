@@ -1,20 +1,20 @@
 # testing graph Adjacency_matrix
-# value of v0x5ac0780 [label="six:6"]; is [label="six:6"]
-# value of v0x5ac0780 [label="six:600"]; is [label="six:600"]
-# value of v0x5ac0500 -> v0x5ac0600 [label="myedge:2"]; is [label="myedge:2"]
-# top element is: v0x5ac0500 [label="foo:1"];
-# neighbors of v0x5ac0600 [label="baz:3"]; are: 2
+# value of v0x5abc220 [label="six:6"]; is [label="six:6"]
+# value of v0x5abc220 [label="six:600"]; is [label="six:600"]
+# value of v0x5abbfa0 -> v0x5abc0a0 [label="myedge:2"]; is [label="myedge:2"]
+# top element is: v0x5abbfa0 [label="foo:1"];
+# neighbors of v0x5abc0a0 [label="baz:3"]; are: 2
 # number of vertices not reachable form this are: 1
-# number of vertices not reachable form v0x5ac0780 [label="six:600"]; are: 1
-# number of vertices not reachable form v0x5ac0800 [label="seven:7"]; are: 6
-# number of vertices not reachable form v0x5ac0600 [label="baz:3"]; are: 1
+# number of vertices not reachable form v0x5abc220 [label="six:600"]; are: 1
+# number of vertices not reachable form v0x5abc2a0 [label="seven:7"]; are: 6
+# number of vertices not reachable form v0x5abc0a0 [label="baz:3"]; are: 1
 # is this graph fully reachable?: 0
-# is this graph fully reachable from v0x5ac0800 [label="seven:7"];?: 0
-# top element is: v0x5ac0500 [label="foo:1"];
+# is this graph fully reachable from v0x5abc2a0 [label="seven:7"];?: 0
+# top element is: v0x5abbfa0 [label="foo:1"];
 # is there a cycle?: 1
-# is there a cycle from v0x5ac0680 [label="four:4"];?: 0
-# are v0x5ac0700 [label="five:5"]; and v0x5ac0780 [label="six:600"]; adjacent? : 1
-# are v0x5ac0700 [label="five:5"]; and v0x5ac0500 [label="foo:1"]; adjacent? : 0
+# is there a cycle from v0x5abc120 [label="four:4"];?: 0
+# are v0x5abc1a0 [label="five:5"]; and v0x5abc220 [label="six:600"]; adjacent? : 1
+# are v0x5abc1a0 [label="five:5"]; and v0x5abbfa0 [label="foo:1"]; adjacent? : 0
 # sorted vertices:
 #	[label="foo:1"]
 #	[label="bar:2"]

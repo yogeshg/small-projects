@@ -1,17 +1,17 @@
 digraph Node_tree
 {
 	# vertices:
-	v0x5b10490 [label="foo:1"];
-	v0x5b10690 [label="five:5"];
-	v0x5b10710 [label="six:600"];
-	v0x5b10590 [label="baz:3"];
-	v0x5b10510 [label="bar:2"];
+	v0x5b2a020 [label="foo:1"];
+	v0x5b2a220 [label="five:5"];
+	v0x5b2a2a0 [label="six:600"];
+	v0x5b2a120 [label="baz:3"];
+	v0x5b2a0a0 [label="bar:2"];
 
 	# edges:
-	v0x5b10490 -> v0x5b10590 [label="myedge:2"];
-	v0x5b10490 -> v0x5b10690 [label=":1"];
-	v0x5b10690 -> v0x5b10710 [label=":1"];
-	v0x5b10590 -> v0x5b10510 [label=":1"];
+	v0x5b2a020 -> v0x5b2a120 [label="myedge:2"];
+	v0x5b2a020 -> v0x5b2a220 [label=":1"];
+	v0x5b2a220 -> v0x5b2a2a0 [label=":1"];
+	v0x5b2a120 -> v0x5b2a0a0 [label=":1"];
 
 	# adjacency:
 	# 0,0,1,0,1,0,0,

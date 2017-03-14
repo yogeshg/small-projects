@@ -1,23 +1,23 @@
 digraph Adjacency_matrix
 {
 	# vertices:
-	v0x5ac0500 [label="foo:1"];
-	v0x5ac0580 [label="bar:2"];
-	v0x5ac0600 [label="baz:3"];
-	v0x5ac0680 [label="four:4"];
-	v0x5ac0700 [label="five:5"];
-	v0x5ac0780 [label="six:600"];
-	v0x5ac0800 [label="seven:7"];
+	v0x5b00650 [label="foo:1"];
+	v0x5b006d0 [label="bar:2"];
+	v0x5b00750 [label="baz:3"];
+	v0x5b007d0 [label="four:4"];
+	v0x5b00850 [label="five:5"];
+	v0x5b008d0 [label="six:600"];
+	v0x5b00950 [label="seven:7"];
 
 	# edges:
-	v0x5ac0500 -> v0x5ac0600 [label="myedge:2"];
-	v0x5ac0500 -> v0x5ac0700 [label=":1"];
-	v0x5ac0600 -> v0x5ac0580 [label=":1"];
-	v0x5ac0600 -> v0x5ac0700 [label=":1"];
-	v0x5ac0680 -> v0x5ac0800 [label=":1"];
-	v0x5ac0700 -> v0x5ac0780 [label=":1"];
-	v0x5ac0700 -> v0x5ac0800 [label=":1"];
-	v0x5ac0780 -> v0x5ac0500 [label=":1"];
+	v0x5b00650 -> v0x5b00750 [label="myedge:2"];
+	v0x5b00650 -> v0x5b00850 [label=":1"];
+	v0x5b00750 -> v0x5b006d0 [label=":1"];
+	v0x5b00750 -> v0x5b00850 [label=":1"];
+	v0x5b007d0 -> v0x5b00950 [label=":1"];
+	v0x5b00850 -> v0x5b008d0 [label=":1"];
+	v0x5b00850 -> v0x5b00950 [label=":1"];
+	v0x5b008d0 -> v0x5b00650 [label=":1"];
 
 	# adjacency:
 	# 0,0,1,0,1,0,0,
