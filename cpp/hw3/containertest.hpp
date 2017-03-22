@@ -27,6 +27,14 @@ class ContainerTest {
         // std::cerr << "random values:"  << toString(values);
         // std::cerr << "random positions:"  << toString(positions);
     }
+    void run(StopWatch& w) {
+        w.check();
+        insert();
+        w.check();
+        remove();
+        w.check();
+    }
+
     void insert() {
         for(int i=0; i<size; ++i){
 #if defined CONTAINER_INSERTS

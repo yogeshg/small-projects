@@ -23,20 +23,18 @@ int main(int argc, char** argv) {
         return 1;
     }
     StopWatch w;
-#ifdef CONTAINER
-#define XSTR(x) STR(x)
-#define STR(x) #x
-    std::cout << XSTR(CONTAINER) <<" ";
-    ContainerTest<CONTAINER> t(size, seed);
-#endif
 
-    w.check();
-    t.insert();
-    w.check();
-    t.remove();
-    w.check();
+    ContainerTest<std::vector<int>> t(size, seed);
+    t.run(w);
     std::cout << size << " " << seed << " ";
     w.toString(std::cout);
     w.reset();
+
+    ContainerTest<std::list<int>> t2(size, seed);
+    t2.run(w);
+    std::cout << size << " " << seed << " ";
+    w.toString(std::cout);
+    w.reset();
+
     return 0;
 }
