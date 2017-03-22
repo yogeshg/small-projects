@@ -1,4 +1,4 @@
 *.pdf
 archive
 logs
-
+.vagrant
