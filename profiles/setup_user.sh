@@ -11,7 +11,11 @@ confirm () {
     esac
 }
 
-echo 'generatind ssh key'
+PROFILES=${PROFILES:-.}
+
+echo 'setting profiles from directory' $PROFILES
+
+echo 'generating ssh key'
 confirm && ssh-keygen -q
 
 echo 'granting ssh access'
@@ -25,6 +29,9 @@ confirm && cat $PROFILES/gitconfig.cfg >> $HOME/.gitconfig
 
 echo 'appending bashrc'
 confirm && cat $PROFILES/bashrc.sh >> $HOME/.bashrc
+
+echo 'appending bash_dev.sh'
+confirm && cat $PROFILES/bash_dev.sh >> $HOME/.bash_dev
 
 echo 'appending bash_aliases.sh'
 confirm && cat $PROFILES/bash_aliases.sh >> $HOME/.bash_aliases
