@@ -13,3 +13,4 @@ set expandtab       " Expand TABs to spaces
 
 set hlsearch        " highlight search results
 
+syntax on
