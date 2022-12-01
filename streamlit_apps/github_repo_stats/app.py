@@ -28,6 +28,7 @@ def main(st):
             repo_names = default_input
         for i,name in enumerate(repo_names.split(",")):
             repo_data, err = crawl_repo(name)
+            st.markdown(f"**{name}**")
             st.line_chart(repo_data, x="created_at", y=("issue_count","release_count"))
             all_data.extend(repo_data)
             all_errs.append(err)
