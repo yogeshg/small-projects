@@ -13,6 +13,8 @@ SAMPLE_REPOS = [
     "neithere/argh",
 ]
 
+CACHE_TIME = 86400
+
 def parse(strtime):
     return dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%SZ")
 
@@ -41,7 +43,7 @@ def main(st):
         st.text("rate limit:")
         st.json(get_rate_limit())
 
-@st.cache(ttl=600)
+@st.cache(ttl=60)
 def sample_repos():
     return random.sample(SAMPLE_REPOS, 3)
 
@@ -56,16 +58,21 @@ def parse_unixtimestamp(obj, key="reset", depth=10):
     if depth <= 0:
         return
     if key in obj:
-        obj[key+"_parsed"] = dt.datetime.fromtimestamp(obj[key]).isoformat()
+        relative = dt.datetime.fromtimestamp(obj[key]) - dt.datetime.now()
+        obj[key+"_parsed"] = str(relative)
     for k,v in obj.items():
         if isinstance(v, dict):
             parse_unixtimestamp(v, key=key, depth=depth-1)
 
-@st.cache(ttl=600)
+@st.cache(ttl=CACHE_TIME)
+def get_request(req_str):
+    resp = requests.get(req_str)
+    return resp
+
 def page_and_parse(gh_api_request):
     data = []
     for page_idx in range(100):
-        resp = requests.get(gh_api_request + f"&per_page=100&page={page_idx+1}")
+        resp = get_request(gh_api_request + f"&per_page=100&page={page_idx+1}")
         if not resp:
             err = f"error in making request: {resp.text}"
             return data, err
@@ -83,8 +90,8 @@ def crawl_repo(repo_name):
 
     print(f"making requests for {repo_name}")
 
-    issues, issues_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/issues?filter=all&state=all&sort=created")
     releases, releases_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/releases")
+    issues, issues_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/issues?filter=all&state=all&sort=created")
 
     all_data = []
     for created_at, url in issues:
