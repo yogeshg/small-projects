@@ -40,6 +40,11 @@ def value2(they, outcome):
             ),
     )[they][outcome]
 
+SAMPLE = """A Y
+B X
+C Z
+"""
+
 def func2(inp):
     score1 = 0
     score2 = 0
@@ -63,10 +68,9 @@ def func2(inp):
 
 # score_shape = 1, 2, 3
 # score_round = 0, 3, 6
-# 
 
 def main(st):
-    inp = st.text_area("input")
+    inp = st.text_area("input", SAMPLE)
     out = func2(inp)
     st.write(out)
 
