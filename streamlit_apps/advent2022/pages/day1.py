@@ -17,7 +17,6 @@ def func(inp):
     )
 
 def main(st):
-    st.write("hello")
     inp = st.text_area("input")
     out = func(inp)
     st.write(out)
