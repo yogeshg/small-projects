@@ -1,11 +1,20 @@
 import streamlit as st
 
 def func(inp):
+    all_cals = []
+    curr_cal = 0
     for i,line in enumerate(inp.split("\n")):
         if line == "":
-            print(f"{i}th line: {line}")
-        # print(line)
-    return "done"
+            all_cals.append(curr_cal)
+            curr_cal = 0
+        else:
+            cal = int(line)
+            curr_cal += cal
+    all_cals.sort()
+    return dict(
+        a1=all_cals[-1:],
+        a2=sum(all_cals[-3:]),
+    )
 
 def main(st):
     st.write("hello")
