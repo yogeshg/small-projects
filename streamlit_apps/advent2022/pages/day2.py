@@ -72,6 +72,5 @@ def main(st):
     inp = st.text_area("input", SAMPLE)
     out = func2(inp)
     st.write(out)
-    st.write("how cool is that?")
 
 main(st)
