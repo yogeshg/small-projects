@@ -83,6 +83,7 @@ def page_and_parse(gh_api_request, since):
         resp = get_request(gh_api_request + f"&per_page=100&page={page_idx+1}")
         if not resp:
             err = f"error in making request: {resp.text}"
+            print(f"{gh_api_request}, page: {page_idx+1}: {err}")
             return data, err
         rc = 0
         last_created_at = since
@@ -90,7 +91,6 @@ def page_and_parse(gh_api_request, since):
             rc += 1
             created_at, url = parse(row.get("created_at")), row.get("html_url")
             data.append((created_at, url))
-            print(f"last_created_at, created_at, since: {last_created_at}, {created_at}, {since}")
             last_created_at = created_at
         if rc < 100 or last_created_at < since:
             break
