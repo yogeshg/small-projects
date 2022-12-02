@@ -33,6 +33,7 @@ def main(st):
             st.write("using sample input: ", default_input)
             repo_names = default_input
         since = st.date_input("since", value=dt.datetime.now()-dt.timedelta(days=90))
+        since = dt.datetime(since.year, since.month, since.day)
         for i,name in enumerate(repo_names.split(",")):
             repo_data, err = crawl_repo(name, since)
             st.markdown(f"**{name}**")
