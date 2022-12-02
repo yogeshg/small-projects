@@ -117,7 +117,7 @@ def crawl_repo(repo_name):
     if len(processed_data) == 0:
         processed_data.append(dict(
             repo_name=repo_name,
-            created_at="2222-12-12T22:22:22Z",
+            created_at=parse("2222-12-12T22:22:22Z"),
             issue_count=0,
             release_count=0,
             url=""
