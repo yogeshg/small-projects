@@ -75,24 +75,29 @@ def get_request(req_str):
     print(f"requesting: {req_str}")
     resp = requests.get(req_str)
     print(f"response: {resp}")
+    resp.raise_for_status()
     return resp
 
 def page_and_parse(gh_api_request, since):
     data = []
     for page_idx in range(100):
-        resp = get_request(gh_api_request + f"&per_page=100&page={page_idx+1}")
-        if not resp:
-            err = f"error in making request: {resp.text}"
+        resp = None
+        try:
+            resp = get_request(gh_api_request + f"&per_page=100&page={page_idx+1}")
+        except Exception as ex:
+            err = f"error in making request: {ex}"
             print(f"{gh_api_request}, page: {page_idx+1}: {err}")
             return data, err
         rc = 0
-        last_created_at = since
         for row in resp.json():
             rc += 1
+            if row.get("pull_request") is not None:
+                continue
             created_at, url = parse(row.get("created_at")), row.get("html_url")
+            if created_at < since:
+                break
             data.append((created_at, url))
-            last_created_at = created_at
-        if rc < 100 or last_created_at < since:
+        if rc < 100:
             break
     return data, None
 
@@ -101,7 +106,7 @@ def crawl_repo(repo_name, since):
     print(f"making requests for {repo_name}")
 
     since_clause = f"&since={format(since)}"
-    releases, releases_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/releases", since)
+    releases, releases_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/releases?_=_", since)
     issues, issues_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/issues?filter=all&state=all&sort=created{since_clause}", since)
 
     all_data = []
