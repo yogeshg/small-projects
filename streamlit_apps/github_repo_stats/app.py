@@ -30,15 +30,17 @@ def plot(repo_data):
     fig.add_trace(go.Scatter(
         x = [row.get("created_at") for row in repo_data],
         y = [row.get("release_count") for row in repo_data],
+        hovertext = [row.get("url") for row in repo_data],
         name = "releases",
     ))
     fig.add_trace(go.Scatter(
         x = [row.get("created_at") for row in repo_data],
         y = [row.get("issue_count") for row in repo_data],
+        hovertext = [row.get("url") for row in repo_data],
         name = "issues",
         yaxis = "y2",
     ))
-    fig.update_layout(yaxis2=dict(overlaying="y", side="right"))
+    fig.update_layout(hovermode="x unified", yaxis2=dict(overlaying="y", side="right"))
     return fig
 
 def main(st):
