@@ -12,4 +12,4 @@ def main(st):
     st.write(out)
 
 
-main()
+main(st)
