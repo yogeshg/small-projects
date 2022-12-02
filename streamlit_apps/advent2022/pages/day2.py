@@ -40,32 +40,25 @@ def value2(they, outcome):
             ),
     )[they][outcome]
 
-def func1(inp):
-    score = 0
+def func2(inp):
+    score1 = 0
+    score2 = 0
     for line in inp.split("\n"):
         they, you = line.split()
+
         score_round = is_win(they, you)
         score_shape = value(you)
         curr_score = score_shape + score_round
-        score += curr_score
+        score1 += curr_score
 
-    return dict(
-        a1=score,
-        a2=0,
-    )
-
-def func2(inp):
-    score = 0
-    for line in inp.split("\n"):
-        they, you = line.split()
         score_round = is_win2(they, you)
         score_shape = value2(they, you)
-        curr_score = score_shape + score_round
-        score += curr_score
+        curr_score2 = score_shape + score_round
+        score2 += curr_score2
 
     return dict(
-        a1=0,
-        a2=score,
+        a1=score1,
+        a2=score2,
     )
 
 # score_shape = 1, 2, 3
@@ -76,6 +69,5 @@ def main(st):
     inp = st.text_area("input")
     out = func2(inp)
     st.write(out)
-
 
 main(st)
