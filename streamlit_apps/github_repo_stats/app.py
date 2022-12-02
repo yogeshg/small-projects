@@ -14,9 +14,13 @@ SAMPLE_REPOS = [
 ]
 
 CACHE_TIME = 86400
+TIMEFORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
 def parse(strtime):
-    return dt.datetime.strptime(strtime, "%Y-%m-%dT%H:%M:%SZ")
+    return dt.datetime.strptime(strtime, TIMEFORMAT)
+
+def format(dttime):
+    return dttime.strftime(TIMEFORMAT)
 
 def main(st):
     all_data = []
@@ -28,8 +32,9 @@ def main(st):
             default_input = ",".join(samples)
             st.write("using sample input: ", default_input)
             repo_names = default_input
+        since = st.date_input("since", value=dt.datetime.now()-dt.timedelta(days=90))
         for i,name in enumerate(repo_names.split(",")):
-            repo_data, err = crawl_repo(name)
+            repo_data, err = crawl_repo(name, since)
             st.markdown(f"**{name}**")
             st.line_chart(repo_data, x="created_at", y=("issue_count","release_count"))
             all_data.extend(repo_data)
@@ -66,10 +71,12 @@ def parse_unixtimestamp(obj, key="reset", depth=10):
 
 @st.cache(ttl=CACHE_TIME)
 def get_request(req_str):
+    print(f"requesting: {req_str}")
     resp = requests.get(req_str)
+    print(f"response: {resp}")
     return resp
 
-def page_and_parse(gh_api_request):
+def page_and_parse(gh_api_request, since):
     data = []
     for page_idx in range(100):
         resp = get_request(gh_api_request + f"&per_page=100&page={page_idx+1}")
@@ -77,21 +84,24 @@ def page_and_parse(gh_api_request):
             err = f"error in making request: {resp.text}"
             return data, err
         rc = 0
+        last_created_at = since
         for row in resp.json():
+            print(f"last_created_at, created_at, since: {last_created_at}, {created_at}, {since}")
             rc += 1
-            created_at, url = row.get("created_at"), row.get("html_url")
+            created_at, url = parse(row.get("created_at")), row.get("html_url")
             data.append((created_at, url))
-        if rc < 100:
+            last_created_at = created_at
+        if rc < 100 or last_created_at < since:
             break
     return data, None
 
 
-def crawl_repo(repo_name):
-
+def crawl_repo(repo_name, since):
     print(f"making requests for {repo_name}")
 
-    releases, releases_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/releases")
-    issues, issues_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/issues?filter=all&state=all&sort=created")
+    since_clause = f"&since={format(since)}"
+    releases, releases_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/releases", since)
+    issues, issues_err = page_and_parse(f"https://api.github.com/repos/{repo_name}/issues?filter=all&state=all&sort=created{since_clause}", since)
 
     all_data = []
     for created_at, url in issues:
@@ -109,7 +119,7 @@ def crawl_repo(repo_name):
         release_count += release_incr
         processed_data.append(dict(
             repo_name=repo_name,
-            created_at=parse(created_at),
+            created_at=(created_at),
             issue_count=issue_count,
             release_count=release_count,
             url=url
