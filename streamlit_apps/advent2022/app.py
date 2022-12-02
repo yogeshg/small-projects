@@ -1,9 +1,9 @@
 import streamlit as st
 
 def func(inp):
-    for line in inp.split("\n"):
+    for i,line in enumerate(inp.split("\n")):
         if line == "":
-            print(f"line: {line}")
+            print(f"{i}th line: {line}")
         # print(line)
     return "done"
 
