@@ -2,6 +2,8 @@ import streamlit as st
 import random
 import requests
 import datetime as dt
+import plotly.graph_objects as go
+
 
 SAMPLE_REPOS = [
     "wandb/local",
@@ -22,6 +24,23 @@ def parse(strtime):
 def format(dttime):
     return dttime.strftime(TIMEFORMAT)
 
+
+def plot(repo_data):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x = [row.get("created_at") for row in repo_data],
+        y = [row.get("release_count") for row in repo_data],
+        name = "releases",
+    ))
+    fig.add_trace(go.Scatter(
+        x = [row.get("created_at") for row in repo_data],
+        y = [row.get("issue_count") for row in repo_data],
+        name = "issues",
+        yaxis = "y2",
+    ))
+    fig.update_layout(yaxis2=dict(overlaying="y", side="right"))
+    return fig
+
 def main(st):
     all_data = []
     all_errs = []
@@ -37,7 +56,7 @@ def main(st):
         for i,name in enumerate(repo_names.split(",")):
             repo_data, err = crawl_repo(name, since)
             st.markdown(f"**{name}**")
-            st.line_chart(repo_data, x="created_at", y=("issue_count","release_count"))
+            st.plotly_chart(plot(repo_data))
             all_data.extend(repo_data)
             all_errs.append(err)
     with st.expander("Debug"):
