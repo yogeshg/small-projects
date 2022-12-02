@@ -38,10 +38,28 @@ def main(st):
         st.text("data:")
         st.dataframe(all_data)
 
+        st.text("rate limit:")
+        st.json(get_rate_limit())
 
 @st.cache(ttl=600)
 def sample_repos():
     return random.sample(SAMPLE_REPOS, 3)
+
+@st.cache(ttl=60)
+def get_rate_limit():
+    resp = requests.get(f"https://api.github.com/rate_limit")
+    obj = resp.json()
+    parse_unixtimestamp(obj)
+    return obj
+
+def parse_unixtimestamp(obj, key="reset", depth=10):
+    if depth <= 0:
+        return
+    if key in obj:
+        obj[key+"_parsed"] = dt.datetime.fromtimestamp(obj[key]).isoformat()
+    for k,v in obj.items():
+        if isinstance(v, dict):
+            parse_unixtimestamp(v, key=key, depth=depth-1)
 
 @st.cache(ttl=600)
 def page_and_parse(gh_api_request):
