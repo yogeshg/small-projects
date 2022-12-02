@@ -5,6 +5,7 @@ def func(inp):
         if line == "":
             print(f"{i}th line: {line}")
         # print(line)
+    print("done")
     return "done"
 
 def main(st):
