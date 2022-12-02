@@ -2,7 +2,9 @@ import streamlit as st
 
 def func(inp):
     for line in inp.split("\n"):
-        print(line)
+        if line == "":
+            print(f"line: {line}")
+        # print(line)
     return "done"
 
 def main(st):
