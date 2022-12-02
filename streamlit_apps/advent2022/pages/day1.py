@@ -1,5 +1,22 @@
 import streamlit as st
 
+SAMPLE = """
+1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000
+"""
+
 def func(inp):
     all_cals = []
     curr_cal = 0
@@ -17,7 +34,7 @@ def func(inp):
     )
 
 def main(st):
-    inp = st.text_area("input")
+    inp = st.text_area("input", SAMPLE)
     out = func(inp)
     st.write(out)
 
