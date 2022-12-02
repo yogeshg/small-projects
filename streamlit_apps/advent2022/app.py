@@ -1,9 +1,10 @@
 import streamlit as st
 
 def func(inp):
+    lines = []
     for line in inp.split("\n"):
-        print(line)
-    return "done"
+        lines.append(line)
+    return lines
 
 def main(st):
     st.write("hello")
