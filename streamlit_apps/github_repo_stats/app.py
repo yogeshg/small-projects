@@ -86,10 +86,10 @@ def page_and_parse(gh_api_request, since):
         rc = 0
         last_created_at = since
         for row in resp.json():
-            print(f"last_created_at, created_at, since: {last_created_at}, {created_at}, {since}")
             rc += 1
             created_at, url = parse(row.get("created_at")), row.get("html_url")
             data.append((created_at, url))
+            print(f"last_created_at, created_at, since: {last_created_at}, {created_at}, {since}")
             last_created_at = created_at
         if rc < 100 or last_created_at < since:
             break
