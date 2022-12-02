@@ -42,8 +42,7 @@ def value2(they, outcome):
 
 SAMPLE = """A Y
 B X
-C Z
-"""
+C Z"""
 
 def func2(inp):
     score1 = 0
