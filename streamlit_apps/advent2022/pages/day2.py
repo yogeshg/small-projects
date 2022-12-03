@@ -72,5 +72,7 @@ def main(st):
     inp = st.text_area("input", SAMPLE)
     out = func2(inp)
     st.write(out)
+    data = [{"x": i, "y": i**2} for i in range(1000)]
+    st.dataframe(data)
 
 main(st)
