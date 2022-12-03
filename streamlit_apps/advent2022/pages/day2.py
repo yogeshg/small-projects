@@ -73,6 +73,6 @@ def main(st):
     out = func2(inp)
     st.write(out)
     data = [{"x": i, "y": i**2} for i in range(1000)]
-    st.dataframe(data)
+    st.scatter(data)
 
 main(st)
