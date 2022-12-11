@@ -47,6 +47,7 @@ def func(inp, mode=1, debug=False):
 
     monkeys = [Monkey(),]
     i = 0
+    BIG_M = 1
     while i < len(inp):
         l = inp[i]
         if l == "":
@@ -68,6 +69,7 @@ def func(inp, mode=1, debug=False):
             i+=1; l = inp[i]
             ll = after_prefix(l, "  Test: divisible by ")
             monkeys[-1].test_div = int(ll)
+            BIG_M *= int(ll)
 
             i+=1; l = inp[i]
             ll = after_prefix(l, "    If true: throw to monkey ")
@@ -81,18 +83,19 @@ def func(inp, mode=1, debug=False):
             
         i+=1
 
-    for round in range(20):
+    for round in range(10000):
+        print(f"{round}")
         for m in monkeys:
-            print(f"{m}")
             while len(m.items):
                 m.inspection_counter += 1
                 item = m.items.pop(0)
-                print(f"  Monkey inspects an item with a worry level of {item}.")
+                # print(f"  Monkey inspects an item with a worry level of {item}.")
                 item = m.operation(item)
-                print(f"    Worry level is {m.operation_desc} to {item}.")
+                # print(f"    Worry level is {m.operation_desc} to {item}.")
 
-                item //= 3
-                print(f"    Monkey gets bored with item. Worry level is divided by 3 to {item}.")
+                # item //= 3
+                # print(f"    Monkey gets bored with item. Worry level is divided by 3 to {item}.")
+                item %= BIG_M
 
                 if 0 == (item % m.test_div):
                     mid = m.test_true
@@ -101,8 +104,8 @@ def func(inp, mode=1, debug=False):
                     mid = m.test_false
                     status = "not divisible"
                 monkeys[mid].items.append(item)
-                print(f"    Current worry level is {status} by {m.test_div}.")
-                print(f"    Item with worry level {item} is thrown to monkey {mid}.")
+                # print(f"    Current worry level is {status} by {m.test_div}.")
+                # print(f"    Item with worry level {item} is thrown to monkey {mid}.")
 
     ctrs = [(m.inspection_counter, m.id) for m in monkeys]
     print(ctrs)
