@@ -26,7 +26,7 @@ def main():
         x = func(inp)
         print(x)
         x = func(inp, 14)
-        print(x)
+        sys.stdout.write(f"{x}\n")
         # x = func(inp, "p2")
         # print(x)
 
