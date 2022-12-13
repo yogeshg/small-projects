@@ -1,5 +1,6 @@
 import sys
 import os
+from functools import cmp_to_key
 
 
 def noop(*_):
@@ -42,10 +43,11 @@ def cmp3(x, y):
     raise ValueError(f"missed condition: {(x,y)}")
 
 
-def func(inp, mode=1, debug=False):
+def func(inp, mode=2, debug=False):
     idx = 0
     lines_read = 0
     out = 0
+    all_packs = []
     while lines_read < len(inp):
         idx += 1
 
@@ -62,11 +64,30 @@ def func(inp, mode=1, debug=False):
         # print(a)
         # print(b)
 
-        res = cmp3(a,b)
-        assert res in ("YES", "NO")
+        if mode == 1:
+            res = cmp3(a,b)
+            assert res in ("YES", "NO")
 
-        if res == "YES":
-            out += idx
+            if res == "YES":
+                out += idx
+        if mode == 2:
+            all_packs.append(a)
+            all_packs.append(b)
+
+    if mode == 2:
+        all_packs.append([[2]])
+        all_packs.append([[6]])
+        d = {"YES": -1, "NO": 1}
+        all_packs.sort(key=cmp_to_key(lambda x,y: d[cmp3(x,y)] ))
+        print(all_packs)
+
+        out = 1
+        for j in range(len(all_packs)):
+            if all_packs[j] == [[2]]:
+                out *= j+1
+            if all_packs[j] == [[6]]:
+                out *= j+1
+
 
 
     return out
