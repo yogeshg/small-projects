@@ -9,6 +9,49 @@ def noop(*_):
 
 # print = noop
 
+
+
+class DUJ:
+
+    class Node:
+        def __init__(self, x):
+            self.x = x
+            self.parent = None
+        def __repr__(self):
+            return f"{self.x} --> {self.parent is not None}"
+
+    def __init__(self, elems):
+        self.nodes = {x: DUJ.Node(x) for x in elems}
+
+    def join(self, x, y):
+        assert x != y
+        m = self.nodes[x]
+        n = self.nodes[y]
+        if m.parent is not None and n.parent is None:
+            n.parent = m.parent
+        elif n.parent is not None and m.parent is None:
+            m.parent = n.parent
+        elif m.parent == n.parent == None:
+            n.parent = m
+        elif m.parent == n.parent:
+            pass
+        else: # both have distinct parents
+            assert m.parent is not None and n.parent is not None, f"should be node: {(m.parent, n.parent)}"
+            self.join(m.parent.x, n.parent.x)
+
+    def setid(self, x):
+        curr = self.nodes[x]
+        # print(f"setid?{curr}")
+        while curr.parent != None and curr.parent != curr:
+            curr = curr.parent
+            # print(f"setid?{curr}")
+        # curr.parent == None
+        return curr.x
+
+
+
+
+
 def val(x):
     if x == "S":
         return 0
@@ -103,11 +146,97 @@ def rec(g, node, allowed_depth, visited, curr_depth, fwd, path_so_far, path_map)
         return found, found_depth
     return False, -1
 
-    
+
+class MetaNode:
+    def __init__(self, parent, nodes, children):
+        self.parent = parent
+        self.nodes = nodes
+        x = sum(xy[0] for xy in nodes) / len(nodes)
+        y = sum(xy[1] for xy in nodes) / len(nodes)
+        self.avg = (x,y)
+
+        self.children = children
+
+    def __repr__(self):
+        avg = "(%0.2f,%0.2f)" % self.avg
+        return f"MN({avg}, {self.nodes} / {self.parent})"
+
+class MetaGraph:
+
+    def __init__(self, graph, duj):
+        self.nodes = set()
+        self.graph = graph
+        self.duj = duj
+
+    def add_node(self, parent, nodes):
+        nodes = set(nodes)
+        children = set()
+        for node in nodes:
+            for child in self.graph.children(node[0], node[1], True):
+                if child in nodes:
+                    continue
+                childs_setid = self.duj.setid(child)
+                children.add(childs_setid)
+        node = MetaNode(parent, nodes, children)
+        self.nodes.add(node)
+
+    def children(self, node):
+        assert node in self.nodes
+        return node.children
+
+    def print(self):
+        for node in self.nodes:
+            print(f"({node}")
+            print(f"{self.children(node)}")
+
+
 
 def func(inp, mode=1, debug=False):
     g = Graph(inp)
     print(g)
+
+    nodeids = []
+    for i in range(g.m):
+        for j in range(g.n):
+            nodeids.append((i,j))
+    duj = DUJ(nodeids)
+    
+
+    for i in range(g.m):
+        for j in range(g.n):
+            children = g.children(i,j,True)
+            for cx,cy in children:
+                if g.grid[cx][cy] == g.grid[i][j]:
+                    duj.join((i,j), (cx, cy))
+
+    META_NODES = dict()
+    for i in range(g.m):
+        # row = ""
+        for j in range(g.n):
+            s = duj.setid((i,j))
+            if s not in META_NODES:
+                META_NODES[s] = list()
+            META_NODES[s].append((i,j))
+        # print(row)
+    pprint(META_NODES)
+    mg = MetaGraph(g, duj)
+    for k, v in META_NODES.items():
+        mg.add_node(k, v)
+
+    mg.print()
+
+
+
+    META_NODES2 = dict()
+    for k,v in META_NODES.items():
+        k2x = sum(xy[0] for xy in v) / len(v)
+        k2y = sum(xy[1] for xy in v) / len(v)
+        META_NODES2[(k2x, k2y)] = v
+        print(f"({k2x:0.03}, {k2y:0.03}):     {v}")
+
+    return
+
+
 
     for depth in range((g.m+g.n),g.m*g.n,10):
 
