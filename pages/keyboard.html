@@ -78,6 +78,7 @@
         const transcription = document.getElementById('transcription');
         let melody = [];
         let activeNotes = new Set();
+        let currentOctaveOffset = 0;
 
         const keyboardLayout = [
             "1234567890-=",
@@ -85,8 +86,6 @@
             "ASDFGHJKL;'",
             "ZXCVBNM,./"
         ];
-
-        const keyboardMap = {};
 
         const notes1 = ["C", "D", "E", "F#", "G#", "A#"];
         const notes2 = ["C#", "D#", "F", "G", "A", "B"];
@@ -103,24 +102,30 @@
             3: 5,
         }
 
-        for (let i = 0; i < keyboardLayout.length; i++) {
-            const notes = i % 2 === 0 ? notes1 : notes2;
-            let currOctave = rowToStartOctave[i];
-            let currNoteIdx = rowToStartNoteIdx[i];
+        function createKeyboardMap() {
+            const keyboardMap = {};
+            for (let i = 0; i < keyboardLayout.length; i++) {
+                const notes = i % 2 === 0 ? notes1 : notes2;
+                let currOctave = rowToStartOctave[i];
+                let currNoteIdx = rowToStartNoteIdx[i];
 
-            for (let j = 0; j < keyboardLayout[i].length; j++) {
-                const key = keyboardLayout[i][j];
-                if (key) {
-                    keyboardMap[key] = `${notes[currNoteIdx]}${currOctave}`;
-                }
+                for (let j = 0; j < keyboardLayout[i].length; j++) {
+                    const key = keyboardLayout[i][j];
+                    if (key) {
+                        keyboardMap[key] = `${notes[currNoteIdx]}${currOctave}`;
+                    }
 
-                // prepare for next note
-                currNoteIdx = (currNoteIdx + 1) % notes.length;
-                if (notes[currNoteIdx] === "C" || notes[currNoteIdx] === "C#") {
-                    currOctave++;
+                    // prepare for next note
+                    currNoteIdx = (currNoteIdx + 1) % notes.length;
+                    if (notes[currNoteIdx] === "C" || notes[currNoteIdx] === "C#") {
+                        currOctave++;
+                    }
                 }
             }
+            return keyboardMap;
         }
+
+        let keyboardMap = createKeyboardMap();
 
         function createHexGrid() {
             createHexRow(0, 0, keyboardLayout[0]);
@@ -139,42 +144,50 @@
                 const keyName = row[i];
                 // use lower case for key name to avoid confusion with note names
                 const displayName = keyName.toLowerCase();
-                const noteName = keyboardMap[keyName];
+                const noteName = getNoteWithOctaveOffset(keyboardMap[keyName]);
                 const isSharp = noteName.includes('#');
                 const keyColor = isSharp ? 'black' : 'white';
                 const key = document.createElement('div');
                 key.className = 'key';
                 key.classList.add(keyColor);
                 key.innerHTML = `${noteName}<div class="key-label">${displayName}</div>`;
-                key.dataset.note = noteName;
+                key.dataset.note = keyName;
                 
-                key.addEventListener('mousedown', () => startNote(key.dataset.note));
-                key.addEventListener('mouseup', () => stopNote(key.dataset.note));
-                key.addEventListener('mouseleave', () => stopNote(key.dataset.note));
+                key.addEventListener('mousedown', () => startNoteWithOffset(keyName));
+                key.addEventListener('mouseup', () => stopNoteWithOffset(keyName));
+                key.addEventListener('mouseleave', () => stopNoteWithOffset(keyName));
                 hexRow.appendChild(key);
             }
             jankoKeyboard.appendChild(hexRow);
         }
 
-        function getKeyForNote(note) {
-            return Object.keys(keyboardMap).find(key => keyboardMap[key] === note);
+        function getNoteWithOctaveOffset(note) {
+            const noteMatch = note.match(/([A-G]#?)(\d)/);
+            if (noteMatch) {
+                const noteName = noteMatch[1];
+                let octave = parseInt(noteMatch[2], 10) + currentOctaveOffset;
+                return `${noteName}${octave}`;
+            }
+            return note;
         }
 
-        function startNote(note) {
+        function startNoteWithOffset(key) {
+            const note = getNoteWithOctaveOffset(keyboardMap[key]);
             if (!activeNotes.has(note)) {
                 synth.triggerAttack(note);
                 activeNotes.add(note);
                 melody.push(note);
                 updateTranscription();
-                highlightKey(note, true);
+                highlightKey(key, true);
             }
         }
 
-        function stopNote(note) {
+        function stopNoteWithOffset(key) {
+            const note = getNoteWithOctaveOffset(keyboardMap[key]);
             if (activeNotes.has(note)) {
                 synth.triggerRelease(note);
                 activeNotes.delete(note);
-                highlightKey(note, false);
+                highlightKey(key, false);
             }
         }
 
@@ -182,14 +195,16 @@
             transcription.value = melody.join(' ');
         }
 
-        function highlightKey(note, isActive) {
-            const keys = document.querySelectorAll(`.key[data-note="${note}"]`);
-            keys.forEach(key => {
+        function highlightKey(key, isActive) {
+            const note = getNoteWithOctaveOffset(keyboardMap[key]);
+            const keys = document.querySelectorAll(`.key[data-note="${key}"]`);
+            keys.forEach(keyElement => {
                 if (isActive) {
-                    key.classList.add('active');
+                    keyElement.classList.add('active');
                 } else {
-                    key.classList.remove('active');
+                    keyElement.classList.remove('active');
                 }
+                // keyElement.innerHTML = `${note}<div class="key-label">${keyElement.textContent.toLowerCase()}</div>`;
             });
         }
 
@@ -197,16 +212,32 @@
             if (event.repeat) return;
             const key = event.key.toUpperCase();
             if (keyboardMap[key]) {
-                startNote(keyboardMap[key]);
+                startNoteWithOffset(key);
+            } else if (event.key === 'Shift') {
+                if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+                    currentOctaveOffset--;
+                } else if (event.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                    currentOctaveOffset++;
+                }
+                // Update the displayed notes
+                updateKeyboardDisplay();
             }
         });
 
         document.addEventListener('keyup', (event) => {
             const key = event.key.toUpperCase();
             if (keyboardMap[key]) {
-                stopNote(keyboardMap[key]);
+                stopNoteWithOffset(key);
             }
         });
+
+        function updateKeyboardDisplay() {
+            const keys = document.querySelectorAll('.key');
+            keys.forEach(key => {
+                const note = getNoteWithOctaveOffset(keyboardMap[key.dataset.note]);
+                key.innerHTML = `${note}<div class="key-label">${key.dataset.note.toLowerCase()}</div>`;
+            });
+        }
 
         createHexGrid();
     </script>
