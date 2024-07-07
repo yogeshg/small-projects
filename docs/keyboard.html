@@ -14,6 +14,11 @@
             padding: 20px;
             background-color: #f0f0f0;
         }
+        #janko-panel {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-end;
+        }
         #janko-keyboard {
             display: flex;
             flex-direction: column;
@@ -65,17 +70,40 @@
             font-family: monospace;
             background-color: white;
         }
+        #shift-left, #shift-right {
+            width: 50px;
+            height: 57px;
+            margin: 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #ccc;
+            cursor: pointer;
+            font-size: 12px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            transition: background-color 0.1s;
+        }
+        #shift-left.active, #shift-right.active {
+            background-color: #999;
+        }
     </style>
 </head>
 <body>
     <h1>Polyphonic Jankó Keyboard</h1>
-    <div id="janko-keyboard"></div>
+    <div id="janko-panel">
+        <div id="shift-left">Shift ↓</div>
+        <div id="janko-keyboard"></div>
+        <div id="shift-right">Shift ↑</div>    
+    </div>
     <textarea id="transcription" readonly></textarea>
 
     <script>
         const synth = new Tone.PolySynth(Tone.Synth).toDestination();
         const jankoKeyboard = document.getElementById('janko-keyboard');
         const transcription = document.getElementById('transcription');
+        const shiftLeft = document.getElementById('shift-left');
+        const shiftRight = document.getElementById('shift-right');
         let melody = [];
         let activeNotes = new Set();
         let currentOctaveOffset = 0;
@@ -204,7 +232,6 @@
                 } else {
                     keyElement.classList.remove('active');
                 }
-                // keyElement.innerHTML = `${note}<div class="key-label">${keyElement.textContent.toLowerCase()}</div>`;
             });
         }
 
@@ -216,8 +243,10 @@
             } else if (event.key === 'Shift') {
                 if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
                     currentOctaveOffset--;
+                    shiftLeft.classList.add('active');
                 } else if (event.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
                     currentOctaveOffset++;
+                    shiftRight.classList.add('active');
                 }
                 // Update the displayed notes
                 updateKeyboardDisplay();
@@ -228,6 +257,12 @@
             const key = event.key.toUpperCase();
             if (keyboardMap[key]) {
                 stopNoteWithOffset(key);
+            } else if (event.key === 'Shift') {
+                if (event.location === KeyboardEvent.DOM_KEY_LOCATION_LEFT) {
+                    shiftLeft.classList.remove('active');
+                } else if (event.location === KeyboardEvent.DOM_KEY_LOCATION_RIGHT) {
+                    shiftRight.classList.remove('active');
+                }
             }
         });
 
