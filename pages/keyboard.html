@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polyphonic Jankó Keyboard with Mac-like Layout</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        #janko-keyboard {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: center;
+        }
+        .row:nth-child(odd) {
+            margin-left: 26px;
+            margin-bottom: -11px;
+        }
+        .key {
+            width: 50px;
+            height: 57px;
+            margin: 1px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 12px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            transition: background-color 0.1s;
+        }
+        .key.white {
+            background-color: #fff;
+        }
+        .key.black {
+            background-color: #333;
+            color: #fff;
+        }
+        .key:hover {
+            opacity: 0.8;
+        }
+        .key:active, .key.active {
+            opacity: 0.6;
+        }
+        .key-label {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+        #transcription {
+            width: 100%;
+            max-width: 500px;
+            height: 100px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-family: monospace;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Polyphonic Jankó Keyboard with Mac-like Layout</h1>
+    <div id="janko-keyboard"></div>
+    <textarea id="transcription" readonly></textarea>
+
+    <script>
+        const synth = new Tone.PolySynth(Tone.Synth).toDestination();
+        const topRowNotes = ['B', 'C#', 'D#', 'F', 'G', 'A'];
+        const bottomRowNotes = ['C', 'D', 'E', 'F#', 'G#', 'A#'];
+        const jankoKeyboard = document.getElementById('janko-keyboard');
+        const transcription = document.getElementById('transcription');
+        let melody = [];
+        let activeNotes = new Set();
+
+        const keyboardMap = {
+            'Q': 'B4', 'W': 'C#5', 'E': 'D#5', 'R': 'F5', 'T': 'G5', 'Y': 'A5', 'U': 'B5', 'I': 'C#6', 'O': 'D#6', 'P': 'F6',
+            'A': 'C5', 'S': 'D5', 'D': 'E5', 'F': 'F#5', 'G': 'G#5', 'H': 'A#5', 'J': 'C6', 'K': 'D6', 'L': 'E6'
+        };
+
+        function createJankoLayout() {
+            createRow(topRowNotes, 0, 4);
+            createRow(bottomRowNotes, 1, 5);
+            createRow(topRowNotes, 2, 5);
+            createRow(bottomRowNotes, 3, 6);
+        }
+
+        function createRow(notes, rowIndex, startOctave) {
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'row';
+            for (let i = 0; i < 10; i++) {
+                const noteIndex = i % 6;
+                const octave = Math.floor(i / 6) + startOctave;
+                const note = `${notes[noteIndex]}${octave}`;
+                const key = document.createElement('div');
+                key.className = 'key';
+                key.classList.add(notes[noteIndex].includes('#') ? 'black' : 'white');
+                key.innerHTML = `${note}<div class="key-label">${getKeyForNote(note) || ''}</div>`;
+                key.dataset.note = note;
+                key.addEventListener('mousedown', () => startNote(note));
+                key.addEventListener('mouseup', () => stopNote(note));
+                key.addEventListener('mouseleave', () => stopNote(note));
+                rowDiv.appendChild(key);
+            }
+            jankoKeyboard.appendChild(rowDiv);
+        }
+
+        function getKeyForNote(note) {
+            return Object.keys(keyboardMap).find(key => keyboardMap[key] === note);
+        }
+
+        function startNote(note) {
+            if (!activeNotes.has(note)) {
+                synth.triggerAttack(note);
+                activeNotes.add(note);
+                melody.push(note);
+                updateTranscription();
+                highlightKey(note, true);
+            }
+        }
+
+        function stopNote(note) {
+            if (activeNotes.has(note)) {
+                synth.triggerRelease(note);
+                activeNotes.delete(note);
+                highlightKey(note, false);
+            }
+        }
+
+        function updateTranscription() {
+            transcription.value = melody.join(' ');
+        }
+
+        function highlightKey(note, isActive) {
+            const key = document.querySelector(`.key[data-note="${note}"]`);
+            if (key) {
+                if (isActive) {
+                    key.classList.add('active');
+                } else {
+                    key.classList.remove('active');
+                }
+            }
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.repeat) return;
+            const key = event.key.toUpperCase();
+            if (keyboardMap[key]) {
+                startNote(keyboardMap[key]);
+            }
+        });
+
+        document.addEventListener('keyup', (event) => {
+            const key = event.key.toUpperCase();
+            if (keyboardMap[key]) {
+                stopNote(keyboardMap[key]);
+            }
+        });
+
+        createJankoLayout();
+    </script>
+</body>
+</html>
