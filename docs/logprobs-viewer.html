@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>OpenAI Logprob Viewer</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  table { border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 4px 6px; white-space: nowrap; }
+  .bold { font-weight: bold; }
+</style>
+</head>
+<body>
+<h2>OpenAI Logprob Viewer</h2>
+
+<label>Endpoint: <input id="endpoint" size="50" value="https://api.openai.com/v1/chat/completions"></label><br><br>
+<label>API Key: <input id="apiKey" type="password" size="50" placeholder="OPENAI_API_KEY"></label><br><br>
+<label>Model: <input id="model" value="gpt-4.1"></label><br><br>
+<label>top_logprobs: <input id="topLogprobs" value="10" type="number"></label><br><br>
+
+<label>System Prompt:
+  <select id="systemSelect">
+    <option value="oneword">One word</option>
+    <option value="mcq">Multiple Choice</option>
+    <option value="num">Numerical</option>
+    <option value="vrb">Verbose</option>
+    <option value="custom">Write your own</option>
+  </select>
+</label><br>
+<textarea id="systemText" rows="2" cols="60" readonly>You are a helpful assistant. Respond in a single word.</textarea><br><br>
+
+<label>User Prompt:
+  <select id="userSelect">
+    <option value="jack">Jack and Jill</option>
+    <option value="planets">Number of Planets</option>
+    <option value="custom">Write your own</option>
+  </select>
+</label><br>
+<textarea id="userText" rows="2" cols="60" readonly>Choose the right option: Jack and ____ went up the hill. A. Bill B. Jill C. Gill d. Dill</textarea><br><br>
+
+<button id="sendBtn">Send</button>
+
+<div id="result"></div>
+
+<script>
+const sysOptions = {
+  oneword:"You are a helpful assistant. Respond in a single word.",
+  mcq:"You are a helpful assistant. Simply respond with A, B, C, or D.",
+  num:"You are a helpful assistant. Simply respond with a single number.",
+  vrb:"You are a helpful but verbose assistant."
+};
+const userOptions = {
+  jack:"Choose the right option: Jack and ____ went up the hill. A. Bill B. Jill C. Gill d. Dill",
+  planets:"How many planets are there in the Solar System? 7, 8, 9, or 10?"
+};
+
+function updatePrompt(selectId, textId, map){
+  const sel = document.getElementById(selectId).value;
+  const ta = document.getElementById(textId);
+  if(sel === 'custom') { ta.readOnly = false; ta.value = ''; }
+  else { ta.readOnly = true; ta.value = map[sel]; }
+}
+
+document.getElementById('systemSelect').onchange = ()=>updatePrompt('systemSelect','systemText',sysOptions);
+document.getElementById('userSelect').onchange = ()=>updatePrompt('userSelect','userText',userOptions);
+
+function colorForLogprob(lp){
+  // lp from -25..0
+  const clamped = Math.max(-25, Math.min(0, lp));
+  const alpha = (clamped +25)/25; // 0..1
+  return `rgba(0, 200, 0, ${alpha})`;
+}
+
+let currentTableData = null;
+let hoverCol = null;
+let hoverRow = null;
+
+function renderTable(data){
+  currentTableData = data;
+  const cols = data.length;
+  const rows = Math.max(...data.map(d=>d.top_logprobs.length));
+
+  let html = '<table><tr>';
+  for(let i=0;i<cols;i++) html += `<th><pre>${i}</pre></th>`;
+  html += '</tr>';
+
+  for(let r=0;r<rows;r++){
+    html += '<tr>';
+    for(let c=0;c<cols;c++){
+      const item = data[c].top_logprobs[r];
+      if(!item){ html += '<td></td>'; continue; }
+      const prob = (Math.exp(item.logprob)*100).toFixed(10) + '%';
+      html += `<td data-col="${c}" data-row="${r}">${item.token} (${prob})</td>`;
+    }
+    html += '</tr>';
+  }
+
+  html += '</table>';
+  document.getElementById('result').innerHTML = html;
+  attachHover();
+  paintHighlights();
+}
+
+function attachHover(){
+  document.querySelectorAll('#result td[data-col]').forEach(td=>{
+    td.onmouseenter = ()=>{
+      hoverCol = parseInt(td.getAttribute('data-col'));
+      hoverRow = parseInt(td.getAttribute('data-row'));
+      paintHighlights();
+    };
+  });
+  document.getElementById('result').onmouseleave = ()=>{
+    hoverCol = null;
+    hoverRow = null;
+    paintHighlights();
+  };
+}
+
+function paintHighlights(){
+  if(!currentTableData) return;
+
+  const cols = currentTableData.length;
+  const activeCol = hoverCol==null ? cols : hoverCol;
+
+  document.querySelectorAll('#result td[data-col]').forEach(td=>{
+    td.classList.remove('bold');
+    td.style.background = '';
+  });
+
+  for(let c=0;c<cols;c++){
+    const colData = currentTableData[c].top_logprobs;
+    if(c < activeCol){
+      const item = colData[0];
+      if(item){
+        const color = colorForLogprob(item.logprob);
+        const cell = document.querySelector(`#result td[data-col="${c}"][data-row="0"]`);
+        if(cell) cell.style.background = color;
+      }
+    } else if(c === activeCol){
+      colData.forEach((t,r)=>{
+        const color = colorForLogprob(t.logprob);
+        const cell = document.querySelector(`#result td[data-col="${c}"][data-row="${r}"]`);
+        if(cell){
+          cell.style.background = color;
+          if(hoverRow===r) cell.classList.add('bold');
+        }
+      });
+    }
+  }
+}
+
+async function sendRequest(){
+  const endpoint = document.getElementById('endpoint').value;
+  const apiKey = document.getElementById('apiKey').value;
+  const model = document.getElementById('model').value;
+  const top = parseInt(document.getElementById('topLogprobs').value);
+  const systemPrompt = document.getElementById('systemText').value;
+  const userPrompt = document.getElementById('userText').value;
+
+  const body = {
+    model: model,
+    logprobs: true,
+    top_logprobs: top,
+    messages:[
+      {role:'system', content: systemPrompt},
+      {role:'user', content: userPrompt}
+    ]
+  };
+
+  const res = await fetch(endpoint, {
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':'Bearer '+apiKey
+    },
+    body: JSON.stringify(body)
+  });
+
+  const json = await res.json();
+  if(json.choices && json.choices[0].logprobs && json.choices[0].logprobs.content){
+    renderTable(json.choices[0].logprobs.content);
+  } else {
+    document.getElementById('result').innerText = JSON.stringify(json,null,2);
+  }
+}
+
+document.getElementById('sendBtn').onclick = sendRequest;
+</script>
+</body>
+</html>
