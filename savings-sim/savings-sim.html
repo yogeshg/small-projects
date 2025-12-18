@@ -3,51 +3,123 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Life Simulation: Income / Expenses / Assets / Liabilities</title>
+  <title>Life Simulation</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
   <style>
-    :root { --bg:#0b1220; --panel:#121a2b; --text:#e7eefc; --muted:#a8b3cf; --line:#23304f; }
-    * { box-sizing:border-box; }
-    body { margin:0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; background:var(--bg); color:var(--text); }
-    header { padding:18px 18px 8px; }
-    h1 { margin:0 0 6px; font-size:18px; }
-    p { margin:0; color:var(--muted); font-size:13px; }
-
-    .wrap { padding: 12px 18px 22px; display:grid; gap:14px; }
-    .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:14px; }
-    .controls { display:grid; gap:10px; }
-    .grid {
-      display:grid;
-      gap:14px;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    :root {
+      --bg:#0b1220;
+      --panel:#121a2b;
+      --text:#e7eefc;
+      --muted:#a8b3cf;
+      --line:#23304f;
+      --accent:#3b5aa8;
     }
-    @media (max-width: 980px) { .grid { grid-template-columns: 1fr; } }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header {
+      padding:18px 20px 10px;
+    }
+
+    h1 {
+      margin:0 0 6px;
+      font-size:20px;
+    }
+
+    p {
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .wrap {
+      padding: 12px 20px 24px;
+      display:grid;
+      gap:16px;
+    }
+
+    .panel {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    /* ===== TOP HALF: INPUTS + LINEAR ASSETS ===== */
+    .top {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    @media (max-width: 1000px) {
+      .top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== INPUTS ===== */
+    .controls {
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
 
     .fields {
       display:grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap:10px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
     }
-    @media (max-width: 980px) { .fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-    @media (max-width: 520px) { .fields { grid-template-columns: 1fr; } }
 
-    label { display:block; font-size:12px; color:var(--muted); margin-bottom:6px; }
+    @media (max-width: 1200px) {
+      .fields { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 520px) {
+      .fields { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
     input {
       width:100%;
-      padding:10px 10px;
+      padding:10px 12px;
       border-radius:10px;
       border:1px solid var(--line);
       background:#0d1526;
       color:var(--text);
       outline:none;
     }
-    input:focus { border-color:#3b5aa8; }
-    .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    input:focus {
+      border-color:var(--accent);
+    }
+
+    .row {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
     button {
-      padding:10px 12px;
+      padding:10px 14px;
       border:1px solid var(--line);
       background:#16203a;
       color:var(--text);
@@ -55,427 +127,227 @@
       cursor:pointer;
       font-weight:600;
     }
-    button:hover { filter:brightness(1.08); }
 
-    .chartCard { padding:12px; }
-    .chartTitle { font-size:13px; color:var(--muted); margin:0 0 10px; }
-    canvas { width:100% !important; height:340px !important; }
-    .small canvas { height:320px !important; }
+    button:hover {
+      filter:brightness(1.08);
+    }
+
+    .note {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* ===== CHARTS ===== */
+    .chartCard {
+      padding:14px;
+    }
+
+    .chartTitle {
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+
+    canvas {
+      width:100% !important;
+      height:360px !important;
+    }
+
+    /* ===== BOTTOM GRID (2x2) ===== */
+    .bottom {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+
+    @media (max-width: 1000px) {
+      .bottom {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Life Simulation</h1>
-    <p>Adjust ages, expenses, income, and growth rate. Charts match your Python logic (log-scale 2×2 + assets linear).</p>
-  </header>
+<header>
+  <h1>Life Simulation</h1>
+  <p>Income, expenses, assets, and liabilities over a lifetime (log + linear views)</p>
+</header>
 
-  <div class="wrap">
-    <section class="panel controls">
+<div class="wrap">
+
+  <!-- ================= TOP HALF ================= -->
+  <section class="top">
+
+    <!-- INPUTS (LEFT HALF) -->
+    <div class="panel controls">
       <div class="fields">
         <div>
           <label>Childhood ends (age)</label>
-          <input id="childhood_age" type="number" min="1" max="100" step="1" value="15">
+          <input id="childhood_age" type="number" value="15">
         </div>
         <div>
           <label>College ends (age)</label>
-          <input id="college_age" type="number" min="1" max="100" step="1" value="20">
+          <input id="college_age" type="number" value="20">
         </div>
         <div>
           <label>Retirement starts (age)</label>
-          <input id="retirement_age" type="number" min="1" max="100" step="1" value="65">
+          <input id="retirement_age" type="number" value="65">
         </div>
         <div>
-          <label>Growth rate (e.g., 0.025)</label>
+          <label>Growth rate</label>
           <input id="growth_rate" type="number" step="0.001" value="0.025">
         </div>
 
         <div>
           <label>Childhood expense ($/yr)</label>
-          <input id="childhood_expense" type="number" step="100" value="5000">
+          <input id="childhood_expense" type="number" value="5000">
         </div>
         <div>
           <label>College expense ($/yr)</label>
-          <input id="college_expense" type="number" step="100" value="15000">
+          <input id="college_expense" type="number" value="15000">
         </div>
         <div>
           <label>Working expense ($/yr)</label>
-          <input id="working_expense" type="number" step="100" value="30000">
+          <input id="working_expense" type="number" value="30000">
         </div>
         <div>
           <label>Retirement expense ($/yr)</label>
-          <input id="retirement_expense" type="number" step="100" value="20000">
+          <input id="retirement_expense" type="number" value="20000">
         </div>
 
         <div>
           <label>Working income ($/yr)</label>
-          <input id="working_income" type="number" step="100" value="40000">
+          <input id="working_income" type="number" value="40000">
         </div>
         <div>
           <label>Log y-min</label>
-          <input id="log_min" type="number" step="100" value="1000">
+          <input id="log_min" type="number" value="1000">
         </div>
         <div>
           <label>Log y-max</label>
-          <input id="log_max" type="number" step="1000" value="1000000">
+          <input id="log_max" type="number" value="1000000">
         </div>
         <div>
           <label>Assets linear y-max</label>
-          <input id="lin_max" type="number" step="1000" value="1000000">
+          <input id="lin_max" type="number" value="1000000">
         </div>
       </div>
 
       <div class="row">
         <button id="runBtn">Run simulation</button>
         <button id="resetBtn">Reset defaults</button>
-        <span id="note" style="color:var(--muted);font-size:12px;"></span>
+        <span id="note" class="note"></span>
       </div>
-    </section>
+    </div>
 
-    <section class="grid">
-      <div class="panel chartCard small">
-        <p class="chartTitle">Income Over Life (log y)</p>
-        <canvas id="incomeChart"></canvas>
-      </div>
-      <div class="panel chartCard small">
-        <p class="chartTitle">Expenses Over Life (log y)</p>
-        <canvas id="expensesChart"></canvas>
-      </div>
-      <div class="panel chartCard small">
-        <p class="chartTitle">Assets Over Life (log y)</p>
-        <canvas id="assetsChart"></canvas>
-      </div>
-      <div class="panel chartCard small">
-        <p class="chartTitle">Liabilities Over Life (log y)</p>
-        <canvas id="liabilitiesChart"></canvas>
-      </div>
-    </section>
-
-    <section class="panel chartCard">
+    <!-- ASSETS LINEAR (RIGHT HALF) -->
+    <div class="panel chartCard">
       <p class="chartTitle">Assets Over Life (linear y)</p>
       <canvas id="assetsLinearChart"></canvas>
-    </section>
-  </div>
+    </div>
+
+  </section>
+
+  <!-- ================= BOTTOM HALF ================= -->
+  <section class="bottom">
+    <div class="panel chartCard">
+      <p class="chartTitle">Income Over Life (log y)</p>
+      <canvas id="incomeChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Expenses Over Life (log y)</p>
+      <canvas id="expensesChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Assets Over Life (log y)</p>
+      <canvas id="assetsChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Liabilities Over Life (log y)</p>
+      <canvas id="liabilitiesChart"></canvas>
+    </div>
+  </section>
+
+</div>
 
 <script>
-  // --- Utilities ---
-  const ages = Array.from({length: 100}, (_, i) => i + 1);
+/* =================== LOGIC (UNCHANGED) =================== */
 
-  const fmtUSD = (n) => {
-    const v = Math.round(Number(n) || 0);
-    return "$" + v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+const ages = Array.from({length:100},(_,i)=>i+1);
+const fmtUSD = n => "$" + Math.round(n).toLocaleString();
+const get = id => Number(document.getElementById(id).value);
+
+function simulate(p){
+  let s=0,d=0,e=[],i=[],a=[],l=[];
+  for(const age of ages){
+    let exp=0,inc=0;
+    if(age<p.childhood_age){exp=p.childhood_expense;inc=exp;}
+    else if(age<p.college_age){exp=p.college_expense;}
+    else if(age<p.retirement_age){exp=p.working_expense;inc=p.working_income;}
+    else{exp=p.retirement_expense;}
+
+    let surplus=inc-exp;
+    s*=1+p.growth_rate;
+    if(d>0 && surplus>0){let pay=Math.min(d,surplus);d-=pay;surplus-=pay;}
+    s+=surplus;
+    if(s<0){d+=-s;s=0;}
+
+    e.push(exp); i.push(inc);
+    a.push(Math.max(s,1)); l.push(Math.max(d,1));
+  }
+  return {e,i,a,l};
+}
+
+function barChart(id,data,yType,yMin,yMax,color){
+  return new Chart(document.getElementById(id),{
+    type:'bar',
+    data:{labels:ages,datasets:[{data,backgroundColor:color}]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:c=>fmtUSD(c.raw)}}},
+      scales:{
+        x:{ticks:{maxTicksLimit:12}},
+        y:{type:yType,min:yMin,max:yMax,
+           ticks:{callback:v=>fmtUSD(v)}}
+      }
+    }
+  });
+}
+
+let charts=[];
+function run(){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const p={
+    childhood_age:get('childhood_age'),
+    college_age:get('college_age'),
+    retirement_age:get('retirement_age'),
+    childhood_expense:get('childhood_expense'),
+    college_expense:get('college_expense'),
+    working_expense:get('working_expense'),
+    retirement_expense:get('retirement_expense'),
+    working_income:get('working_income'),
+    growth_rate:get('growth_rate')
   };
+  const {e,i,a,l}=simulate(p);
+  const ymin=get('log_min'), ymax=get('log_max'), linmax=get('lin_max');
 
-  const getNumber = (id) => Number(document.getElementById(id).value);
+  charts.push(barChart('incomeChart',i,'logarithmic',ymin,ymax,'rgba(70,200,120,.55)'));
+  charts.push(barChart('expensesChart',e,'logarithmic',ymin,ymax,'rgba(255,90,90,.55)'));
+  charts.push(barChart('assetsChart',a,'logarithmic',ymin,ymax,'rgba(90,160,255,.55)'));
+  charts.push(barChart('liabilitiesChart',l,'logarithmic',ymin,ymax,'rgba(255,180,70,.65)'));
+  charts.push(barChart('assetsLinearChart',a,'linear',1000,linmax,'rgba(90,160,255,.55)'));
+}
 
-  function simulate(params) {
-    const {
-      childhood_age, college_age, retirement_age,
-      childhood_expense, college_expense, working_expense, retirement_expense,
-      working_income, growth_rate
-    } = params;
+function resetDefaults(){
+  location.reload();
+}
 
-    const expenses = [];
-    const income = [];
-    const assets = [];
-    const liabilities = [];
-
-    let savings = 0.0;
-    let debt = 0.0;
-
-    for (const age of ages) {
-      let yearly_expense = 0;
-      let yearly_income = 0;
-
-      if (age < childhood_age) {
-        yearly_expense = childhood_expense;
-        yearly_income = yearly_expense; // bank of mom and dad
-      } else if (age < college_age) {
-        yearly_expense = college_expense;
-        yearly_income = 0;
-      } else if (age < retirement_age) {
-        yearly_expense = working_expense;
-        yearly_income = working_income;
-      } else {
-        yearly_expense = retirement_expense;
-        yearly_income = 0;
-      }
-
-      let surplus = yearly_income - yearly_expense;
-
-      // Apply investment growth
-      savings *= (1 + growth_rate);
-
-      // Pay down debt if possible
-      if (debt > 0 && surplus > 0) {
-        const payment = Math.min(debt, surplus);
-        debt -= payment;
-        surplus -= payment;
-      }
-
-      // Apply surplus/deficit
-      savings += surplus;
-      if (savings < 0) {
-        debt += -savings;
-        savings = 0;
-      }
-
-      expenses.push(yearly_expense);
-      income.push(yearly_income);
-
-      // avoid log(0), match Python: max(value, 1)
-      assets.push(Math.max(savings, 1));
-      liabilities.push(Math.max(debt, 1));
-    }
-
-    return { expenses, income, assets, liabilities };
-  }
-
-  // --- Custom plugin to draw a few labels at specific ages (like the matplotlib ax.text calls) ---
-  const AgeLabelPlugin = {
-    id: 'ageLabelPlugin',
-    afterDatasetsDraw(chart, args, pluginOptions) {
-      const opts = pluginOptions || {};
-      const labels = opts.labels || [];
-      if (!labels.length) return;
-
-      const ctx = chart.ctx;
-      const meta = chart.getDatasetMeta(0);
-      if (!meta || !meta.data) return;
-
-      ctx.save();
-      ctx.font = '12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial';
-      ctx.fillStyle = opts.color || '#e7eefc';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'bottom';
-
-      for (const item of labels) {
-        const age = item.age;
-        const idx = age - 1;
-        const el = meta.data[idx];
-        if (!el) continue;
-
-        const v = item.valueFn(chart.data.datasets[0].data[idx]);
-        const text = item.textFn(v);
-
-        // Place slightly above the bar (in pixels), with optional yScale multiplier for log cases.
-        const x = el.x;
-        const y = chart.scales.y.getPixelForValue(item.yValueFn(v));
-
-        ctx.fillText(text, x, y - 2);
-      }
-      ctx.restore();
-    }
-  };
-
-  Chart.register(AgeLabelPlugin);
-
-  function makeBarChart(canvasId, title, dataArr, {
-    yType = 'logarithmic',
-    yMin = 1000,
-    yMax = 1000000,
-    barColor = 'rgba(90, 160, 255, 0.55)',
-    labelAges = [],
-    labelStrategy = 'add2000', // or 'mul1_2'
-    showXAxisLabel = true,
-    showYAxisLabel = true
-  } = {}) {
-    const ctx = document.getElementById(canvasId);
-
-    const labelSpecs = labelAges.map(age => {
-      return {
-        age,
-        valueFn: (v) => v,
-        textFn: (v) => fmtUSD(v),
-        yValueFn: (v) => {
-          if (labelStrategy === 'mul1_2') return v * 1.2;
-          return v + 2000; // matches income/expense add +2000 behavior
-        }
-      };
-    });
-
-    return new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ages,
-        datasets: [{
-          label: title,
-          data: dataArr,
-          backgroundColor: barColor,
-          borderWidth: 0,
-          barPercentage: 1.0,
-          categoryPercentage: 1.0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              title: (items) => `Age ${items[0].label}`,
-              label: (item) => fmtUSD(item.raw)
-            }
-          },
-          ageLabelPlugin: {
-            labels: labelSpecs
-          }
-        },
-        scales: {
-          x: {
-            grid: { color: 'rgba(35, 48, 79, 0.6)' },
-            ticks: {
-              color: '#a8b3cf',
-              maxTicksLimit: 12
-            },
-            title: {
-              display: showXAxisLabel,
-              text: 'Age',
-              color: '#a8b3cf'
-            }
-          },
-          y: {
-            type: yType,
-            min: yMin,
-            max: yMax,
-            grid: { color: 'rgba(35, 48, 79, 0.6)' },
-            ticks: {
-              color: '#a8b3cf',
-              callback: (value) => {
-                // Chart.js provides tick value as number for linear; for log it may be string.
-                const v = Number(value);
-                if (!isFinite(v)) return value;
-                // Reduce clutter for log axis
-                const nice = [1e3, 1e4, 1e5, 1e6];
-                if (yType === 'logarithmic' && !nice.includes(v)) return '';
-                return fmtUSD(v);
-              }
-            },
-            title: {
-              display: showYAxisLabel,
-              text: (yType === 'logarithmic') ? 'Amount (log scale)' : 'Amount (linear scale)',
-              color: '#a8b3cf'
-            }
-          }
-        }
-      }
-    });
-  }
-
-  // --- Chart instances ---
-  let incomeChart, expensesChart, assetsChart, liabilitiesChart, assetsLinearChart;
-
-  function destroyAll() {
-    for (const c of [incomeChart, expensesChart, assetsChart, liabilitiesChart, assetsLinearChart]) {
-      if (c) c.destroy();
-    }
-    incomeChart = expensesChart = assetsChart = liabilitiesChart = assetsLinearChart = null;
-  }
-
-  function run() {
-    const params = {
-      childhood_age: getNumber('childhood_age'),
-      college_age: getNumber('college_age'),
-      retirement_age: getNumber('retirement_age'),
-      childhood_expense: getNumber('childhood_expense'),
-      college_expense: getNumber('college_expense'),
-      working_expense: getNumber('working_expense'),
-      retirement_expense: getNumber('retirement_expense'),
-      working_income: getNumber('working_income'),
-      growth_rate: getNumber('growth_rate')
-    };
-
-    // Basic sanity note (no hard blocking, but helps avoid confusing charts)
-    const note = document.getElementById('note');
-    if (!(params.childhood_age < params.college_age && params.college_age < params.retirement_age)) {
-      note.textContent = "Tip: Usually childhood_age < college_age < retirement_age.";
-    } else {
-      note.textContent = "";
-    }
-
-    const { expenses, income, assets, liabilities } = simulate(params);
-
-    const logMin = getNumber('log_min');
-    const logMax = getNumber('log_max');
-    const linMax = getNumber('lin_max');
-
-    destroyAll();
-
-    // Match your matplotlib label ages:
-    incomeChart = makeBarChart('incomeChart', 'Income', income, {
-      yType: 'logarithmic', yMin: logMin, yMax: logMax,
-      barColor: 'rgba(70, 200, 120, 0.55)',
-      labelAges: [7, 45, 80],
-      labelStrategy: 'add2000',
-      showXAxisLabel: false,
-      showYAxisLabel: true
-    });
-
-    expensesChart = makeBarChart('expensesChart', 'Expenses', expenses, {
-      yType: 'logarithmic', yMin: logMin, yMax: logMax,
-      barColor: 'rgba(255, 90, 90, 0.55)',
-      labelAges: [7, 18, 45, 80],
-      labelStrategy: 'add2000',
-      showXAxisLabel: false,
-      showYAxisLabel: true
-    });
-
-    assetsChart = makeBarChart('assetsChart', 'Assets (Savings)', assets, {
-      yType: 'logarithmic', yMin: logMin, yMax: logMax,
-      barColor: 'rgba(90, 160, 255, 0.55)',
-      labelAges: [27, 45, 65, 85],
-      labelStrategy: 'mul1_2',
-      showXAxisLabel: true,
-      showYAxisLabel: true
-    });
-
-    liabilitiesChart = makeBarChart('liabilitiesChart', 'Liabilities (Debt)', liabilities, {
-      yType: 'logarithmic', yMin: logMin, yMax: logMax,
-      barColor: 'rgba(255, 180, 70, 0.65)',
-      labelAges: [19, 26],
-      labelStrategy: 'mul1_2',
-      showXAxisLabel: true,
-      showYAxisLabel: true
-    });
-
-    // Linear assets plot (your extra figure)
-    assetsLinearChart = makeBarChart('assetsLinearChart', 'Assets (Savings)', assets, {
-      yType: 'linear', yMin: 1000, yMax: linMax,
-      barColor: 'rgba(90, 160, 255, 0.55)',
-      labelAges: [27, 45, 65, 85],
-      labelStrategy: 'add2000',
-      showXAxisLabel: true,
-      showYAxisLabel: true
-    });
-  }
-
-  function resetDefaults() {
-    const defaults = {
-      childhood_age: 15,
-      college_age: 20,
-      retirement_age: 65,
-      childhood_expense: 5000,
-      college_expense: 15000,
-      working_expense: 30000,
-      retirement_expense: 20000,
-      working_income: 40000,
-      growth_rate: 0.025,
-      log_min: 1000,
-      log_max: 1000000,
-      lin_max: 1000000
-    };
-    for (const [k, v] of Object.entries(defaults)) {
-      document.getElementById(k).value = v;
-    }
-    run();
-  }
-
-  document.getElementById('runBtn').addEventListener('click', run);
-  document.getElementById('resetBtn').addEventListener('click', resetDefaults);
-
-  // Auto-run on load
-  run();
+run();
+document.getElementById('runBtn').onclick=run;
+document.getElementById('resetBtn').onclick=resetDefaults;
 </script>
 </body>
 </html>
