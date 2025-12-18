@@ -4,7 +4,17 @@ import matplotlib.pyplot as plt
 
 ages = list(range(1, 101))
 
-def simulate():
+def simulate(
+        childhood_age = 15,
+        college_age = 20,
+        retirement_age = 65,
+        childhood_expense = 5000,
+        college_expense = 15000,
+        working_expense = 30000,
+        retirement_expense = 20000,
+        working_income = 40000,
+        growth_rate = 0.025
+):
     expenses = []
     income = []
     assets = []
@@ -12,24 +22,22 @@ def simulate():
 
     savings = 0.0
     debt = 0.0
-    growth_rate = 0.025
 
     for age in ages:
-        # Identify phase
-        if age < 15:  # childhood
-            yearly_expense = 5000
+        if age < childhood_age:
+            yearly_expense = childhood_expense
             yearly_income = yearly_expense  # bank of mom and dad
 
-        elif age < 20:  # college
-            yearly_expense = 15000
+        elif age < college_age:
+            yearly_expense = college_expense
             yearly_income = 0
 
-        elif age < 65:  # working
-            yearly_expense = 30000
-            yearly_income = 40000
+        elif age < retirement_age:
+            yearly_expense = working_expense
+            yearly_income = working_income
 
         else:  # retirement
-            yearly_expense = 20000
+            yearly_expense = retirement_expense
             yearly_income = 0  # draw from assets
 
         surplus = yearly_income - yearly_expense
