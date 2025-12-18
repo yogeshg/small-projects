@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Life Finances Simulation</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg:#0b1220;
+      --panel:#121a2b;
+      --text:#e7eefc;
+      --muted:#a8b3cf;
+      --line:#23304f;
+      --accent:#3b5aa8;
+    }
+
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header {
+      padding:18px 20px 10px;
+    }
+
+    h1 {
+      margin:0 0 6px;
+      font-size:20px;
+    }
+
+    p {
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .wrap {
+      padding: 12px 20px 24px;
+      display:grid;
+      gap:16px;
+    }
+
+    .panel {
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    /* ===== TOP HALF: INPUTS + LINEAR ASSETS ===== */
+    .top {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    @media (max-width: 1000px) {
+      .top {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===== INPUTS ===== */
+    .controls {
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+
+    .fields {
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:12px;
+    }
+
+    @media (max-width: 1200px) {
+      .fields { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+
+    @media (max-width: 520px) {
+      .fields { grid-template-columns: 1fr; }
+    }
+
+    label {
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+    }
+
+    input {
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#0d1526;
+      color:var(--text);
+      outline:none;
+    }
+
+    input:focus {
+      border-color:var(--accent);
+    }
+
+    .row {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    button {
+      padding:10px 14px;
+      border:1px solid var(--line);
+      background:#16203a;
+      color:var(--text);
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:600;
+    }
+
+    button:hover {
+      filter:brightness(1.08);
+    }
+
+    .note {
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    /* ===== CHARTS ===== */
+    .chartCard {
+      padding:14px;
+    }
+
+    .chartTitle {
+      font-size:13px;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+
+    canvas {
+      width:100% !important;
+      height:360px !important;
+    }
+
+    /* ===== BOTTOM GRID (2x2) ===== */
+    .bottom {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:16px;
+    }
+
+    @media (max-width: 1000px) {
+      .bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>Life Simulation</h1>
+  <p>Income, expenses, assets, and liabilities over a lifetime (log + linear views)</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= TOP HALF ================= -->
+  <section class="top">
+
+    <!-- INPUTS (LEFT HALF) -->
+    <div class="panel controls">
+      <div class="fields">
+        <div>
+          <label>Childhood ends (age)</label>
+          <input id="childhood_age" type="number" value="15">
+        </div>
+        <div>
+          <label>College ends (age)</label>
+          <input id="college_age" type="number" value="20">
+        </div>
+        <div>
+          <label>Retirement starts (age)</label>
+          <input id="retirement_age" type="number" value="65">
+        </div>
+        <div>
+          <label>Growth rate</label>
+          <input id="growth_rate" type="number" step="0.001" value="0.025">
+        </div>
+
+        <div>
+          <label>Childhood expense ($/yr)</label>
+          <input id="childhood_expense" type="number" value="5000">
+        </div>
+        <div>
+          <label>College expense ($/yr)</label>
+          <input id="college_expense" type="number" value="15000">
+        </div>
+        <div>
+          <label>Working expense ($/yr)</label>
+          <input id="working_expense" type="number" value="30000">
+        </div>
+        <div>
+          <label>Retirement expense ($/yr)</label>
+          <input id="retirement_expense" type="number" value="20000">
+        </div>
+
+        <div>
+          <label>Working income ($/yr)</label>
+          <input id="working_income" type="number" value="40000">
+        </div>
+        <div>
+          <label>Log y-min</label>
+          <input id="log_min" type="number" value="1000">
+        </div>
+        <div>
+          <label>Log y-max</label>
+          <input id="log_max" type="number" value="1000000">
+        </div>
+        <div>
+          <label>Assets linear y-max</label>
+          <input id="lin_max" type="number" value="1000000">
+        </div>
+      </div>
+
+      <div class="row">
+        <button id="runBtn">Run simulation</button>
+        <button id="resetBtn">Reset defaults</button>
+        <span id="note" class="note"></span>
+      </div>
+    </div>
+
+    <!-- ASSETS LINEAR (RIGHT HALF) -->
+    <div class="panel chartCard">
+      <p class="chartTitle">Assets Over Life (linear y)</p>
+      <canvas id="assetsLinearChart"></canvas>
+    </div>
+
+  </section>
+
+  <!-- ================= BOTTOM HALF ================= -->
+  <section class="bottom">
+    <div class="panel chartCard">
+      <p class="chartTitle">Income Over Life (log y)</p>
+      <canvas id="incomeChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Expenses Over Life (log y)</p>
+      <canvas id="expensesChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Assets Over Life (log y)</p>
+      <canvas id="assetsChart"></canvas>
+    </div>
+    <div class="panel chartCard">
+      <p class="chartTitle">Liabilities Over Life (log y)</p>
+      <canvas id="liabilitiesChart"></canvas>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* =================== LOGIC (UNCHANGED) =================== */
+
+const ages = Array.from({length:100},(_,i)=>i+1);
+const fmtUSD = n => "$" + Math.round(n).toLocaleString();
+const get = id => Number(document.getElementById(id).value);
+
+function simulate(p){
+  let s=0,d=0,e=[],i=[],a=[],l=[];
+  for(const age of ages){
+    let exp=0,inc=0;
+    if(age<p.childhood_age){exp=p.childhood_expense;inc=exp;}
+    else if(age<p.college_age){exp=p.college_expense;}
+    else if(age<p.retirement_age){exp=p.working_expense;inc=p.working_income;}
+    else{exp=p.retirement_expense;}
+
+    let surplus=inc-exp;
+    s*=1+p.growth_rate;
+    if(d>0 && surplus>0){let pay=Math.min(d,surplus);d-=pay;surplus-=pay;}
+    s+=surplus;
+    if(s<0){d+=-s;s=0;}
+
+    e.push(exp); i.push(inc);
+    a.push(Math.max(s,1)); l.push(Math.max(d,1));
+  }
+  return {e,i,a,l};
+}
+
+function barChart(id,data,yType,yMin,yMax,color){
+  return new Chart(document.getElementById(id),{
+    type:'bar',
+    data:{labels:ages,datasets:[{data,backgroundColor:color}]},
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:c=>fmtUSD(c.raw)}}},
+      scales:{
+        x:{ticks:{maxTicksLimit:12}},
+        y:{type:yType,min:yMin,max:yMax,
+           ticks:{callback:v=>fmtUSD(v)}}
+      }
+    }
+  });
+}
+
+let charts=[];
+function run(){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const p={
+    childhood_age:get('childhood_age'),
+    college_age:get('college_age'),
+    retirement_age:get('retirement_age'),
+    childhood_expense:get('childhood_expense'),
+    college_expense:get('college_expense'),
+    working_expense:get('working_expense'),
+    retirement_expense:get('retirement_expense'),
+    working_income:get('working_income'),
+    growth_rate:get('growth_rate')
+  };
+  const {e,i,a,l}=simulate(p);
+  const ymin=get('log_min'), ymax=get('log_max'), linmax=get('lin_max');
+
+  charts.push(barChart('incomeChart',i,'logarithmic',ymin,ymax,'rgba(70,200,120,.55)'));
+  charts.push(barChart('expensesChart',e,'logarithmic',ymin,ymax,'rgba(255,90,90,.55)'));
+  charts.push(barChart('assetsChart',a,'logarithmic',ymin,ymax,'rgba(90,160,255,.55)'));
+  charts.push(barChart('liabilitiesChart',l,'logarithmic',ymin,ymax,'rgba(255,180,70,.65)'));
+  charts.push(barChart('assetsLinearChart',a,'linear',1000,linmax,'rgba(90,160,255,.55)'));
+}
+
+function resetDefaults(){
+  location.reload();
+}
+
+run();
+document.getElementById('runBtn').onclick=run;
+document.getElementById('resetBtn').onclick=resetDefaults;
+</script>
+</body>
+</html>
