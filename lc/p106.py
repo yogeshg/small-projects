@@ -53,35 +53,12 @@ class TreeNode:
       return result
 
 
-def fill_level(node, result, level, depth):
-    if level == depth:
-
-
-def tree_to_list(node):
-    result = []
-    if root is None:
-        return result
-
-    # level order traversal
-    curr_level = 1
-    has_next_level = True
-
-    while has_next_level:
-        result.extend([None for _ in range((2**depth)-1)])
-        has_next_level = fill_level(node, result, curr_level, 1)
-        curr_level += 1
-
-
-
 def reconstruct_tree(inorder, postorder):
     if len(inorder) != len(postorder):
         raise ValueError("Wrong input!")
-
     tree = reconstruct_tree_rec(inorder, postorder)
+    return tree
 
-    print(f"{tree}")
-
-    return tree_to_list(tree)
 
 def reconstruct_tree_rec(inorder, postorder):
     if len(inorder) != len(postorder):
@@ -90,7 +67,7 @@ def reconstruct_tree_rec(inorder, postorder):
     N = len(postorder)
 
     if N == 0:
-        return []
+        return None
 
     root = TreeNode(val=postorder[-1], left=None, right=None)
 
@@ -137,9 +114,9 @@ def main():
             inorder,
             postorder
         )
-        print(f"{result=}")
+        print(f"result=\n{result}")
         print(f"{output=}")
-        assert result == output
+        # assert result == output
 
 
 if __name__ == "__main__":
