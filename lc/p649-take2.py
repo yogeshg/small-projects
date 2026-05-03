@@ -1,0 +1,82 @@
+#!/usr/bin/python3
+
+# Dota2 Senate
+
+
+
+# def simulate(senate):
+#   N = len(senate)
+#   blocked = [False for i in range(N)]
+#   for i in range(N):
+#     # round i
+#     for j in range(1,N):
+#     
+
+NAMES = {
+  "R": "Radiant",
+  "D": "Dire"
+}
+
+def _other(p):
+  return "R" if p == "D" else "D"
+
+def simulate(senate, N):
+
+  deactivate = [False for i in range(N)]
+
+  for round_idx in range(N):
+    for senator_idx in range(N):
+      senator = senate[senator_idx]
+      other_party = _other(senator)
+      if deactivate[senator_idx] == True:
+        continue
+      did_deactivate = False
+      for target in range(N):
+        if (senate[target] == other_party) and (deactivate[target] != True):
+           deactivate[target] = True
+           did_deactivate = True
+           break
+      if not did_deactivate:
+        return senator
+  raise ValueError("vote should have been called already")
+
+
+def winner(senate):
+  N = len(senate)
+  if N == 0:
+    return None
+
+  return NAMES[simulate(senate, N)]
+
+def main():
+  print(winner("RD"), "R?")
+  print(winner("RDD"), "D?")
+  print(winner("RDDR"), "R?")
+  print(winner("RDDDRR"), "D?")
+  print(winner("RDDRRD"), "R?")
+  print(winner("DRRDRDRDRDDRDRDR"), "R?")
+
+
+main()
+
+
+
+
+
+
+
+"""
+
+DRRDRDRDRDDRDRDR
+xxxx x x xx x x   --> R
+
+
+
+
+
+
+
+"""
+
+
+
