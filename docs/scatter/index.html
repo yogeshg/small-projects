@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" data-theme="system">
 <head>
 <meta charset="UTF-8">
@@ -483,13 +483,15 @@ DOCTYPE html>
     transition: all 0.15s;
   }
 
-  .icon-btn:not(:disabled):hover {
+  .icon-btn:hover {
     color: var(--accent);
     border-color: var(--accent);
   }
 
   .icon-btn:disabled {
-    color: var(--ink-faint);
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   table {
@@ -762,7 +764,7 @@ DOCTYPE html>
     <div class="section-header">
       <span class="section-title">Selection</span>
     </div>
-    <p class="helper">Click and drag on the chart to draw a selection rectangle. Selected points appear in the table below.</p>
+    <p class="helper">Click and drag on the chart to select points. <strong style="color:var(--ink-dim)">Alt-click</strong> a point to add, <strong style="color:var(--ink-dim)">Shift+Alt-click</strong> to remove.</p>
   </div>
 </aside>
 
@@ -1479,6 +1481,20 @@ function renderLegend(colorScale) {
 }
 
 // ============= TABLE =============
+function getSortedSelection() {
+  const col = getColInfo(state.x);
+  return state.rows
+    .filter(r => state.selectedIds.has(r.__id))
+    .sort((a, b) => {
+      const av = a[state.x], bv = b[state.x];
+      if (av == null && bv == null) return 0;
+      if (av == null) return 1;
+      if (bv == null) return -1;
+      if (col?.type === 'category') return String(av).localeCompare(String(bv));
+      return av - bv; // number and date (stored as ms) both sort numerically
+    });
+}
+
 function renderTable() {
   const content = document.getElementById('tableContent');
   document.getElementById('selCount').textContent = `${state.selectedIds.size} point${state.selectedIds.size === 1 ? '' : 's'}`;
@@ -1489,7 +1505,7 @@ function renderTable() {
     return;
   }
 
-  const selRows = state.rows.filter(r => state.selectedIds.has(r.__id));
+  const selRows = getSortedSelection();
   const cols = state.cols;
   let html = '<table><thead><tr>';
   for (const c of cols) {
@@ -1533,6 +1549,26 @@ function setupChartInteraction() {
 
   svg.addEventListener('mousedown', (e) => {
     if (!state.rows.length) return;
+
+    // Alt-click on a point: toggle add/remove from selection
+    if (e.altKey) {
+      const target = e.target;
+      if (target && target.tagName === 'circle' && target.hasAttribute('data-id')) {
+        const id = +target.getAttribute('data-id');
+        if (e.shiftKey) {
+          // Shift+Alt → remove
+          state.selectedIds.delete(id);
+        } else {
+          // Alt → add
+          state.selectedIds.add(id);
+        }
+        render();
+        renderTable();
+        e.preventDefault();
+      }
+      return; // never start a drag-rect while alt is held
+    }
+
     const p = svgPoint(e);
     const { m, plotW, plotH } = getDims();
     if (p.x < m.left || p.x > m.left + plotW || p.y < m.top || p.y > m.top + plotH) return;
@@ -1926,8 +1962,7 @@ function downloadCSV() {
     return (s.includes(',') || s.includes('"') || s.includes('\n')) ? `"${s.replace(/"/g, '""')}"` : s;
   };
   const header = cols.map(c => escape(c.name)).join(',');
-  const rows = state.rows
-    .filter(r => state.selectedIds.has(r.__id))
+  const rows = getSortedSelection()
     .map(r => cols.map(c => {
       let v = r[c.name];
       if (c.type === 'date') v = r[`__raw_${c.name}`] ?? (v != null ? new Date(v).toISOString().slice(0,10) : '');
