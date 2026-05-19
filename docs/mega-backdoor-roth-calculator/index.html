@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mega Backdoor Roth Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --surface2: #f0ede6;
+    --border: #e2ddd5;
+    --border-strong: #c8c2b8;
+    --text: #1a1714;
+    --text-muted: #6b6560;
+    --text-faint: #9e9890;
+    --green-light-bg: #edf7ed;
+    --green-light-border: #a8d8a8;
+    --green-light-text: #2d6a2d;
+    --green-bg: #d4edda;
+    --green-border: #6abf6a;
+    --green-text: #1a4d1a;
+    --blue-bg: #e3f0fb;
+    --blue-border: #85b7eb;
+    --blue-text: #0c447c;
+    --accent: #2d5f3f;
+    --accent-light: #e8f3ec;
+    --amber: #8a5c0a;
+    --amber-bg: #fef3dc;
+  }
+
+  body {
+    font-family: 'DM Mono', monospace;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-wrap {
+    max-width: 780px;
+    margin: 0 auto;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.4rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .card-full { grid-column: 1 / -1; }
+
+  .card-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-label svg { opacity: 0.5; }
+
+  details summary {
+    cursor: pointer;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+
+  details summary::-webkit-details-marker { display: none; }
+
+  details summary::after {
+    content: '+';
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-faint);
+    transition: transform 0.2s;
+  }
+
+  details[open] summary::after {
+    content: '−';
+  }
+
+  details[open] summary { margin-bottom: 1rem; }
+
+  .field {
+    margin-bottom: 1rem;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface2);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="number"]:focus, select:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+  }
+
+  .checkbox-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .checkbox-row:first-child { padding-top: 0; }
+
+  .checkbox-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .checkbox-row span {
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .big-select {
+    font-size: 15px;
+    padding: 10px 12px;
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  .results-section {
+    margin-top: 1.5rem;
+  }
+
+  .result-header {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 1rem;
+  }
+
+  .result-bar-wrap {
+    margin-bottom: 1.5rem;
+  }
+
+  .bar-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  .bar-track {
+    height: 32px;
+    background: var(--surface2);
+    border-radius: 8px;
+    display: flex;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .bar-seg {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 500;
+    transition: width 0.4s ease;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .seg-pretax {
+    background: var(--green-light-bg);
+    border-right: 1px solid var(--green-light-border);
+    color: var(--green-light-text);
+  }
+
+  .seg-match {
+    background: var(--green-bg);
+    border-right: 1px solid var(--green-border);
+    color: var(--green-text);
+  }
+
+  .seg-aftertax {
+    background: var(--blue-bg);
+    color: var(--blue-text);
+  }
+
+  .seg-unused {
+    background: var(--surface2);
+    color: var(--text-faint);
+  }
+
+  .result-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (max-width: 520px) { .result-cards { grid-template-columns: 1fr; } }
+
+  .rcard {
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid;
+  }
+
+  .rcard-pretax {
+    background: var(--green-light-bg);
+    border-color: var(--green-light-border);
+  }
+
+  .rcard-match {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+  }
+
+  .rcard-aftertax {
+    background: var(--blue-bg);
+    border-color: var(--blue-border);
+  }
+
+  .rcard-label {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .rcard-pretax .rcard-label { color: var(--green-light-text); }
+  .rcard-match .rcard-label { color: var(--green-text); }
+  .rcard-aftertax .rcard-label { color: var(--blue-text); }
+
+  .rcard-amount {
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+
+  .rcard-pretax .rcard-amount { color: var(--green-light-text); }
+  .rcard-match .rcard-amount { color: var(--green-text); }
+  .rcard-aftertax .rcard-amount { color: var(--blue-text); }
+
+  .rcard-sub {
+    font-size: 11px;
+    margin-top: 2px;
+  }
+
+  .rcard-pretax .rcard-sub { color: var(--green-light-text); opacity: 0.8; }
+  .rcard-match .rcard-sub { color: var(--green-text); opacity: 0.8; }
+  .rcard-aftertax .rcard-sub { color: var(--blue-text); opacity: 0.8; }
+
+  .paycheck-breakdown {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+  }
+
+  .pb-title {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  .pb-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .pb-row:last-child { border-bottom: none; }
+
+  .pb-key { color: var(--text-muted); }
+  .pb-val { font-weight: 500; color: var(--text); }
+
+  .pb-val.green-light { color: var(--green-light-text); }
+  .pb-val.green { color: var(--green-text); }
+  .pb-val.blue { color: var(--blue-text); }
+
+  .notice {
+    background: var(--amber-bg);
+    border: 1px solid #e8c980;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--amber);
+    margin-top: 1rem;
+    line-height: 1.5;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 1.5rem 0;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid var(--border-strong);
+    margin-top: 4px;
+  }
+
+  .total-label { font-size: 12px; color: var(--text-muted); }
+  .total-val { font-size: 16px; font-weight: 500; color: var(--accent); }
+
+  .pct-badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .badge-pretax { background: var(--green-light-bg); color: var(--green-light-text); border: 1px solid var(--green-light-border); }
+  .badge-aftertax { background: var(--blue-bg); color: var(--blue-text); border: 1px solid var(--blue-border); }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .slider-row input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent);
+  }
+
+  .slider-val {
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 42px;
+    text-align: right;
+    color: var(--text);
+  }
+
+  .remaining-cap {
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 3px;
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <div class="eyebrow">Retirement Planning</div>
+    <h1>Mega Backdoor Roth</h1>
+    <p class="subtitle">Calculate your optimal after-tax 401(k) contribution strategy</p>
+  </header>
+
+  <div class="grid">
+
+    <!-- Advanced limits (expandable) -->
+    <div class="card card-full">
+      <details id="limits-details">
+        <summary>IRS Contribution Limits</summary>
+        <div class="grid" style="gap:12px">
+          <div class="field">
+            <label>Annual 415(c) limit (total)</label>
+            <input type="number" id="limit-total" value="70000" step="500">
+          </div>
+          <div class="field">
+            <label>Elective deferral limit (402(g))</label>
+            <input type="number" id="limit-elective" value="23500" step="500">
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- Existing contributions (expandable) -->
+    <div class="card card-full">
+      <details id="existing-details">
+        <summary>Existing YTD Contributions</summary>
+        <div class="grid" style="gap:12px">
+          <div class="field">
+            <label>Already contributed — Pre-Tax ($)</label>
+            <input type="number" id="exist-pretax" value="0" min="0" step="100">
+          </div>
+          <div class="field">
+            <label>Already contributed — Employer Match ($)</label>
+            <input type="number" id="exist-match" value="0" min="0" step="100">
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label>Already contributed — After-Tax ($)</label>
+            <input type="number" id="exist-aftertax" value="0" min="0" step="100">
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <!-- Pay periods -->
+    <div class="card">
+      <div class="card-label">Pay Schedule</div>
+      <div class="field">
+        <label>Pay frequency</label>
+        <select id="pay-freq" class="big-select">
+          <option value="biweekly">Biweekly (26/yr)</option>
+          <option value="semimonthly">Semimonthly (24/yr)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Remaining pay periods</label>
+        <input type="number" id="periods-left" value="" min="1" max="26" placeholder="auto">
+        <div class="remaining-cap" id="periods-hint">Auto-calculated from today</div>
+      </div>
+    </div>
+
+    <!-- Total comp -->
+    <div class="card">
+      <div class="card-label">Compensation</div>
+      <div class="field">
+        <label>Annual gross salary</label>
+        <div class="slider-row">
+          <input type="range" id="salary-range" min="50000" max="500000" step="25000" value="175000">
+          <span class="slider-val" id="salary-disp">$175,000</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Or enter exact amount ($)</label>
+        <input type="number" id="salary-exact" value="175000" min="50000" max="2000000" step="1000">
+      </div>
+    </div>
+
+    <!-- Employer match -->
+    <div class="card">
+      <div class="card-label">Employer Match</div>
+      <div class="field">
+        <label>Match rate (% of your contribution)</label>
+        <div class="slider-row">
+          <input type="range" id="match-range" min="0" max="100" step="5" value="50">
+          <span class="slider-val" id="match-disp">50%</span>
+        </div>
+      </div>
+      <div class="field">
+        <label>Match up to (% of salary)</label>
+        <div class="slider-row">
+          <input type="range" id="match-cap-range" min="0" max="20" step="1" value="6">
+          <span class="slider-val" id="match-cap-disp">6%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Checkboxes -->
+    <div class="card">
+      <div class="card-label">Strategy</div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="chk-max-pretax" checked>
+        <span>Maximize pre-tax 401(k)</span>
+      </label>
+      <label class="checkbox-row">
+        <input type="checkbox" id="chk-max-total" checked>
+        <span>Maximize total (fill after-tax)</span>
+      </label>
+    </div>
+
+  </div>
+
+  <!-- Results -->
+  <div class="results-section" id="results-section">
+    <div class="divider"></div>
+    <div class="result-header">Contribution Breakdown</div>
+
+    <!-- Bar chart -->
+    <div class="result-bar-wrap">
+      <div class="bar-labels">
+        <span>$0</span>
+        <span id="bar-max-label">$70,000 limit</span>
+      </div>
+      <div class="bar-track" id="bar-track">
+        <div class="bar-seg seg-pretax" id="seg-pretax" style="width:0%"></div>
+        <div class="bar-seg seg-match" id="seg-match" style="width:0%"></div>
+        <div class="bar-seg seg-aftertax" id="seg-aftertax" style="width:0%"></div>
+        <div class="bar-seg seg-unused" id="seg-unused" style="width:100%"></div>
+      </div>
+      <div style="display:flex; gap:16px; margin-top:8px; flex-wrap:wrap;">
+        <div style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-muted)">
+          <div style="width:12px;height:12px;border-radius:3px;background:var(--green-light-bg);border:1px solid var(--green-light-border)"></div> Pre-Tax
+        </div>
+        <div style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-muted)">
+          <div style="width:12px;height:12px;border-radius:3px;background:var(--green-bg);border:1px solid var(--green-border)"></div> Employer Match
+        </div>
+        <div style="display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-muted)">
+          <div style="width:12px;height:12px;border-radius:3px;background:var(--blue-bg);border:1px solid var(--blue-border)"></div> After-Tax (Mega Backdoor)
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 result cards -->
+    <div class="result-cards">
+      <div class="rcard rcard-pretax">
+        <div class="rcard-label">Pre-Tax 401(k)</div>
+        <div class="rcard-amount" id="res-pretax-amt">—</div>
+        <div class="rcard-sub" id="res-pretax-pct">— per paycheck</div>
+        <div class="rcard-sub" id="res-pretax-pct2">—% of salary</div>
+      </div>
+      <div class="rcard rcard-match">
+        <div class="rcard-label">Employer Match</div>
+        <div class="rcard-amount" id="res-match-amt">—</div>
+        <div class="rcard-sub" id="res-match-sub">estimated total</div>
+      </div>
+      <div class="rcard rcard-aftertax">
+        <div class="rcard-label">After-Tax (MBR)</div>
+        <div class="rcard-amount" id="res-aftertax-amt">—</div>
+        <div class="rcard-sub" id="res-aftertax-pct">— per paycheck</div>
+        <div class="rcard-sub" id="res-aftertax-pct2">—% of salary</div>
+      </div>
+    </div>
+
+    <!-- Per-paycheck breakdown -->
+    <div class="paycheck-breakdown">
+      <div class="pb-title">Per-paycheck deductions (remaining periods)</div>
+      <div class="pb-row">
+        <span class="pb-key">Gross paycheck</span>
+        <span class="pb-val" id="pb-gross">—</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-key">Pre-tax deduction <span class="pct-badge badge-pretax" id="pb-pretax-pct">—</span></span>
+        <span class="pb-val green-light" id="pb-pretax">—</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-key">Employer match (est.)</span>
+        <span class="pb-val green" id="pb-match">—</span>
+      </div>
+      <div class="pb-row">
+        <span class="pb-key">After-tax deduction <span class="pct-badge badge-aftertax" id="pb-aftertax-pct">—</span></span>
+        <span class="pb-val blue" id="pb-aftertax">—</span>
+      </div>
+      <div class="total-row">
+        <span class="total-label">Total annual contribution</span>
+        <span class="total-val" id="pb-total">—</span>
+      </div>
+    </div>
+
+    <div id="notice-area"></div>
+
+  </div>
+
+</div>
+
+<script>
+  // Helpers
+  const $ = id => document.getElementById(id);
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const fmtPct = n => (Math.round(n * 10) / 10) + '%';
+
+  // Random defaults
+  const randSalary = Math.round((Math.random() * (500000 - 50000) / 25000)) * 25000 + 50000;
+  const randMatch = Math.round(Math.random() * 10) * 5; // 0–50 in steps of 5
+
+  $('salary-range').value = randSalary;
+  $('salary-exact').value = randSalary;
+  $('salary-disp').textContent = fmt(randSalary);
+  $('match-range').value = randMatch;
+  $('match-disp').textContent = randMatch + '%';
+
+  // Auto remaining periods
+  function calcDefaultPeriods(freq) {
+    const now = new Date();
+    const endOfYear = new Date(now.getFullYear(), 11, 31);
+    const msLeft = endOfYear - now;
+    const daysLeft = msLeft / (1000 * 60 * 60 * 24);
+    if (freq === 'biweekly') return Math.max(1, Math.ceil(daysLeft / 14));
+    return Math.max(1, Math.ceil(daysLeft / 15.2));
+  }
+
+  function updatePeriodHint() {
+    const freq = $('pay-freq').value;
+    const def = calcDefaultPeriods(freq);
+    if (!$('periods-left').value) {
+      $('periods-hint').textContent = `~${def} periods remaining in ${new Date().getFullYear()}`;
+    }
+  }
+  updatePeriodHint();
+
+  function getPeriodsLeft() {
+    const v = $('periods-left').value;
+    if (v && +v > 0) return +v;
+    return calcDefaultPeriods($('pay-freq').value);
+  }
+
+  function getPeriodsPerYear() {
+    return $('pay-freq').value === 'biweekly' ? 26 : 24;
+  }
+
+  // Wire sliders
+  $('salary-range').addEventListener('input', e => {
+    const v = +e.target.value;
+    $('salary-disp').textContent = fmt(v);
+    $('salary-exact').value = v;
+    calc();
+  });
+
+  $('salary-exact').addEventListener('input', e => {
+    const v = +e.target.value;
+    if (v >= 50000 && v <= 500000) $('salary-range').value = v;
+    $('salary-disp').textContent = fmt(v);
+    calc();
+  });
+
+  $('match-range').addEventListener('input', e => {
+    $('match-disp').textContent = e.target.value + '%';
+    calc();
+  });
+
+  $('match-cap-range').addEventListener('input', e => {
+    $('match-cap-disp').textContent = e.target.value + '%';
+    calc();
+  });
+
+  ['pay-freq','periods-left','limit-total','limit-elective',
+   'exist-pretax','exist-match','exist-aftertax',
+   'chk-max-pretax','chk-max-total'].forEach(id => {
+    $(id).addEventListener('change', () => { updatePeriodHint(); calc(); });
+    $(id).addEventListener('input', () => calc());
+  });
+
+  function calc() {
+    const salary = +$('salary-exact').value || randSalary;
+    const periodsLeft = getPeriodsLeft();
+    const periodsPerYear = getPeriodsPerYear();
+    const limitTotal = +$('limit-total').value || 70000;
+    const limitElective = +$('limit-elective').value || 23500;
+    const matchRate = +$('match-range').value / 100;
+    const matchCapPct = +$('match-cap-range').value / 100;
+    const maxPretax = $('chk-max-pretax').checked;
+    const maxTotal = $('chk-max-total').checked;
+
+    const existPretax = +$('exist-pretax').value || 0;
+    const existMatch = +$('exist-match').value || 0;
+    const existAftertax = +$('exist-aftertax').value || 0;
+
+    const paycheckGross = salary / periodsPerYear;
+
+    // Pre-tax: how much more can we do this year?
+    let remainingElective = Math.max(0, limitElective - existPretax);
+    let pretaxForRemaining = maxPretax ? remainingElective : 0;
+    // clamp so we don't over-contribute per period
+    pretaxForRemaining = Math.min(pretaxForRemaining, paycheckGross * periodsLeft);
+
+    const pretaxPerCheck = periodsLeft > 0 ? pretaxForRemaining / periodsLeft : 0;
+
+    // Employer match estimate for remaining periods
+    const matchableSalary = paycheckGross * periodsLeft;
+    const matchBasis = Math.min(pretaxForRemaining, matchableSalary * matchCapPct);
+    let matchForRemaining = matchBasis * matchRate;
+    matchForRemaining = Math.max(0, Math.min(matchForRemaining, limitTotal - existMatch - existPretax - existAftertax - pretaxForRemaining));
+
+    const totalAlreadyUsed = existPretax + existMatch + existAftertax;
+    const totalUsedAfterPreAndMatch = totalAlreadyUsed + pretaxForRemaining + matchForRemaining;
+    let remainingCap = Math.max(0, limitTotal - totalUsedAfterPreAndMatch);
+
+    // After-tax fills remaining room
+    let aftertaxForRemaining = 0;
+    if (maxTotal) {
+      // How much after-tax cap is left (accounting for existing)
+      let afterTaxRoom = Math.max(0, remainingCap - existAftertax);
+      afterTaxRoom = Math.max(0, afterTaxRoom); // don't double-subtract existing
+      // Actually remaining room after existing aftertax
+      let realRoom = Math.max(0, limitTotal - totalAlreadyUsed - pretaxForRemaining - matchForRemaining);
+      aftertaxForRemaining = Math.min(realRoom, paycheckGross * periodsLeft);
+    }
+
+    const aftertaxPerCheck = periodsLeft > 0 ? aftertaxForRemaining / periodsLeft : 0;
+
+    const totalAnnual = pretaxForRemaining + matchForRemaining + aftertaxForRemaining + totalAlreadyUsed;
+    const grandTotal = pretaxForRemaining + matchForRemaining + aftertaxForRemaining;
+
+    // Bar chart
+    const barMax = limitTotal;
+    const pPretax = Math.min(100, (existPretax + pretaxForRemaining) / barMax * 100);
+    const pMatch = Math.min(100, (existMatch + matchForRemaining) / barMax * 100);
+    const pAfter = Math.min(100, (existAftertax + aftertaxForRemaining) / barMax * 100);
+    const pUnused = Math.max(0, 100 - pPretax - pMatch - pAfter);
+
+    $('seg-pretax').style.width = pPretax + '%';
+    $('seg-pretax').textContent = pPretax > 8 ? fmtPct(pPretax) : '';
+    $('seg-match').style.width = pMatch + '%';
+    $('seg-match').textContent = pMatch > 8 ? fmtPct(pMatch) : '';
+    $('seg-aftertax').style.width = pAfter + '%';
+    $('seg-aftertax').textContent = pAfter > 8 ? fmtPct(pAfter) : '';
+    $('seg-unused').style.width = pUnused + '%';
+    $('seg-unused').textContent = pUnused > 8 ? fmtPct(pUnused) + ' unused' : '';
+    $('bar-max-label').textContent = fmt(limitTotal) + ' limit';
+
+    // Cards
+    const totalPretax = existPretax + pretaxForRemaining;
+    const totalMatch = existMatch + matchForRemaining;
+    const totalAftertax = existAftertax + aftertaxForRemaining;
+
+    $('res-pretax-amt').textContent = fmt(totalPretax);
+    $('res-pretax-pct').textContent = fmt(pretaxPerCheck) + ' / paycheck';
+    $('res-pretax-pct2').textContent = fmtPct(totalPretax / salary * 100) + ' of salary';
+
+    $('res-match-amt').textContent = fmt(totalMatch);
+    $('res-match-sub').textContent = 'est. annual match';
+
+    $('res-aftertax-amt').textContent = fmt(totalAftertax);
+    $('res-aftertax-pct').textContent = fmt(aftertaxPerCheck) + ' / paycheck';
+    $('res-aftertax-pct2').textContent = fmtPct(totalAftertax / salary * 100) + ' of salary';
+
+    // Paycheck breakdown
+    $('pb-gross').textContent = fmt(paycheckGross);
+    $('pb-pretax').textContent = fmt(pretaxPerCheck);
+    $('pb-pretax-pct').textContent = fmtPct(pretaxPerCheck / paycheckGross * 100);
+    $('pb-match').textContent = fmt(periodsLeft > 0 ? matchForRemaining / periodsLeft : 0);
+    $('pb-aftertax').textContent = fmt(aftertaxPerCheck);
+    $('pb-aftertax-pct').textContent = fmtPct(aftertaxPerCheck / paycheckGross * 100);
+    $('pb-total').textContent = fmt(totalPretax + totalMatch + totalAftertax);
+
+    // Notices
+    const notices = [];
+    if (totalPretax + totalMatch + totalAftertax >= limitTotal * 0.999) {
+      notices.push('You are on track to maximize your ' + fmt(limitTotal) + ' annual 415(c) limit — excellent!');
+    }
+    if (!maxTotal && aftertaxForRemaining === 0) {
+      notices.push('Enable "Maximize Total" to calculate your Mega Backdoor Roth after-tax contributions.');
+    }
+    if (aftertaxPerCheck > paycheckGross * 0.6) {
+      notices.push('After-tax deductions are very high relative to your paycheck. Verify your plan allows this rate.');
+    }
+    if (periodsLeft <= 2 && pretaxForRemaining > 0) {
+      notices.push('Few pay periods remain — front-loading may not be possible. Check with your plan administrator.');
+    }
+
+    const area = $('notice-area');
+    area.innerHTML = notices.map(n => `<div class="notice">${n}</div>`).join('');
+  }
+
+  calc();
+</script>
+</body>
+</html>
