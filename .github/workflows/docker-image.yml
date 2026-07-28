@@ -4,9 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       packages:
-        description: 'Comma-separated list of Python packages to install in the devcontainer'
+        description: 'Python packages to install in the devcontainer'
         required: true
-        default: 'numpy,pandas'
+        type: string
+        default: 'uvicorn fastapi pydantic'
 
 jobs:
   build:
